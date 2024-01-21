@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5121f3bef2086334fbeeaae1a6cabe65, type: 3}
+  m_Name: TempNarrative
+  m_EditorClassIdentifier: 
+  NodeLinks:
+  - BaseNodeGUID: 7fd837fe-7a95-429e-8a8d-70663964391d
+    PortName: Next
+    TargetNodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
+  - BaseNodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
+    PortName: "\u041F\u0440\u0438\u0432\u0435\u0442"
+    TargetNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+  - BaseNodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
+    PortName: "\u041F\u043E\u043A\u0430"
+    TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "\u0434\u0430"
+    TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+  DialogueNodeData:
+  - NodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
+    DialogueTitle: 
+    DialogueText: "\u041F\u0440\u0438\u0432\u0435\u0442 [PlayerName]"
+    Position: {x: 252, y: 143.2}
+  - NodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    DialogueTitle: 
+    DialogueText: "\u041E\u0442\u043B\u0438\u0447\u043D\u044B\u0439 \u0434\u0435\u043D\u044C!"
+    Position: {x: 779.2, y: 86.399994}
+  - NodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+    DialogueTitle: 
+    DialogueText: "\u041F\u043E\u043A\u0430"
+    Position: {x: 1282.4, y: 361.6}
+  ExposedProperties:
+  - PropertyName: PlayerName
+    PropertyValue: Timur
