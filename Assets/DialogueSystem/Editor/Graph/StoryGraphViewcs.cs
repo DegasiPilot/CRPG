@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DialogueSystem.DataContainers;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -27,13 +28,27 @@ namespace DialogueSystem.Editor
             this.AddManipulator(new RectangleSelector());
 
             AddElement(GetEntryPointNodeInstance());
-            this.AddManipulator(CreateNodeContextualMenu("Add Dialogue Node"));
+            this.AddManipulator(CreateDialogueNodeContextualMenu("Add Dialogue Node", NodeType.Dialogue));
+            this.AddManipulator(CreateDialogueNodeContextualMenu("Add CharacteristicCheck Node", NodeType.CharacteristicCheck));
         }
 
-        private IManipulator CreateNodeContextualMenu(string actionTitle)
+        private IManipulator CreateDialogueNodeContextualMenu(string actionTitle, NodeType nodeType)
         {
+            Action<DropdownMenuAction> action = (actionEvent) => AddElement(CreateDialogueNode("DialogueName", "DialogueText",
+                        actionEvent.eventInfo.localMousePosition));
+            switch (nodeType)
+            {
+                case NodeType.Dialogue:
+                    action = (actionEvent) => AddElement(CreateDialogueNode("DialogueName", "DialogueText",
+                        actionEvent.eventInfo.localMousePosition));
+                    break;
+                case NodeType.CharacteristicCheck:
+                    action = (actionEvent) => AddElement(CreateCharacteristicNode(Characteristics.Strength,1,
+                        actionEvent.eventInfo.localMousePosition));
+                    break;
+            }
             ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
-                menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode("DialogueName", "DialogueText", actionEvent.eventInfo.localMousePosition)))
+                menuEvent => menuEvent.menu.AppendAction(actionTitle, action)
             );
 
             return contextualMenuManipulator;
@@ -93,12 +108,7 @@ namespace DialogueSystem.Editor
             return compatiblePorts;
         }
 
-        public void CreateNewDialogueNode(string nodeTitle, string nodeName, Vector2 position)
-        {
-            AddElement(CreateNode(nodeTitle, nodeName, position));
-        }
-
-        public DialogueNode CreateNode(string nodeTitle, string nodeText, Vector2 position)
+        public DialogueNode CreateDialogueNode(string nodeTitle, string nodeText, Vector2 position)
         {
             var node = new DialogueNode()
             {
@@ -146,6 +156,46 @@ namespace DialogueSystem.Editor
             return node;
         }
 
+        public CharacteristicCheckNode CreateCharacteristicNode(Characteristics characteristic, int difficultyNumber, Vector2 position)
+        {
+            var node = new CharacteristicCheckNode()
+            {
+                title = "CharacteristicCheck",
+                Characteristic = characteristic,
+                DifficultyNumber = difficultyNumber,
+                GUID = Guid.NewGuid().ToString()
+            };
+
+            var inputPort = GetPortInstance(node, Direction.Input, Port.Capacity.Multi);
+            inputPort.portName = "Input";
+            node.inputContainer.Add(inputPort);
+            node.SetPosition(new Rect(position, Vector2.zero));
+
+            AddCheckPorts(node);
+
+            var characteristicDropdown = new DropdownField(Enum.GetNames(typeof(Characteristics)).ToList(), 0);
+            characteristicDropdown.RegisterValueChangedCallback(evt =>
+            {
+                node.Characteristic = Enum.Parse<Characteristics>(evt.newValue);
+            });
+            characteristicDropdown.SetValueWithoutNotify(node.Characteristic.ToString());
+            node.extensionContainer.Add(characteristicDropdown);
+
+            var difficultyTextField = new TextField("");
+            difficultyTextField.maxLength = 3;
+            difficultyTextField.RegisterValueChangedCallback(evt =>
+            {
+                string newValue = Regex.Replace(evt.newValue, @"\D", "");
+                int.TryParse(newValue, out node.DifficultyNumber);
+                difficultyTextField.SetValueWithoutNotify(newValue);
+            });
+            difficultyTextField.style.maxWidth = 100;
+            difficultyTextField.SetValueWithoutNotify(node.DifficultyNumber.ToString());
+            node.extensionContainer.Add(difficultyTextField);
+            node.RefreshExpandedState();
+
+            return node;
+        }
 
         public void AddChoicePort(DialogueNode nodeCache, string overriddenPortName = "")
         {
@@ -179,6 +229,21 @@ namespace DialogueSystem.Editor
             nodeCache.RefreshExpandedState();
         }
 
+        public void AddCheckPorts(CharacteristicCheckNode node)
+        {
+            var generatedPort = GetPortInstance(node, Direction.Output);
+            var portLabel = generatedPort.contentContainer.Q<Label>("type");
+            generatedPort.contentContainer.Remove(portLabel);
+            generatedPort.contentContainer.Add(new Label("Успех"));
+            node.outputContainer.Add(generatedPort);
+
+            var generatedPort2 = GetPortInstance(node, Direction.Output);
+            portLabel = generatedPort2.contentContainer.Q<Label>("type");
+            generatedPort2.contentContainer.Remove(portLabel);
+            generatedPort2.contentContainer.Add(new Label("Провал"));
+            node.outputContainer.Add(generatedPort2);
+        }
+
         private void RemovePort(Node node, Port socket)
         {
             var targetEdge = edges.ToList()
@@ -195,7 +260,7 @@ namespace DialogueSystem.Editor
             node.RefreshExpandedState();
         }
 
-        private Port GetPortInstance(DialogueNode node, Direction nodeDirection,
+        private Port GetPortInstance(Node node, Direction nodeDirection,
             Port.Capacity capacity = Port.Capacity.Single)
         {
             return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(bool));

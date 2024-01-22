@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5121f3bef2086334fbeeaae1a6cabe65, type: 3}
+  m_Name: Narrative2
+  m_EditorClassIdentifier: 
+  NodeLinks:
+  - BaseNodeGUID: 37368760-628a-423f-ba4f-27a1e00e90e7
+    PortName: Next
+    TargetNodeGUID: 4b9fdcd2-c363-4a66-8e43-c77ff9ca14fe
+  - BaseNodeGUID: 4b9fdcd2-c363-4a66-8e43-c77ff9ca14fe
+    PortName: Boolean
+    TargetNodeGUID: 2d4b5620-9df9-4648-80f2-93033999dc62
+  - BaseNodeGUID: 4b9fdcd2-c363-4a66-8e43-c77ff9ca14fe
+    PortName: Boolean
+    TargetNodeGUID: fabad970-363e-4356-a08b-58a712b15b1a
+  DialogueNodeData:
+  - NodeGUID: 2d4b5620-9df9-4648-80f2-93033999dc62
+    Position: {x: 491.2, y: 124}
+    DialogueTitle: 
+    DialogueText: "\u041B\u043E\u0432\u043A\u0430\u0447"
+  - NodeGUID: fabad970-363e-4356-a08b-58a712b15b1a
+    Position: {x: 511.2, y: 276.80002}
+    DialogueTitle: 
+    DialogueText: "\u0422\u044B \u043F\u0435\u043B\u044C\u043C\u0435\u043D\u044C"
+  CharacteristicNodeData:
+  - NodeGUID: 4b9fdcd2-c363-4a66-8e43-c77ff9ca14fe
+    Position: {x: 239.2, y: 180.8}
+    Characteristic: 1
+    CheckDifficulty: 10
+  ExposedProperties: []

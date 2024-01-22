@@ -41,9 +41,9 @@ namespace DialogueSystem.Editor
         private void GenerateToolbar()
         {
             var toolbar = new Toolbar();
-            toolbar.Add(new Button(() => RequestDataOperation(0)) { text = "New" });
-            toolbar.Add(new Button(() => RequestDataOperation(1)) { text = "Save" });
-            toolbar.Add(new Button(() => RequestDataOperation(2)) { text = "Load" });
+            toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.CreateNew)) { text = "New" });
+            toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.Save)) { text = "Save" });
+            toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.Load)) { text = "Load" });
             if (_fileName != string.Empty)
             {
                 var fileNameTextField = new Label($"File Name: {_fileName}");
@@ -52,12 +52,12 @@ namespace DialogueSystem.Editor
             rootVisualElement.Add(toolbar);
         }
 
-        private void RequestDataOperation(byte option)
+        private void RequestDataOperation(DataOperationType operationType)
         {
             var saveUtility = GraphSaveUtility.GetInstance(_graphView);
-            switch (option)
+            switch (operationType)
             {
-                case 0: //New
+                case DataOperationType.CreateNew:
                     {
                         _fileName = string.Empty;
                         _filePath = string.Empty;
@@ -67,7 +67,7 @@ namespace DialogueSystem.Editor
                         GenerateBlackBoard();
                         break;
                     }
-                case 1: //Save
+                case DataOperationType.Save: 
                     {
                         if (_filePath != string.Empty && _filePath != null)
                         {
@@ -81,7 +81,7 @@ namespace DialogueSystem.Editor
                         RegenerateToolbar();
                         break;
                     }
-                case 2: //Load
+                case DataOperationType.Load: 
                     {
                         saveUtility.LoadNarrative(out _filePath, out _fileName);
                         RegenerateToolbar();

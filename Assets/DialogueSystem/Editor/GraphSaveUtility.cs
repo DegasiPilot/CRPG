@@ -12,7 +12,7 @@ namespace DialogueSystem.Editor
     public class GraphSaveUtility
     {
         private List<Edge> Edges => _graphView.edges.ToList();
-        private List<DialogueNode> Nodes => _graphView.nodes.ToList().Cast<DialogueNode>().ToList();
+        private List<SaveableNode> Nodes => _graphView.nodes.ToList().Cast<SaveableNode>().ToList();
 
         private List<Group> CommentBlocks =>
             _graphView.graphElements.ToList().Where(x => x is Group).Cast<Group>().ToList();
@@ -59,6 +59,7 @@ namespace DialogueSystem.Editor
                 {
                     container.NodeLinks = dialogueContainerObject.NodeLinks;
                     container.DialogueNodeData = dialogueContainerObject.DialogueNodeData;
+                    container.CharacteristicNodeData = dialogueContainerObject.CharacteristicNodeData;
                     container.ExposedProperties = dialogueContainerObject.ExposedProperties;
                     EditorUtility.SetDirty(container);
                 }
@@ -73,8 +74,8 @@ namespace DialogueSystem.Editor
             var connectedSockets = Edges.Where(x => x.input.node != null).ToArray();
             for (var i = 0; i < connectedSockets.Count(); i++)
             {
-                var outputNode = (connectedSockets[i].output.node as DialogueNode);
-                var inputNode = (connectedSockets[i].input.node as DialogueNode);
+                var outputNode = connectedSockets[i].output.node as SaveableNode;
+                var inputNode = connectedSockets[i].input.node as SaveableNode;
                 dialogueContainerObject.NodeLinks.Add(new NodeLinkData
                 {
                     BaseNodeGUID = outputNode.GUID,
@@ -85,13 +86,29 @@ namespace DialogueSystem.Editor
 
             foreach (var node in Nodes.Where(node => !node.EntyPoint))
             {
-                dialogueContainerObject.DialogueNodeData.Add(new DialogueNodeData
+                if (node.NodeType == NodeType.Dialogue)
                 {
-                    NodeGUID = node.GUID,
-                    DialogueTitle = node.DialogueTitle,
-                    DialogueText = node.DialogueText,
-                    Position = node.GetPosition().position
-                });
+                    DialogueNode dialogueNode = node as DialogueNode;
+                    dialogueContainerObject.DialogueNodeData.Add(new DialogueNodeData
+                    {
+                        NodeGUID = dialogueNode.GUID,
+                        DialogueTitle = dialogueNode.DialogueTitle,
+                        DialogueText = dialogueNode.DialogueText,
+                        Position = dialogueNode.GetPosition().position
+                    });
+                }
+                else if (node.NodeType == NodeType.CharacteristicCheck)
+                {
+                    CharacteristicCheckNode characteristicCheckNode = node as CharacteristicCheckNode;
+                    dialogueContainerObject.CharacteristicNodeData.Add(new CharacteristicNodeData
+                    {
+                        NodeGUID = characteristicCheckNode.GUID,
+                        Characteristic = characteristicCheckNode.Characteristic,
+                        CheckDifficulty = characteristicCheckNode.DifficultyNumber,
+                        Position = characteristicCheckNode.GetPosition().position
+                    });
+                    Debug.Log(characteristicCheckNode.DifficultyNumber);
+                }
             }
 
             return true;
@@ -122,7 +139,8 @@ namespace DialogueSystem.Editor
 
             ClearGraph();
             GenerateDialogueNodes();
-            ConnectDialogueNodes();
+            GenerateCharacteristicNodes();
+            ConnectNodes();
             AddExposedProperties();
             GenerateCommentBlocks();
         }
@@ -149,7 +167,7 @@ namespace DialogueSystem.Editor
         {
             foreach (var perNode in _dialogueContainer.DialogueNodeData)
             {
-                var tempNode = _graphView.CreateNode(perNode.DialogueTitle, perNode.DialogueText, Vector2.zero);
+                var tempNode = _graphView.CreateDialogueNode(perNode.DialogueTitle, perNode.DialogueText, Vector2.zero);
                 tempNode.GUID = perNode.NodeGUID;
                 _graphView.AddElement(tempNode);
 
@@ -158,7 +176,17 @@ namespace DialogueSystem.Editor
             }
         }
 
-        private void ConnectDialogueNodes()
+        private void GenerateCharacteristicNodes()
+        {
+            foreach (var perNode in _dialogueContainer.CharacteristicNodeData)
+            {
+                var tempNode = _graphView.CreateCharacteristicNode(perNode.Characteristic, perNode.CheckDifficulty, Vector2.zero);
+                tempNode.GUID = perNode.NodeGUID;
+                _graphView.AddElement(tempNode);
+            }
+        }
+
+        private void ConnectNodes()
         {
             for (var i = 0; i < Nodes.Count; i++)
             {
@@ -170,8 +198,9 @@ namespace DialogueSystem.Editor
                     var targetNode = Nodes.First(x => x.GUID == targetNodeGUID);
                     LinkNodesTogether(Nodes[i].outputContainer[j].Q<Port>(), targetNode.inputContainer[0].Q<Port>());
 
-                    targetNode.SetPosition(new Rect(
-                        _dialogueContainer.DialogueNodeData.First(x => x.NodeGUID == targetNodeGUID).Position, Vector2.zero));
+                    SaveableNodeData saveableNode = _dialogueContainer.DialogueNodeData.FirstOrDefault(x => x.NodeGUID == targetNodeGUID);
+                    saveableNode ??= _dialogueContainer.CharacteristicNodeData.FirstOrDefault(x => x.NodeGUID == targetNodeGUID);
+                    targetNode.SetPosition(new Rect(saveableNode.Position, Vector2.zero));
                 }
             }
         }

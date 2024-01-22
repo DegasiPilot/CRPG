@@ -1,14 +1,13 @@
 using System;
-using UnityEngine;
 
 namespace DialogueSystem.DataContainers
 {
     [Serializable]
-    public class DialogueNodeData
+    public class DialogueNodeData : SaveableNodeData
     {
-        public string NodeGUID;
         public string DialogueTitle;
         public string DialogueText;
-        public Vector2 Position;
+
+        public override NodeType NodeType => NodeType.Dialogue;
     }
 }

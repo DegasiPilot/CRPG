@@ -1,12 +1,10 @@
-using UnityEditor.Experimental.GraphView;
-
 namespace DialogueSystem.Editor
 {
-    public class DialogueNode : Node
+    public class DialogueNode : SaveableNode
     {
         public string DialogueTitle;
         public string DialogueText;
-        public string GUID;
-        public bool EntyPoint = false;
+
+        public override NodeType NodeType => NodeType.Dialogue;
     }
 }
