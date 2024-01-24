@@ -17,6 +17,7 @@ namespace DialogueSystem.Runtime
         [SerializeField] private Button choicePrefab;
         [SerializeField] private Transform buttonContainer;
         [SerializeField] private CharacteristicCheckPanel characteristicCheckPanel;
+        [SerializeField] private Button EndDialogueButton;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject dialogueDisplay;
@@ -33,7 +34,8 @@ namespace DialogueSystem.Runtime
             allNodes.Clear();
             allNodes.UnionWith(dialogue.DialogueNodeData);
             allNodes.UnionWith(dialogue.CharacteristicNodeData);
-            var narrativeData = dialogue.NodeLinks.First(); 
+            var narrativeData = dialogue.NodeLinks.First();
+            EndDialogueButton.gameObject.SetActive(false);
             ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
         }
 
@@ -72,6 +74,11 @@ namespace DialogueSystem.Runtime
                 dialogueDisplay.SetActive(false);
                 characteristicCheckPanel.gameObject.SetActive(true);
                 characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
+            }
+
+            if(choices.Length == 0)
+            {
+                EndDialogueButton.gameObject.SetActive(true);
             }
         }
 
