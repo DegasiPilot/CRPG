@@ -9,6 +9,8 @@ namespace DialogueSystem.Runtime
     public class DialogueParser : MonoBehaviour
     {
         public static DialogueParser Instance;
+        public Personage PlayerPersonage;
+        public Personage SecondPersonage;
 
         [SerializeField] private DialogueContainer dialogue;
         [SerializeField] private Text dialogueText;
@@ -16,19 +18,23 @@ namespace DialogueSystem.Runtime
         [SerializeField] private Transform buttonContainer;
         [SerializeField] private CharacteristicCheckPanel characteristicCheckPanel;
 
-        private HashSet<SaveableNodeData> allNodes;
+        private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject dialogueDisplay;
 
-        private void Start()
+        public void Setup()
         {
             Instance = this;
             characteristicCheckPanel.Setup();
-            var narrativeData = dialogue.NodeLinks.First(); //Entrypoint node
-            allNodes = new();
+            dialogueDisplay = dialogueText.transform.parent.gameObject;
+        }
+
+        public void StartDialogue()
+        {
+            allNodes.Clear();
             allNodes.UnionWith(dialogue.DialogueNodeData);
             allNodes.UnionWith(dialogue.CharacteristicNodeData);
-            dialogueDisplay = dialogueText.transform.parent.gameObject;
-            ProceedToNarrative(narrativeData.TargetNodeGUID);
+            var narrativeData = dialogue.NodeLinks.First(); 
+            ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
         }
 
         public void ProceedToNarrative(string narrativeDataGUID)
@@ -42,7 +48,7 @@ namespace DialogueSystem.Runtime
 
                 var dialogueNode = nodeData as DialogueNodeData;
                 string text = dialogueNode.DialogueText;
-                dialogueText.text = ProcessProperties(text);
+                dialogueText.text = SecondPersonage.Name + ": " + ProcessProperties(text);
                 var buttons = buttonContainer.GetComponentsInChildren<Button>();
                 for (int i = 0; i < buttons.Length; i++)
                 {
@@ -65,7 +71,7 @@ namespace DialogueSystem.Runtime
 
                 dialogueDisplay.SetActive(false);
                 characteristicCheckPanel.gameObject.SetActive(true);
-                characteristicCheckPanel.CharacteristicCheck(checkNode, choices);
+                characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
             }
         }
 

@@ -10,6 +10,7 @@ namespace DialogueSystem.Runtime
         [SerializeField] private Text DifficultyNumberText;
         [SerializeField] private Text ResultNumberText;
         [SerializeField] private Text ResultText;
+        [SerializeField] private Text BonusText;
         [SerializeField] private Button ConfirmButton;
 
         private CharacteristicNodeData _checkNode;
@@ -17,19 +18,24 @@ namespace DialogueSystem.Runtime
         private Text _confirmBtnText;
         private string _nextNodeGIUD;
 
+        private int _bonus;
+
         public void Setup()
         {
             _confirmBtnText = ConfirmButton.GetComponentInChildren<Text>();
             _nodeLinkData = new NodeLinkData[2];
         }
 
-        public void CharacteristicCheck(CharacteristicNodeData nodeData, NodeLinkData[] nodeLinks)
+        public void CharacteristicCheck(CharacteristicNodeData nodeData, NodeLinkData[] nodeLinks, Personage personage)
         {
             _checkNode = nodeData;
             _nodeLinkData = nodeLinks;
-            CharacteristicCheckText.text = Translator.TranslateToRussian(_checkNode.Characteristic.ToString());
-            DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
 
+            string characteristicName = Translator.TranslateToRussian(_checkNode.Characteristic.ToString());
+            CharacteristicCheckText.text = characteristicName;
+            DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
+            _bonus = personage.GetCharacteristicBonus(nodeData.Characteristic);
+            BonusText.text = _bonus >= 0 ? $"Бонус от {characteristicName}: +{_bonus}" : $"Штраф от {characteristicName} {_bonus}";
             _confirmBtnText.text = "Бросить кубик";
         }
 
@@ -38,7 +44,7 @@ namespace DialogueSystem.Runtime
             if (ResultText.text == "")
             {
                 int result = RoleDice();
-                if(result >= _checkNode.CheckDifficulty)
+                if(result + _bonus >= _checkNode.CheckDifficulty)
                 {
                     ResultText.text = "Успех";
                     ResultText.color = Color.green;
