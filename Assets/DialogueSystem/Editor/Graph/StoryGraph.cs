@@ -14,12 +14,11 @@ namespace DialogueSystem.Editor
         private string _filePath;
 
         private StoryGraphView _graphView;
-        private DialogueContainer _dialogueContainer;
 
         [MenuItem("Graph/Narrative Graph")]
         public static void CreateGraphViewWindow()
         {
-            var window = GetWindow<StoryGraph>("Dialogue");
+            CreateWindow<StoryGraph>("Dialogue");
         }
 
         private void ConstructGraphView()
