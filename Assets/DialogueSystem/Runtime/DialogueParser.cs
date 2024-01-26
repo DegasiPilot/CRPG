@@ -36,6 +36,7 @@ namespace DialogueSystem.Runtime
             allNodes.UnionWith(dialogue.CharacteristicNodeData);
             var narrativeData = dialogue.NodeLinks.First();
             EndDialogueButton.gameObject.SetActive(false);
+            GameManager.Instance.ChangeGameMode(GameMode.Dialogue);
             ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
         }
 
@@ -71,7 +72,6 @@ namespace DialogueSystem.Runtime
 
                 var checkNode = nodeData as CharacteristicNodeData;
 
-                dialogueDisplay.SetActive(false);
                 characteristicCheckPanel.gameObject.SetActive(true);
                 characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
             }
@@ -89,6 +89,12 @@ namespace DialogueSystem.Runtime
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }
             return text;
+        }
+
+        public void EndDialogue()
+        {
+            dialogueDisplay.SetActive(false);
+            GameManager.Instance.ChangeGameMode(GameMode.Free);
         }
     }
 }
