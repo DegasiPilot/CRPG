@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DialogueSystem.Runtime;
 
 public class CameraController : MonoBehaviour
 {
@@ -21,6 +22,11 @@ public class CameraController : MonoBehaviour
                 if (hit.collider.transform.TryGetComponent(out TerrainCollider _))
                 {
                     GameManager.Instance.PlayerController.GoToPosition(hit.point);
+                }
+                else if (hit.collider.transform.TryGetComponent(out DialogueActor dialogueActor))
+                {
+                    DialogueParser.Instance.SetSecondDialogueActor(dialogueActor);
+                    DialogueParser.Instance.TryStartDialogue();
                 }
             }
         }

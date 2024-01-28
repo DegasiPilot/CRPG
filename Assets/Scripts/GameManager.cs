@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
         dialogueParser.SecondPersonage = SecondPersonage;
         PlayerController = _playerPersonage.GetComponent<PlayerController>();
         PlayerController.Setup();
-        dialogueParser.StartDialogue();
     }
 
     public void ChangeGameMode(GameMode gameMode)

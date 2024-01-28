@@ -9,50 +9,60 @@ namespace DialogueSystem.Runtime
     public class DialogueParser : MonoBehaviour
     {
         public static DialogueParser Instance;
+
+        [SerializeField] private Text _dialogueText;
+        [SerializeField] private Button _choicePrefab;
+        [SerializeField] private Transform _buttonContainer;
+        [SerializeField] private CharacteristicCheckPanel _characteristicCheckPanel;
+        [SerializeField] private Button _endDialogueButton; 
+        
         public Personage PlayerPersonage;
         public Personage SecondPersonage;
 
-        [SerializeField] private DialogueContainer dialogue;
-        [SerializeField] private Text dialogueText;
-        [SerializeField] private Button choicePrefab;
-        [SerializeField] private Transform buttonContainer;
-        [SerializeField] private CharacteristicCheckPanel characteristicCheckPanel;
-        [SerializeField] private Button EndDialogueButton;
-
         private readonly HashSet<SaveableNodeData> allNodes= new();
-        private GameObject dialogueDisplay;
+        private GameObject _dialogueDisplay;
+        private DialogueContainer _dialogue;
 
         public void Setup()
         {
             Instance = this;
-            characteristicCheckPanel.Setup();
-            dialogueDisplay = dialogueText.transform.parent.gameObject;
+            _characteristicCheckPanel.Setup();
+            _dialogueDisplay = _dialogueText.transform.parent.gameObject;
         }
 
-        public void StartDialogue()
+        public void SetSecondDialogueActor(DialogueActor dialogueActor)
         {
-            allNodes.Clear();
-            allNodes.UnionWith(dialogue.DialogueNodeData);
-            allNodes.UnionWith(dialogue.CharacteristicNodeData);
-            var narrativeData = dialogue.NodeLinks.First();
-            EndDialogueButton.gameObject.SetActive(false);
-            GameManager.Instance.ChangeGameMode(GameMode.Dialogue);
-            ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
+            SecondPersonage = dialogueActor.Personage;
+            _dialogue = dialogueActor.Dialogue;
+        }
+
+        public void TryStartDialogue()
+        {
+            if (_dialogue)
+            {
+                allNodes.Clear();
+                allNodes.UnionWith(_dialogue.DialogueNodeData);
+                allNodes.UnionWith(_dialogue.CharacteristicNodeData);
+                var narrativeData = _dialogue.NodeLinks.First();
+                _endDialogueButton.gameObject.SetActive(false);
+                GameManager.Instance.ChangeGameMode(GameMode.Dialogue);
+                ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
+            }
         }
 
         public void ProceedToNarrative(string narrativeDataGUID)
         {
             SaveableNodeData nodeData = allNodes.First(x => x.NodeGUID == narrativeDataGUID);
-            var choices = dialogue.NodeLinks.Where(x => x.BaseNodeGUID == narrativeDataGUID).ToArray();
+            var choices = _dialogue.NodeLinks.Where(x => x.BaseNodeGUID == narrativeDataGUID).ToArray();
             if (nodeData.NodeType == NodeType.Dialogue)
             {
-                characteristicCheckPanel.gameObject.SetActive(false);
-                dialogueDisplay.SetActive(true);
+                _characteristicCheckPanel.gameObject.SetActive(false);
+                _dialogueDisplay.SetActive(true);
 
-                var dialogueNode = nodeData as DialogueNodeData;
-                string text = dialogueNode.DialogueText;
-                dialogueText.text = SecondPersonage.Name + ": " + ProcessProperties(text);
-                var buttons = buttonContainer.GetComponentsInChildren<Button>();
+                var _dialogueNode = nodeData as DialogueNodeData;
+                string text = _dialogueNode.DialogueText;
+                _dialogueText.text = SecondPersonage.Name + ": " + ProcessProperties(text);
+                var buttons = _buttonContainer.GetComponentsInChildren<Button>();
                 for (int i = 0; i < buttons.Length; i++)
                 {
                     Destroy(buttons[i].gameObject);
@@ -60,7 +70,7 @@ namespace DialogueSystem.Runtime
 
                 for (int i = 0; i < choices.Count(); i++)
                 {
-                    var button = Instantiate(choicePrefab, buttonContainer);
+                    var button = Instantiate(_choicePrefab, _buttonContainer);
                     button.GetComponentInChildren<Text>().text = ProcessProperties($"{i + 1})" + choices[i].PortName);
                     var targetNodeGUID = choices[i].TargetNodeGUID;
                     button.onClick.AddListener(() => ProceedToNarrative(targetNodeGUID));
@@ -68,23 +78,23 @@ namespace DialogueSystem.Runtime
             }
             else if(nodeData.NodeType == NodeType.CharacteristicCheck)
             {
-                dialogueDisplay.SetActive(false);
+                _dialogueDisplay.SetActive(false);
 
                 var checkNode = nodeData as CharacteristicNodeData;
 
-                characteristicCheckPanel.gameObject.SetActive(true);
-                characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
+                _characteristicCheckPanel.gameObject.SetActive(true);
+                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
             }
 
             if(choices.Length == 0)
             {
-                EndDialogueButton.gameObject.SetActive(true);
+                _endDialogueButton.gameObject.SetActive(true);
             }
         }
 
         private string ProcessProperties(string text)
         {
-            foreach (var exposedProperty in dialogue.ExposedProperties)
+            foreach (var exposedProperty in _dialogue.ExposedProperties)
             {
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }
@@ -93,7 +103,8 @@ namespace DialogueSystem.Runtime
 
         public void EndDialogue()
         {
-            dialogueDisplay.SetActive(false);
+            _dialogueDisplay.SetActive(false);
+            _dialogue = null;
             GameManager.Instance.ChangeGameMode(GameMode.Free);
         }
     }
