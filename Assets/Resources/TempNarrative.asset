@@ -23,21 +23,50 @@ MonoBehaviour:
     PortName: "\u041F\u043E\u043A\u0430"
     TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
   - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
-    PortName: "\u0434\u0430"
+    PortName: "\u041F\u043E\u043A\u0430"
+    TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u041B\u043E\u0432\u043A\u043E\u0441\u0442\u044C] \u0425\u043E\u0431\u0430!
+      \u0421\u043C\u043E\u0442\u0440\u0438 \u043A\u0430\u043A \u043C\u043E\u0433\u0443!"
+    TargetNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+    PortName: "\u041F\u043E\u043A\u0430"
+    TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+  - BaseNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+    PortName: "\u041F\u043E\u043A\u0430"
     TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
   DialogueNodeData:
   - NodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
+    Position: {x: 252, y: 143.2}
     DialogueTitle: 
     DialogueText: "\u041F\u0440\u0438\u0432\u0435\u0442 [PlayerName]"
-    Position: {x: 252, y: 143.2}
   - NodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    Position: {x: 802.4, y: 86.399994}
     DialogueTitle: 
     DialogueText: "\u041E\u0442\u043B\u0438\u0447\u043D\u044B\u0439 \u0434\u0435\u043D\u044C!"
-    Position: {x: 779.2, y: 86.399994}
+  - NodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+    Position: {x: 1632.8, y: 86.399994}
+    DialogueTitle: 
+    DialogueText: "\u0425\u043E-\u0445\u043E. \u041D\u0443 \u0442\u044B \u0438 \u043B\u043E\u0432\u043A\u0438\u0439"
+  - NodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+    Position: {x: 1632.8, y: 235.2}
+    DialogueTitle: 
+    DialogueText: "\u0422\u044B \u043F\u0435\u043B\u044C\u043C\u0435\u043D\u044C"
   - NodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+    Position: {x: 2333.6, y: 656.8}
     DialogueTitle: 
     DialogueText: "\u041F\u043E\u043A\u0430"
-    Position: {x: 1282.4, y: 361.6}
+  CharacteristicNodeData:
+  - NodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+    Position: {x: 1365.6, y: 86.399994}
+    Characteristic: 1
+    CheckDifficulty: 10
   ExposedProperties:
   - PropertyName: PlayerName
     PropertyValue: Timur
