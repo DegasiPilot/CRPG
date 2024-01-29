@@ -4,33 +4,54 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public delegate void Interact(Transform transform);
+
     public float Speed;
 
-    private Vector3 targetPosition;
-    private Vector3 direction;
-    private CharacterController controller;
+    private Vector3 _targetPosition;
+    private float _maxSqrTargetOffset;
+    private Vector3 _direction;
+    private CharacterController _controller;
+    private Interact _interact;
+    private Transform _interactObject;
 
     public void Setup()
     {
-        controller = GetComponent<CharacterController>();
+        _controller = GetComponent<CharacterController>();
     }
 
     private void FixedUpdate()
     {
-        if(direction != Vector3.zero)
+        if (_direction != Vector3.zero)
         {
-            controller.SimpleMove(direction * Speed);
-            if((targetPosition - transform.position).sqrMagnitude <= 0.01)
+            _controller.SimpleMove(_direction * Speed);
+            if ((_targetPosition - transform.position).sqrMagnitude <= _maxSqrTargetOffset)
             {
-                direction = Vector3.zero;
+                _direction = Vector3.zero;
+                if (_interact != null && _interactObject)
+                {
+                    _interact.Invoke(_interactObject);
+                    _interact = null;
+                    _interactObject = null;
+                }
             }
         }
     }
 
-    public void GoToPosition(Vector3 position)
+    public void GoToPosition(Vector3 position, float maxTargetOffset = 0.01f)
     {
-        targetPosition = position;
-        direction = (targetPosition - transform.position).normalized;
-        transform.forward = direction;
+        _maxSqrTargetOffset = maxTargetOffset * maxTargetOffset;
+        _targetPosition = position;
+        _direction = (_targetPosition - transform.position).normalized;
+        transform.forward = _direction;
+        _interact = null;
+        _interactObject = null;
+    }
+
+    public void InteractWith(Transform transform, float maxInteractDistance, Interact interact, Transform interactObject)
+    {
+        GoToPosition(transform.position, maxInteractDistance);
+        _interact = interact;
+        _interactObject = interactObject;
     }
 }

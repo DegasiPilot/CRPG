@@ -2404,6 +2404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Dialogue: {fileID: 11400000, guid: 116fe902212e67642a6a5fc4cc3eeb4e, type: 2}
+  MaxDialogueDistance: 3
 --- !u!136 &1665480740
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -30,9 +30,7 @@ public class CameraController : MonoBehaviour
                 }
                 else if (hit.collider.transform.TryGetComponent(out DialogueActor dialogueActor))
                 {
-                    DialogueParser.Instance.SetSecondDialogueActor(dialogueActor);
-                    FocusOn(dialogueActor.transform);
-                    DialogueParser.Instance.TryStartDialogue();
+                    GameManager.Instance.OnDialogueActorPressed(dialogueActor);
                 }
             }
         }

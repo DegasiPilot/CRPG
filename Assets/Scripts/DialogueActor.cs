@@ -7,6 +7,8 @@ using DialogueSystem.DataContainers;
 public class DialogueActor : MonoBehaviour
 {
     public DialogueContainer Dialogue;
+    public float MaxDialogueDistance;
+
     public Personage Personage
     {
         get

@@ -43,4 +43,16 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
+    public void OnDialogueActorPressed(DialogueActor dialogueActor)
+    {
+        DialogueParser.Instance.SetSecondDialogueActor(dialogueActor);
+        PlayerController.InteractWith(dialogueActor.transform, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor.transform);
+    }
+
+    public void StartDialogue(Transform focusObject)
+    {
+        CameraController.FocusOn(focusObject);
+        DialogueParser.Instance.TryStartDialogue();
+    }
 }
