@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using DialogueSystem.Runtime;
 
@@ -11,6 +9,13 @@ public class CameraController : MonoBehaviour
     public int ZoomSpeed;
     public float MinDistance;
     public float MaxDistance;
+
+    private float _standartAngleX;
+
+    public void Setup()
+    {
+        _standartAngleX = transform.eulerAngles.x;
+    }
 
     void Update()
     {
@@ -26,6 +31,7 @@ public class CameraController : MonoBehaviour
                 else if (hit.collider.transform.TryGetComponent(out DialogueActor dialogueActor))
                 {
                     DialogueParser.Instance.SetSecondDialogueActor(dialogueActor);
+                    FocusOn(dialogueActor.transform);
                     DialogueParser.Instance.TryStartDialogue();
                 }
             }
@@ -39,11 +45,6 @@ public class CameraController : MonoBehaviour
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        if (h == 0 && v == 0 && Input.GetMouseButton(0))
-        {
-            h = Input.GetAxis("Mouse X") * -MouseSensitivity;
-            v = Input.GetAxis("Mouse Y") * -MouseSensitivity;
-        }
         transform.parent.Translate(new Vector3(h, 0, v) * Time.deltaTime * MoveSpeed);
     }
 
@@ -84,5 +85,20 @@ public class CameraController : MonoBehaviour
                 transform.position = Vector3.MoveTowards(position, parentPosition, moveDistance);
             }
         }
+    }
+
+    public void FocusOn(Transform focusObject)
+    {
+        transform.parent.position = focusObject.position;
+        transform.parent.eulerAngles = focusObject.eulerAngles + new Vector3(0, 180, 0);
+        transform.localPosition = new Vector3(0, 1, -2);
+        transform.localEulerAngles = Vector3.zero;
+    }
+
+    public void StandartView()
+    {
+        transform.parent.eulerAngles = Vector3.zero;
+        transform.localEulerAngles = new Vector3(_standartAngleX, 0, 0);
+        transform.localPosition = -transform.forward * MinDistance;
     }
 }

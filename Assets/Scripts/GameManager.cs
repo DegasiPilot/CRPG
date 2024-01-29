@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public Personage SecondPersonage;
     public CameraController CameraController;
 
-    public PlayerController PlayerController;
+    [System.NonSerialized] public PlayerController PlayerController;
     
     private GameMode _gameMode;
     private Personage _playerPersonage;
@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
         dialogueParser.SecondPersonage = SecondPersonage;
         PlayerController = _playerPersonage.GetComponent<PlayerController>();
         PlayerController.Setup();
+        CameraController.Setup();
     }
 
     public void ChangeGameMode(GameMode gameMode)
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameMode.Free:
                 CameraController.enabled = true;
+                CameraController.StandartView();
                 break;
         }
     }

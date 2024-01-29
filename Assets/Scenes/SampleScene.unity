@@ -1305,9 +1305,9 @@ MonoBehaviour:
   MouseSensitivity: 10
   MoveSpeed: 10
   RotateSpeed: 45
-  ZoomSpeed: 10000
-  MinDistance: 1
-  MaxDistance: 100
+  ZoomSpeed: 5000
+  MinDistance: 4
+  MaxDistance: 20
 --- !u!1 &1075171358
 GameObject:
   m_ObjectHideFlags: 0
@@ -2086,7 +2086,6 @@ MonoBehaviour:
   Player: {fileID: 1968516539}
   SecondPersonage: {fileID: 1665480737}
   CameraController: {fileID: 963194229}
-  PlayerController: {fileID: 0}
 --- !u!4 &1573653451
 Transform:
   m_ObjectHideFlags: 0
@@ -2384,14 +2383,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1665480736}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 250.5, y: 0, z: 270.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 318849788}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1665480739
 MonoBehaviour:
   m_ObjectHideFlags: 0
