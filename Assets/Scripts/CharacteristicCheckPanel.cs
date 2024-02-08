@@ -26,12 +26,12 @@ namespace DialogueSystem.Runtime
             _nodeLinkData = new NodeLinkData[2];
         }
 
-        public void CharacteristicCheck(CharacteristicNodeData nodeData, NodeLinkData[] nodeLinks, Personage personage)
+        public void CharacteristicCheck(CharacteristicNodeData nodeData, NodeLinkData[] nodeLinks, PersonageInfo personage)
         {
             _checkNode = nodeData;
             _nodeLinkData = nodeLinks;
 
-            string characteristicName = Translator.TranslateToRussian(_checkNode.Characteristic.ToString());
+            string characteristicName = Translator.Translate(_checkNode.Characteristic.ToString());
             CharacteristicCheckText.text = characteristicName;
             DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
             _bonus = personage.GetCharacteristicBonus(nodeData.Characteristic);

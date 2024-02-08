@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void GoToPosition(Vector3 position, float maxTargetOffset = 0.01f)
+    public void GoToPosition(Vector3 position, float maxTargetOffset = 0.1f)
     {
         _maxSqrTargetOffset = maxTargetOffset * maxTargetOffset;
         _targetPosition = position;

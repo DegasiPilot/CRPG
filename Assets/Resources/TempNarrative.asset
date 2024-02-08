@@ -22,50 +22,111 @@ MonoBehaviour:
   - BaseNodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
     PortName: "\u041F\u043E\u043A\u0430"
     TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
-  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
-    PortName: "\u041F\u043E\u043A\u0430"
-    TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
-  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
-    PortName: "[\u041B\u043E\u0432\u043A\u043E\u0441\u0442\u044C] \u0425\u043E\u0431\u0430!
-      \u0421\u043C\u043E\u0442\u0440\u0438 \u043A\u0430\u043A \u043C\u043E\u0433\u0443!"
-    TargetNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
-  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
-    PortName: Boolean
-    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
-  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
-    PortName: Boolean
-    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
   - BaseNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
     PortName: "\u041F\u043E\u043A\u0430"
     TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
   - BaseNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
     PortName: "\u041F\u043E\u043A\u0430"
     TargetNodeGUID: 30c2123e-5733-4844-851d-e39908f15829
+  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: a2b91311-77d8-4b1b-b52b-6ad6ce51747e
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: a2b91311-77d8-4b1b-b52b-6ad6ce51747e
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: 489dc84e-af61-425a-b1b0-88f1ab68697d
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: 489dc84e-af61-425a-b1b0-88f1ab68697d
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: 55744fba-39ea-4dd4-a3eb-38a05d205f83
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: 55744fba-39ea-4dd4-a3eb-38a05d205f83
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: 66e7dc69-d81a-41db-90f2-769714738821
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: 66e7dc69-d81a-41db-90f2-769714738821
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: c0864837-9511-4197-bc09-823d3a80a42f
+    PortName: Boolean
+    TargetNodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
+  - BaseNodeGUID: c0864837-9511-4197-bc09-823d3a80a42f
+    PortName: Boolean
+    TargetNodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u0421\u0438\u043B\u0430]"
+    TargetNodeGUID: a2b91311-77d8-4b1b-b52b-6ad6ce51747e
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u041B\u043E\u0432\u043A\u043E\u0441\u0442\u044C]"
+    TargetNodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u0422\u0435\u043B\u043E\u0441\u043B\u043E\u0436\u0435\u043D\u0438\u0435]"
+    TargetNodeGUID: 489dc84e-af61-425a-b1b0-88f1ab68697d
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u0418\u043D\u0442\u0435\u043B\u0435\u043A\u0442]"
+    TargetNodeGUID: 55744fba-39ea-4dd4-a3eb-38a05d205f83
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u041C\u0443\u0434\u0440\u043E\u0441\u0442\u044C]"
+    TargetNodeGUID: 66e7dc69-d81a-41db-90f2-769714738821
+  - BaseNodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    PortName: "[\u0425\u0430\u0440\u0438\u0437\u043C\u0430]"
+    TargetNodeGUID: c0864837-9511-4197-bc09-823d3a80a42f
   DialogueNodeData:
   - NodeGUID: 854a16c3-2bd3-4a53-b4a8-040145c77476
     Position: {x: 252, y: 143.2}
     DialogueTitle: 
     DialogueText: "\u041F\u0440\u0438\u0432\u0435\u0442 [PlayerName]"
-  - NodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
-    Position: {x: 802.4, y: 86.399994}
-    DialogueTitle: 
-    DialogueText: "\u041E\u0442\u043B\u0438\u0447\u043D\u044B\u0439 \u0434\u0435\u043D\u044C!"
   - NodeGUID: 6a9b6889-b9b8-4536-9164-787f7ecd0820
-    Position: {x: 1632.8, y: 86.399994}
+    Position: {x: 1755.2, y: -120.8}
     DialogueTitle: 
-    DialogueText: "\u0425\u043E-\u0445\u043E. \u041D\u0443 \u0442\u044B \u0438 \u043B\u043E\u0432\u043A\u0438\u0439"
+    DialogueText: "\u041C\u043E\u043B\u043E\u0434\u0435\u0446"
   - NodeGUID: 7aa325a4-0a1b-4448-98de-229b4a8e5e05
-    Position: {x: 1632.8, y: 235.2}
+    Position: {x: 1754.4, y: 105.600006}
     DialogueTitle: 
-    DialogueText: "\u0422\u044B \u043F\u0435\u043B\u044C\u043C\u0435\u043D\u044C"
+    DialogueText: "\u0422\u0430\u043A \u0441\u0435\u0431\u0435"
   - NodeGUID: 30c2123e-5733-4844-851d-e39908f15829
-    Position: {x: 2333.6, y: 656.8}
+    Position: {x: 2342.4, y: 652}
     DialogueTitle: 
     DialogueText: "\u041F\u043E\u043A\u0430"
+  - NodeGUID: 1d614ab7-9510-4310-83d9-680a9e757031
+    Position: {x: 838.4, y: -32}
+    DialogueTitle: 
+    DialogueText: "\u041E\u0442\u043B\u0438\u0447\u043D\u044B\u0439 \u0434\u0435\u043D\u044C!"
   CharacteristicNodeData:
   - NodeGUID: f1721ac0-7a65-4ed4-b855-bf4288a8e294
-    Position: {x: 1365.6, y: 86.399994}
+    Position: {x: 1397.6, y: -212}
     Characteristic: 1
+    CheckDifficulty: 10
+  - NodeGUID: a2b91311-77d8-4b1b-b52b-6ad6ce51747e
+    Position: {x: 1397.6, y: -379.19998}
+    Characteristic: 0
+    CheckDifficulty: 10
+  - NodeGUID: 489dc84e-af61-425a-b1b0-88f1ab68697d
+    Position: {x: 1397.6, y: -32}
+    Characteristic: 2
+    CheckDifficulty: 10
+  - NodeGUID: 55744fba-39ea-4dd4-a3eb-38a05d205f83
+    Position: {x: 1397.6, y: 131.2}
+    Characteristic: 3
+    CheckDifficulty: 10
+  - NodeGUID: 66e7dc69-d81a-41db-90f2-769714738821
+    Position: {x: 1397.6, y: 309.6}
+    Characteristic: 4
+    CheckDifficulty: 10
+  - NodeGUID: c0864837-9511-4197-bc09-823d3a80a42f
+    Position: {x: 1397.6, y: 488}
+    Characteristic: 5
     CheckDifficulty: 10
   ExposedProperties:
   - PropertyName: PlayerName

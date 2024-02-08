@@ -7,13 +7,17 @@ public static class Translator
     {
         { "Strength", "Сила"},
         { "Dexterity", "Ловкость"},
-        { "Constitution", "Телосложение"},
+        { "Constitution", "Выносливость"},
         { "Intelligence", "Интелект"},
         { "Wisdom", "Мудрость"},
-        { "Charisma", "Харизма"}
+        { "Charisma", "Харизма"},
+        { "Human", "Человек"},
+        { "Elf", "Эльф"},
+        { "Dwarf", "Дварф"},
+        { "Orc", "Орк"},
     };
 
-    public static string TranslateToRussian(string englishString)
+    public static string Translate(string englishString)
     {
         if (_russianDictionary.Keys.Contains(englishString))
         {
@@ -21,7 +25,7 @@ public static class Translator
         }
         else
         {
-            return "";
+            return englishString;
         }
     }
 }

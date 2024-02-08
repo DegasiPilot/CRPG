@@ -9,15 +9,15 @@ public class DialogueActor : MonoBehaviour
     public DialogueContainer Dialogue;
     public float MaxDialogueDistance;
 
-    public Personage Personage
+    public PersonageInfo PersonageInfo
     {
         get
         {
-            if (personage == null)
-                personage = GetComponent<Personage>();
-            return personage;
+            if (_personageInfo == null)
+                _personageInfo = GetComponent<Personage>().personageInfo;
+            return _personageInfo;
         }
     }
 
-    private Personage personage;
+    private PersonageInfo _personageInfo;
 }

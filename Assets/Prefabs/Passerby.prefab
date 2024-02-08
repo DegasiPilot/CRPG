@@ -92,8 +92,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 639178468184618657}
-  - component: {fileID: 4144164348217487462}
-  - component: {fileID: 7276858101479696419}
   - component: {fileID: 3062555443109163141}
   m_Layer: 0
   m_Name: Passerby
@@ -118,33 +116,6 @@ Transform:
   - {fileID: 6823916377785915713}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4144164348217487462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8709186507766611781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: "\u041F\u0440\u043E\u0445\u043E\u0436\u0438\u0439"
---- !u!114 &7276858101479696419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8709186507766611781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0de9a9886225f44cabb0d9a07145f50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Dialogue: {fileID: 11400000, guid: 116fe902212e67642a6a5fc4cc3eeb4e, type: 2}
-  MaxDialogueDistance: 3
 --- !u!136 &3062555443109163141
 CapsuleCollider:
   m_ObjectHideFlags: 0

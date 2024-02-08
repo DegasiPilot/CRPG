@@ -16,8 +16,8 @@ namespace DialogueSystem.Runtime
         [SerializeField] private CharacteristicCheckPanel _characteristicCheckPanel;
         [SerializeField] private Button _endDialogueButton; 
         
-        public Personage PlayerPersonage;
-        public Personage SecondPersonage;
+        public PersonageInfo PlayerPersonageInfo;
+        public PersonageInfo SecondPersonageInfo;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject _dialogueDisplay;
@@ -32,7 +32,7 @@ namespace DialogueSystem.Runtime
 
         public void SetSecondDialogueActor(DialogueActor dialogueActor)
         {
-            SecondPersonage = dialogueActor.Personage;
+            SecondPersonageInfo = dialogueActor.PersonageInfo;
             _dialogue = dialogueActor.Dialogue;
         }
 
@@ -61,7 +61,7 @@ namespace DialogueSystem.Runtime
 
                 var _dialogueNode = nodeData as DialogueNodeData;
                 string text = _dialogueNode.DialogueText;
-                _dialogueText.text = SecondPersonage.Name + ": " + ProcessProperties(text);
+                _dialogueText.text = SecondPersonageInfo.Name + ": " + ProcessProperties(text);
                 var buttons = _buttonContainer.GetComponentsInChildren<Button>();
                 for (int i = 0; i < buttons.Length; i++)
                 {
@@ -83,7 +83,7 @@ namespace DialogueSystem.Runtime
                 var checkNode = nodeData as CharacteristicNodeData;
 
                 _characteristicCheckPanel.gameObject.SetActive(true);
-                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonage);
+                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonageInfo);
             }
 
             if(choices.Length == 0)

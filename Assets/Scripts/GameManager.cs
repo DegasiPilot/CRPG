@@ -15,16 +15,16 @@ public class GameManager : MonoBehaviour
     [System.NonSerialized] public PlayerController PlayerController;
     
     private GameMode _gameMode;
-    private Personage _playerPersonage;
+    private PersonageInfo _playerPersonageInfo;
 
     void Start()
     {
         Instance = this;
         dialogueParser.Setup();
-        _playerPersonage = Player.GetComponent<Personage>();
-        dialogueParser.PlayerPersonage = _playerPersonage;
-        dialogueParser.SecondPersonage = SecondPersonage;
-        PlayerController = _playerPersonage.GetComponent<PlayerController>();
+        _playerPersonageInfo = Player.GetComponent<Personage>().personageInfo;
+        dialogueParser.PlayerPersonageInfo = _playerPersonageInfo;
+        dialogueParser.SecondPersonageInfo = SecondPersonage.personageInfo;
+        PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
         CameraController.Setup();
     }
