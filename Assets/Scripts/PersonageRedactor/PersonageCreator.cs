@@ -95,4 +95,9 @@ public class PersonageCreator : MonoBehaviour
         StatPointsText.text = 12 - unSpendedPoints + "/" + 12;
         StatPointsText.color = unSpendedPoints == 0 ? Color.green : Color.red;
     }
+
+    public void SetName(string name)
+    {
+        _personage.Name = name;
+    }
 }
