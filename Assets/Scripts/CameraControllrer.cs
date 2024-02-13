@@ -32,6 +32,10 @@ public class CameraController : MonoBehaviour
                 {
                     GameManager.Instance.OnDialogueActorPressed(dialogueActor);
                 }
+                else if(hit.collider.transform.TryGetComponent(out Item item))
+                {
+                    GameManager.Instance.OnItemPressed(item);
+                }
             }
         }
         Move();

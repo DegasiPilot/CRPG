@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public delegate void Interact(Transform transform);
+    public delegate void Interact(Transform transform, Component interactComponent);
 
     public float Speed;
 
@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private Interact _interact;
     private Transform _interactObject;
+    private Component _interactComponent;
 
     public void Setup()
     {
@@ -28,11 +29,12 @@ public class PlayerController : MonoBehaviour
             if ((_targetPosition - transform.position).sqrMagnitude <= _maxSqrTargetOffset)
             {
                 _direction = Vector3.zero;
-                if (_interact != null && _interactObject)
+                if (_interact != null && _interactObject && _interactComponent)
                 {
-                    _interact.Invoke(_interactObject);
+                    _interact.Invoke(_interactObject, _interactComponent);
                     _interact = null;
                     _interactObject = null;
+                    _interactComponent = null;
                 }
             }
         }
@@ -48,10 +50,11 @@ public class PlayerController : MonoBehaviour
         _interactObject = null;
     }
 
-    public void InteractWith(Transform transform, float maxInteractDistance, Interact interact, Transform interactObject)
+    public void InteractWith(Transform interactObject, float maxInteractDistance, Interact interact, Component interactComponent)
     {
-        GoToPosition(transform.position, maxInteractDistance);
+        GoToPosition(interactObject.position, maxInteractDistance);
         _interact = interact;
         _interactObject = interactObject;
+        _interactComponent = interactComponent;
     }
 }

@@ -11,22 +11,24 @@ public class GameManager : MonoBehaviour
     public GameObject Player;
     public Personage SecondPersonage;
     public CameraController CameraController;
+    public CanvasManager CanvasManager;
 
-    [System.NonSerialized] public PlayerController PlayerController;
+    [HideInInspector] public PlayerController PlayerController;
     
     private GameMode _gameMode;
-    private PersonageInfo _playerPersonageInfo;
+    [HideInInspector] public Personage PlayerPersonage;
 
     void Start()
     {
         Instance = this;
         dialogueParser.Setup();
-        _playerPersonageInfo = Player.GetComponent<Personage>().personageInfo;
-        dialogueParser.PlayerPersonageInfo = _playerPersonageInfo;
+        PlayerPersonage = Player.GetComponent<Personage>();
+        dialogueParser.PlayerPersonageInfo = PlayerPersonage.personageInfo;
         dialogueParser.SecondPersonageInfo = SecondPersonage.personageInfo;
         PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
         CameraController.Setup();
+        CanvasManager.Setup();
     }
 
     public void ChangeGameMode(GameMode gameMode)
@@ -46,13 +48,39 @@ public class GameManager : MonoBehaviour
 
     public void OnDialogueActorPressed(DialogueActor dialogueActor)
     {
-        DialogueParser.Instance.SetSecondDialogueActor(dialogueActor);
-        PlayerController.InteractWith(dialogueActor.transform, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor.transform);
+        PlayerController.InteractWith(dialogueActor.transform, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
     }
 
-    public void StartDialogue(Transform focusObject)
+    public void OnItemPressed(Item item)
     {
+        PlayerController.InteractWith(item.transform, 1, ItemInteract, item);
+    }
+
+    public void StartDialogue(Transform focusObject, Component component)
+    {
+        DialogueParser.Instance.SetSecondDialogueActor(component as DialogueActor);
         CameraController.FocusOn(focusObject);
         DialogueParser.Instance.TryStartDialogue();
+    }
+
+    public void ItemInteract(Transform itemObject, Component component)
+    {
+        PlayerPersonage.PickupItem(itemObject.gameObject);
+        itemObject.gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (CanvasManager.ToggleInventory())
+            {
+                CameraController.enabled = false;
+            }
+            else
+            {
+                CameraController.enabled = true;
+            }
+        }
     }
 }
