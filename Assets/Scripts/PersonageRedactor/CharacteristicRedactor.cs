@@ -21,6 +21,8 @@ public class CharacteristicRedactor : MonoBehaviour
         _plusBtn.onClick.AddListener(AddPoint);
         _amontText = GetComponentsInChildren<Text>().First(x => x.name == "Amount");
         _amontText.text = PersonageCreator.Instance.GetCharacteristicValue(Characteristic).ToString();
+        PersonageCreator.Instance.OnNoMoreStatPoints.AddListener(() => _plusBtn.interactable = false);
+        PersonageCreator.Instance.OnGetStatPoints.AddListener(TryActivatePlusButton);
     }
 
     private void AddPoint()
@@ -37,5 +39,13 @@ public class CharacteristicRedactor : MonoBehaviour
         _minusBtn.interactable = canRemoveMore;
         _plusBtn.interactable = true;
         _amontText.text = PersonageCreator.Instance.GetCharacteristicValue(Characteristic).ToString();
+    }
+
+    private void TryActivatePlusButton()
+    {
+        if(PersonageCreator.Instance.CanAddMore(Characteristic))
+        {
+            _plusBtn.interactable = true;
+        }
     }
 }

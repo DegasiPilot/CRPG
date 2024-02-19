@@ -5,10 +5,13 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class PersonageCreator : MonoBehaviour
 {
     public static PersonageCreator Instance;
+    public UnityEvent OnNoMoreStatPoints;
+    public UnityEvent OnGetStatPoints;
 
     public Transform StatsParent;
     public Button RaceButton;
@@ -41,6 +44,10 @@ public class PersonageCreator : MonoBehaviour
             _personage[characteristic]++;
             SetStatPoints(--_personage.UnSpendedStatPoints);
             canAddMore = _personage[characteristic] < 18 && _personage.UnSpendedStatPoints > 0;
+            if (_personage.UnSpendedStatPoints == 0)
+            {
+                OnNoMoreStatPoints.Invoke();
+            }
         }
         else
         {
@@ -52,6 +59,10 @@ public class PersonageCreator : MonoBehaviour
     {
         if (_personage[characteristic] > 0)
         {
+            if (_personage.UnSpendedStatPoints == 0)
+            {
+                OnGetStatPoints.Invoke();
+            }
             _personage[characteristic]--;
             SetStatPoints(++_personage.UnSpendedStatPoints);
             canRemoveMore = _personage[characteristic] > 0;
@@ -65,6 +76,11 @@ public class PersonageCreator : MonoBehaviour
     public int GetCharacteristicValue(Characteristics characteristic)
     {
         return _personage[characteristic];
+    }
+
+    public bool CanAddMore(Characteristics characteristic)
+    {
+        return _personage[characteristic] < 18; 
     }
 
     public void SetRace(Race race)

@@ -96,6 +96,10 @@ namespace DialogueSystem.Runtime
         {
             foreach (var exposedProperty in _dialogue.ExposedProperties)
             {
+                if(exposedProperty.PropertyName == "PlayerName")
+                {
+                    exposedProperty.PropertyValue = PlayerPersonageInfo.Name;
+                }
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }
             return text;
