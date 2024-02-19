@@ -48,25 +48,25 @@ public class GameManager : MonoBehaviour
 
     public void OnDialogueActorPressed(DialogueActor dialogueActor)
     {
-        PlayerController.InteractWith(dialogueActor.transform, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+        PlayerController.InteractWith(dialogueActor.gameObject, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
     }
 
     public void OnItemPressed(Item item)
     {
-        PlayerController.InteractWith(item.transform, 1, ItemInteract, item);
+        PlayerController.InteractWith(item.gameObject, 1, ItemInteract, item);
     }
 
-    public void StartDialogue(Transform focusObject, Component component)
+    public void StartDialogue(GameObject focusObject, Component component)
     {
         DialogueParser.Instance.SetSecondDialogueActor(component as DialogueActor);
         CameraController.FocusOn(focusObject);
         DialogueParser.Instance.TryStartDialogue();
     }
 
-    public void ItemInteract(Transform itemObject, Component component)
+    public void ItemInteract(GameObject itemObject, Component component)
     {
-        PlayerPersonage.PickupItem(itemObject.gameObject);
-        itemObject.gameObject.SetActive(false);
+        PlayerPersonage.PickupItem(itemObject);
+        itemObject.SetActive(false);
     }
 
     private void Update()

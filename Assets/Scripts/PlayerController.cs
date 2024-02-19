@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public delegate void Interact(Transform transform, Component interactComponent);
+    public delegate void Interact(GameObject gameObject, Component interactComponent);
 
     public float Speed;
 
@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _direction;
     private CharacterController _controller;
     private Interact _interact;
-    private Transform _interactObject;
+    private GameObject _interactObject;
     private Component _interactComponent;
 
     public void Setup()
@@ -50,9 +50,9 @@ public class PlayerController : MonoBehaviour
         _interactObject = null;
     }
 
-    public void InteractWith(Transform interactObject, float maxInteractDistance, Interact interact, Component interactComponent)
+    public void InteractWith(GameObject interactObject, float maxInteractDistance, Interact interact, Component interactComponent)
     {
-        GoToPosition(interactObject.position, maxInteractDistance);
+        GoToPosition(interactObject.transform.position, maxInteractDistance);
         _interact = interact;
         _interactObject = interactObject;
         _interactComponent = interactComponent;

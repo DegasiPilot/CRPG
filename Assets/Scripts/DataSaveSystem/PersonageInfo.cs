@@ -16,7 +16,7 @@ public class PersonageInfo
 
     public Race Race;
 
-    public List<GameObject> Inventory = new List<GameObject>();
+    public List<GameObject> Inventory;
 
     public PersonageInfo(string name = "Unnammed")
     {
@@ -27,6 +27,7 @@ public class PersonageInfo
         Intelligence = 10;
         Wisdom = 10;
         Charisma = 10;
+        Inventory = new List<GameObject>();
     }
 
     public int this [Characteristics index]

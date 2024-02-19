@@ -34,6 +34,7 @@ public class CameraController : MonoBehaviour
                 }
                 else if(hit.collider.transform.TryGetComponent(out Item item))
                 {
+                    Debug.Log(item != null);
                     GameManager.Instance.OnItemPressed(item);
                 }
             }
@@ -89,10 +90,10 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void FocusOn(Transform focusObject)
+    public void FocusOn(GameObject focusObject)
     {
-        transform.parent.position = focusObject.position;
-        transform.parent.eulerAngles = focusObject.eulerAngles + new Vector3(0, 180, 0);
+        transform.position = focusObject.transform.position;
+        transform.parent.eulerAngles = focusObject.transform.eulerAngles + new Vector3(0, 180, 0);
         transform.localPosition = new Vector3(0, 1, -2);
         transform.localEulerAngles = Vector3.zero;
     }
