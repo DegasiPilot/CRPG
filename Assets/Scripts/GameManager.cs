@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Instance = this;
-        GameData.LoadLastGameSave();
         dialogueParser.Setup();
         PlayerPersonage = Player.GetComponent<Personage>();
         PlayerPersonage.PersonageInfo = GameData.PlayerPersonage;

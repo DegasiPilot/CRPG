@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Linq;
+using System.Collections.Generic;
 
 internal static class CRUD
 {
@@ -52,5 +53,10 @@ internal static class CRUD
     public static GameSaveInfo GetLastGameSave()
     {
         return GetCollection<GameSaveInfo>().AsQueryable().OrderByDescending(x => x.DateTime).First();
+    }
+
+    public static List<GameSaveInfo> GetAllGameSaves()
+    {
+        return GetCollection<GameSaveInfo>().AsQueryable().ToList();
     }
 }
