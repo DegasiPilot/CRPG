@@ -4,9 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuScript : MonoBehaviour
 {
+    public static MainMenuScript Instance;
+
     public Transform SavesTransformParent;
     public GameObject SaveSlotPrefab;
     private List<GameSaveInfo> _saves;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void StartNewGame()
     {
@@ -16,6 +23,12 @@ public class MainMenuScript : MonoBehaviour
     public void LoadLastGame()
     {
         GameData.LoadLastGameSave();
+        SceneManager.LoadScene("SampleScene");
+    }
+
+    public void LoadGame(GameSaveInfo gameSave)
+    {
+        GameData.LoadGameSave(gameSave);
         SceneManager.LoadScene("SampleScene");
     }
 

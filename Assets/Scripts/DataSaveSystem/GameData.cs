@@ -19,6 +19,11 @@ public static class GameData
     public static void LoadLastGameSave()
     {
         GameSaveInfo gameSave = CRUD.GetLastGameSave();
+        LoadGameSave(gameSave);
+    }
+
+    public static void LoadGameSave(GameSaveInfo gameSave)
+    {
         PlayerPersonage = CRUD.GetPersonageInfo(gameSave.MainPersonageId);
     }
 }
