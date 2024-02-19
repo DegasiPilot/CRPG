@@ -16,7 +16,7 @@ namespace DialogueSystem.Runtime
         [SerializeField] private CharacteristicCheckPanel _characteristicCheckPanel;
         [SerializeField] private Button _endDialogueButton; 
         
-        public PersonageInfo PlayerPersonageInfo;
+        public PersonageInfo PlayerPersonageInfo => GameManager.Instance.PlayerPersonage.PersonageInfo;
         public PersonageInfo SecondPersonageInfo;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();

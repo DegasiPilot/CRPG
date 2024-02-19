@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class PersonageCreator : MonoBehaviour
 {
@@ -22,8 +23,8 @@ public class PersonageCreator : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _personage = ScriptableObject.CreateInstance<PersonageInfo>();
-        _raceInfos = Resources.LoadAll<RaceInfo>("RacesInfo");
+        _personage = new PersonageInfo();
+        _raceInfos = RaceInfo.GetAllRaceInfos();
         var statRedactors = StatsParent.GetComponentsInChildren<CharacteristicRedactor>();
         foreach (var redactor in statRedactors)
         {
@@ -35,11 +36,11 @@ public class PersonageCreator : MonoBehaviour
 
     public void AddStatPoint(Characteristics characteristic, out bool canAddMore)
     {
-        if (_personage.Stats[characteristic] < 18 && _personage.UnSpendedStatPoints > 0)
+        if (_personage[characteristic] < 18 && _personage.UnSpendedStatPoints > 0)
         {
-            _personage.Stats[characteristic]++;
+            _personage[characteristic]++;
             SetStatPoints(--_personage.UnSpendedStatPoints);
-            canAddMore = _personage.Stats[characteristic] < 18 && _personage.UnSpendedStatPoints > 0;
+            canAddMore = _personage[characteristic] < 18 && _personage.UnSpendedStatPoints > 0;
         }
         else
         {
@@ -49,11 +50,11 @@ public class PersonageCreator : MonoBehaviour
 
     public void RemoveStatPoint(Characteristics characteristic, out bool canRemoveMore)
     {
-        if (_personage.Stats[characteristic] > 0)
+        if (_personage[characteristic] > 0)
         {
-            _personage.Stats[characteristic]--;
+            _personage[characteristic]--;
             SetStatPoints(++_personage.UnSpendedStatPoints);
-            canRemoveMore = _personage.Stats[characteristic] > 0;
+            canRemoveMore = _personage[characteristic] > 0;
         }
         else
         {
@@ -63,7 +64,7 @@ public class PersonageCreator : MonoBehaviour
 
     public int GetCharacteristicValue(Characteristics characteristic)
     {
-        return _personage.Stats[characteristic];
+        return _personage[characteristic];
     }
 
     public void SetRace(Race race)
@@ -73,16 +74,17 @@ public class PersonageCreator : MonoBehaviour
         _raceBtnText.text = $"Раса\n{raceName}";
         RaceTitle.text = raceName;
         RaceDescription.text = info.Description;
-        _personage.RaceInfo = info;
+        _personage.Race = race;
     }
 
     public void TrySavePersonage()
     {
-        if(_personage.RaceInfo && _personage.UnSpendedStatPoints == 0)
+        if(_personage.Race != Race.None && _personage.UnSpendedStatPoints == 0 && !string.IsNullOrEmpty(_personage.Name))
         {
-            string number = Resources.FindObjectsOfTypeAll<PersonageInfo>().Length.ToString();
-            AssetDatabase.CreateAsset(_personage, "Assets/Resources/PersonageInfo/Test" + number + ".asset");
-            Debug.Log("true");
+            CRUD.CreatePersonageInfo(_personage);
+            GameData.PlayerPersonage = _personage;
+            GameData.NewGameSave();
+            SceneManager.LoadScene("SampleScene");
         }
         else
         {

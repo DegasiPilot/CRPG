@@ -14,7 +14,7 @@ public class DialogueActor : MonoBehaviour
         get
         {
             if (_personageInfo == null)
-                _personageInfo = GetComponent<Personage>().personageInfo;
+                _personageInfo = GetComponent<Personage>().PersonageInfo;
             return _personageInfo;
         }
     }

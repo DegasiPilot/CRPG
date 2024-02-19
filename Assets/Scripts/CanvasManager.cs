@@ -11,7 +11,7 @@ public class CanvasManager : MonoBehaviour
 
     private GridLayoutGroup InventoryContainer;
     private bool IsInventoryOpen = false;
-    private List<GameObject> Inventory => GameManager.Instance.PlayerPersonage.Inventory;
+    private List<GameObject> Inventory => GameManager.Instance.PlayerPersonage.PersonageInfo.Inventory;
 
     public void Setup()
     {
