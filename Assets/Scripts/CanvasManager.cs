@@ -28,7 +28,7 @@ public class CanvasManager : MonoBehaviour
             {
                 GameObject currentButton = InventoryContainer.transform.GetChild(i).gameObject;
                 currentButton.gameObject.SetActive(true);
-                currentButton.GetComponentInChildren<Image>().sprite = Inventory[i].GetComponent<Item>().Icon; 
+                currentButton.transform.GetChild(0).GetComponent<Image>().sprite = Inventory[i].GetComponent<Item>().Icon; 
             }
             for(int i = Inventory.Count; i < InventoryContainer.transform.childCount; i++)
             {
