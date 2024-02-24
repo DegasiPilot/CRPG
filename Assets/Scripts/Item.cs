@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SaveableGameobject))]
 public class Item : MonoBehaviour
 {
-    public string Name;
-    public Sprite Icon;
+    public ItemInfo ItemInfo;
+    public bool IsInInventory;
 }

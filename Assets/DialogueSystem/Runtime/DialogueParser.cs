@@ -23,9 +23,13 @@ namespace DialogueSystem.Runtime
         private GameObject _dialogueDisplay;
         private DialogueContainer _dialogue;
 
-        public void Setup()
+        private void Awake()
         {
             Instance = this;
+        }
+
+        public void Setup()
+        {
             _characteristicCheckPanel.Setup();
             _dialogueDisplay = _dialogueText.transform.parent.gameObject;
         }

@@ -3,6 +3,8 @@ using DialogueSystem.Runtime;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance;
+
     public int MouseSensitivity;
     public int MoveSpeed;
     public int RotateSpeed;
@@ -11,6 +13,11 @@ public class CameraController : MonoBehaviour
     public float MaxDistance;
 
     private float _standartAngleX;
+
+    public void Awake()
+    {
+        Instance = this;
+    }
 
     public void Setup()
     {

@@ -124,7 +124,7 @@ namespace DialogueSystem.Editor
         {
             fileName = string.Empty;
             // open file explorer to get file path
-            filePath = EditorUtility.OpenFilePanel("Load Narrative", Application.dataPath + "/Resources", "asset");
+            filePath = EditorUtility.OpenFilePanel("Load Narrative", Application.dataPath + "/ScriptableObjects/Dialogues", "asset");
             if (filePath.Length == 0) 
                 return;
 

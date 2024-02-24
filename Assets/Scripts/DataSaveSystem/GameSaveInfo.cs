@@ -6,4 +6,8 @@ public class GameSaveInfo
 
     public BsonDateTime DateTime;
     public ObjectId MainPersonageId { get; set; }
+
+    public SceneSaveInfo SceneSaveInfo { get; set; }
+
+    public string[] InventoryItemsNames { get; set; }
 }

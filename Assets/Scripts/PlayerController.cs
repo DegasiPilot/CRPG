@@ -57,4 +57,10 @@ public class PlayerController : MonoBehaviour
         _interactObject = interactObject;
         _interactComponent = interactComponent;
     }
+
+    public void PickupItem(Item item)
+    {
+        GameData.Inventory.Add(item);
+        item.IsInInventory = true;
+    }
 }

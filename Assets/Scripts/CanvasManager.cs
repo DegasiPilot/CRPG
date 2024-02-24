@@ -8,29 +8,34 @@ public class CanvasManager : MonoBehaviour
     public static CanvasManager Instance;
 
     public GameObject InventoryPanel;
+    public GameObject PauseMenuPanel;
 
     private GridLayoutGroup InventoryContainer;
-    private bool IsInventoryOpen = false;
-    private List<GameObject> Inventory => GameManager.Instance.PlayerPersonage.PersonageInfo.Inventory;
+    public bool IsInventoryOpen { get; private set; } = false;
+    public bool IsPauseMenuOpen { get; private set; } = false;
+
+    public void Awake()
+    {
+        Instance = this;
+    }
 
     public void Setup()
     {
-        Instance = this;
         InventoryContainer = InventoryPanel.GetComponentInChildren<GridLayoutGroup>();
     }
 
-    public bool ToggleInventory()
+    public void ToggleInventory()
     {
         if (!IsInventoryOpen)
         {
             InventoryPanel.SetActive(true);
-            for(int i = 0; i < Inventory.Count; i++)
+            for(int i = 0; i < GameData.Inventory.Count; i++)
             {
                 GameObject currentButton = InventoryContainer.transform.GetChild(i).gameObject;
                 currentButton.gameObject.SetActive(true);
-                currentButton.transform.GetChild(0).GetComponent<Image>().sprite = Inventory[i].GetComponent<Item>().Icon; 
+                currentButton.transform.GetChild(0).GetComponent<Image>().sprite = GameData.Inventory[i].GetComponent<Item>().ItemInfo.Icon; 
             }
-            for(int i = Inventory.Count; i < InventoryContainer.transform.childCount; i++)
+            for(int i = GameData.Inventory.Count; i < InventoryContainer.transform.childCount; i++)
             {
                 InventoryContainer.transform.GetChild(i).gameObject.SetActive(false);
             }
@@ -40,6 +45,11 @@ public class CanvasManager : MonoBehaviour
             InventoryPanel.SetActive(false);
         }
         IsInventoryOpen = !IsInventoryOpen;
-        return IsInventoryOpen;
+    }
+
+    public void TogglePauseMenu()
+    {
+        IsPauseMenuOpen = !IsPauseMenuOpen;
+        PauseMenuPanel.SetActive(IsPauseMenuOpen);
     }
 }

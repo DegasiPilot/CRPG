@@ -1,6 +1,4 @@
-using UnityEngine;
 using MongoDB.Bson;
-using System.Collections.Generic;
 
 public class PersonageInfo
 {
@@ -16,8 +14,6 @@ public class PersonageInfo
 
     public Race Race;
 
-    public List<GameObject> Inventory;
-
     public PersonageInfo(string name = "Unnammed")
     {
         Name = name;
@@ -27,7 +23,6 @@ public class PersonageInfo
         Intelligence = 10;
         Wisdom = 10;
         Charisma = 10;
-        Inventory = new List<GameObject>();
     }
 
     public int this [Characteristics index]

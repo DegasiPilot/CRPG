@@ -45,9 +45,4 @@ public class RaceInfo : ScriptableObject
             }
         }
     }
-
-    public static RaceInfo[] GetAllRaceInfos()
-    {
-        return Resources.LoadAll<RaceInfo>("RacesInfo");
-    }
 }

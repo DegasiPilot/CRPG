@@ -18,16 +18,15 @@ public class PersonageCreator : MonoBehaviour
     public Text RaceTitle;
     public Text RaceDescription;
     public Text StatPointsText;
+    public List<RaceInfo> RaceInfos;
 
     private PersonageInfo _personage;
-    private RaceInfo[] _raceInfos;
     private Text _raceBtnText;
 
     private void Awake()
     {
         Instance = this;
         _personage = new PersonageInfo();
-        _raceInfos = RaceInfo.GetAllRaceInfos();
         var statRedactors = StatsParent.GetComponentsInChildren<CharacteristicRedactor>();
         foreach (var redactor in statRedactors)
         {
@@ -85,7 +84,7 @@ public class PersonageCreator : MonoBehaviour
 
     public void SetRace(Race race)
     {
-        var info = _raceInfos.First(x => x.Race == race);
+        var info = RaceInfos.First(x => x.Race == race);
         string raceName = Translator.Translate(race.ToString());
         _raceBtnText.text = $"Раса\n{raceName}";
         RaceTitle.text = raceName;

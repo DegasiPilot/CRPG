@@ -1,34 +1,44 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DialogueSystem.Runtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public DialogueParser dialogueParser;
     public GameObject Player;
     public Personage SecondPersonage;
-    public CameraController CameraController;
-    public CanvasManager CanvasManager;
+    public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
+    [HideInInspector] public Personage PlayerPersonage;
     
     private GameMode _gameMode;
-    [HideInInspector] public Personage PlayerPersonage;
+    private List<Personage> _personages;
+
+    private void Awake()
+    {
+        Instance = this;
+        Time.timeScale = 1;
+    }
 
     void Start()
     {
-        Instance = this;
-        dialogueParser.Setup();
+        SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
+        DialogueParser.Instance.Setup();
         PlayerPersonage = Player.GetComponent<Personage>();
         PlayerPersonage.PersonageInfo = GameData.PlayerPersonage;
-        dialogueParser.SecondPersonageInfo = SecondPersonage.PersonageInfo;
+        DialogueParser.Instance.SecondPersonageInfo = SecondPersonage.PersonageInfo;
         PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
-        CameraController.Setup();
-        CanvasManager.Setup();
+        CameraController.Instance.Setup();
+        CanvasManager.Instance.Setup();
+        _personages = Personages.GetComponentsInChildren<Personage>().ToList();
+        _personages.ForEach(p => p.Setup());
     }
 
     public void ChangeGameMode(GameMode gameMode)
@@ -37,11 +47,11 @@ public class GameManager : MonoBehaviour
         switch (gameMode)
         {
             case GameMode.Dialogue:
-                CameraController.enabled = false;
+                CameraController.Instance.enabled = false;
                 break;
             case GameMode.Free:
-                CameraController.enabled = true;
-                CameraController.StandartView();
+                CameraController.Instance.enabled = true;
+                CameraController.Instance.StandartView();
                 break;
         }
     }
@@ -59,28 +69,64 @@ public class GameManager : MonoBehaviour
     public void StartDialogue(GameObject focusObject, Component component)
     {
         DialogueParser.Instance.SetSecondDialogueActor(component as DialogueActor);
-        CameraController.FocusOn(focusObject);
+        CameraController.Instance.FocusOn(focusObject);
         DialogueParser.Instance.TryStartDialogue();
     }
 
     public void ItemInteract(GameObject itemObject, Component component)
     {
-        PlayerPersonage.PickupItem(itemObject);
+        PlayerController.PickupItem(component as Item);
         itemObject.SetActive(false);
+    }
+
+    public void CreateNewGameSave()
+    {
+        SceneSaveLoadManager.Instance.SaveScene();
+        GameData.NewGameSave();
+    }
+
+    public void ExitToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            if (CanvasManager.ToggleInventory())
-            {
-                CameraController.enabled = false;
-            }
-            else
-            {
-                CameraController.enabled = true;
-            }
+            ToggleInvenoty();
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePauseMenu();
+        }
+    }
+    
+    public void ToggleInvenoty()
+    {
+        CanvasManager.Instance.ToggleInventory();
+        if (CanvasManager.Instance.IsInventoryOpen)
+        {
+            CameraController.Instance.enabled = false;
+        }
+        else
+        {
+            CameraController.Instance.enabled = true;
+        }
+    }
+
+    public void TogglePauseMenu()
+    {
+        CanvasManager.Instance.TogglePauseMenu();
+        if (CanvasManager.Instance.IsPauseMenuOpen)
+        {
+            CameraController.Instance.enabled = false;
+            Time.timeScale = 0;
+        }
+        else
+        {
+            CameraController.Instance.enabled = true;
+            Time.timeScale = 1;
         }
     }
 }
