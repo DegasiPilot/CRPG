@@ -61,6 +61,15 @@ public class PlayerController : MonoBehaviour
     public void PickupItem(Item item)
     {
         GameData.Inventory.Add(item);
+        item.gameObject.SetActive(false);
         item.IsInInventory = true;
+    }
+
+    public void DropItem(Item item)
+    {
+        GameData.Inventory.Remove(item);
+        item.transform.position = gameObject.transform.position + gameObject.transform.forward;
+        item.gameObject.SetActive(true);
+        item.IsInInventory = false;
     }
 }

@@ -76,7 +76,6 @@ public class GameManager : MonoBehaviour
     public void ItemInteract(GameObject itemObject, Component component)
     {
         PlayerController.PickupItem(component as Item);
-        itemObject.SetActive(false);
     }
 
     public void CreateNewGameSave()
