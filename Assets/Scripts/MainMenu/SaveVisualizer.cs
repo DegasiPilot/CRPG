@@ -10,7 +10,7 @@ public class SaveVisualizer : MonoBehaviour
 
     public void Setup(GameSaveInfo saveInfo)
     {
-        System.DateTime dateTime = saveInfo.DateTime.ToUniversalTime();
+        System.DateTime dateTime = saveInfo.DateTime.ToLocalTime();
         SaveTimeText.text = $"{dateTime.ToShortDateString()} {dateTime.ToShortTimeString()}";
         PersonageInfoText.text = CRUD.GetPersonageInfo(saveInfo.MainPersonageId).Name;
         GetComponentInParent<Button>().onClick.AddListener(() => MainMenuScript.Instance.LoadGame(saveInfo));

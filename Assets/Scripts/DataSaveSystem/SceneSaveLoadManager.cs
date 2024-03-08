@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 internal class SceneSaveLoadManager : MonoBehaviour
@@ -48,7 +46,7 @@ internal class SceneSaveLoadManager : MonoBehaviour
             }
             else
             {
-                Instantiate(Itemsinfos.First(x => x.Name == itemName).Prefab);
+                GameObject go = Instantiate(Itemsinfos.First(x => x.Name == itemName).Prefab);
             }
         }
     }

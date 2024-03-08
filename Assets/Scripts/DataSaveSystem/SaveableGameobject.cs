@@ -20,14 +20,15 @@ public class SaveableGameobject : MonoBehaviour
             PosX = transform.position.x,
             PosY = transform.position.y,
             PosZ = transform.position.z,
-            RotX = transform.eulerAngles.x,
-            RotY = transform.eulerAngles.y,
-            RotZ = transform.eulerAngles.z,
+            RotX = (int)transform.eulerAngles.x,
+            RotY = (int)transform.eulerAngles.y,
+            RotZ = (int)transform.eulerAngles.z,
             IsActive = isActiveAndEnabled,
         };
         if(itemComponent != null)
         {
             info.IsInInventory = itemComponent.IsInInventory;
+            info.IsEquiped = itemComponent.IsEquiped;
         }
         return info;
     }
@@ -37,9 +38,11 @@ public class SaveableGameobject : MonoBehaviour
         transform.position.Set(info.PosX, info.PosY, info.PosZ);
         transform.eulerAngles = new Vector3(info.RotX, info.RotY, info.RotZ);
         gameObject.SetActive(info.IsActive);
-        if (info.IsInInventory)
+
+        if(itemComponent != null)
         {
-            itemComponent.IsInInventory = true;
+            itemComponent.IsInInventory = info.IsInInventory;
+            itemComponent.IsEquiped = info.IsEquiped;
         }
     }
 }

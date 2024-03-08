@@ -4,10 +4,11 @@
     public float PosY;
     public float PosZ;
 
-    public float RotX;
-    public float RotY;
-    public float RotZ;
+    public int RotX;
+    public int RotY;
+    public int RotZ;
 
     public bool IsActive;
     public bool IsInInventory;
+    public bool IsEquiped;
 }

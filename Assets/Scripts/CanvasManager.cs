@@ -2,31 +2,76 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class CanvasManager : MonoBehaviour
 {
     public static CanvasManager Instance;
 
     public GameObject InventoryPanel;
-    public GameObject ItemContextMenu;
+    public ItemContextMenu ItemContextMenu;
     public GameObject PauseMenuPanel;
 
     public bool IsInventoryOpen { get; private set; } = false;
     public bool IsPauseMenuOpen { get; private set; } = false;
 
-    private List<ItemSlot> _inventorySlots;
+    private List<InventorySlot> _inventorySlots;
     private ItemSlot _activeItemSlot;
+    private GraphicRaycaster _graphicRaycaster;
+    private readonly List<RaycastResult> _raycastResultsList = new List<RaycastResult>();
 
     public void Awake()
     {
         Instance = this;
+        _graphicRaycaster = GetComponent<GraphicRaycaster>();
     }
 
     public void Setup()
     {
-        _inventorySlots = InventoryPanel.GetComponentsInChildren<ItemSlot>(true).ToList();
+        _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>(true).ToList();
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = Input.mousePosition;
+            _raycastResultsList.Clear();
+            _graphicRaycaster.Raycast(pointer, _raycastResultsList);
+            if (_raycastResultsList.Any())
+            {
+                if (_raycastResultsList[0].gameObject.TryGetComponent(out ItemSlot itemSlot))
+                {
+                    if (itemSlot.Item != null)
+                    {
+                        ActivateContextMenu(itemSlot);
+                        return;
+                    }
+                }
+                else if(_raycastResultsList[0].gameObject.TryGetComponent(out Button button))
+                {
+                    if(button == ItemContextMenu.EquipmentButton)
+                    {
+                        if (button.interactable)
+                        {
+                            OnEquipButtonClick();
+                        }
+                        return;
+                    }
+                    else if (button == ItemContextMenu.DropButton)
+                    {
+                        if (button.interactable)
+                        {
+                            OnDropButtonClick();
+                        }
+                        return;
+                    }
+                }
+            }
+            ItemContextMenu.gameObject.SetActive(false);
+        }
     }
 
     public void ToggleInventory()
@@ -34,12 +79,17 @@ public class CanvasManager : MonoBehaviour
         if (!IsInventoryOpen)
         {
             InventoryPanel.SetActive(true);
-            for(int i = 0; i < GameData.Inventory.Count; i++)
+            int inventoryCount = GameData.Inventory.Count;
+            for (int i = 0; i < inventoryCount; i++)
             {
+                if (GameData.Inventory[i].IsEquiped)
+                {
+                    continue;
+                }
                 _inventorySlots[i].gameObject.SetActive(true);
                 _inventorySlots[i].Setup(GameData.Inventory[i]);
             }
-            for(int i = GameData.Inventory.Count; i < _inventorySlots.Count; i++)
+            for(int i = inventoryCount; i < _inventorySlots.Count; i++)
             {
                 _inventorySlots[i].gameObject.SetActive(false);
             }
@@ -57,24 +107,51 @@ public class CanvasManager : MonoBehaviour
         PauseMenuPanel.SetActive(IsPauseMenuOpen);
     }
 
-    public void OnItemButtonbClick(ItemSlot itemSlot)
+    public void ActivateContextMenu(ItemSlot itemSlot)
     {
         RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)InventoryPanel.transform, 
             Input.mousePosition, null, out Vector2 localPos);
         ((RectTransform)ItemContextMenu.transform).anchoredPosition = localPos;
-        ItemContextMenu.SetActive(true);
+        ItemContextMenu.gameObject.SetActive(true);
+        ItemContextMenu.Setup(itemSlot.Item);
         _activeItemSlot = itemSlot;
     }
 
     public void OnEquipButtonClick()
     {
-
+        if (!_activeItemSlot.Item.IsEquiped)
+        {
+            EquipmentManager.Instance.EquipItem(_activeItemSlot.Item, out List<Item> undressedItems);
+            undressedItems.ForEach(AddToInventoryUI);
+            _activeItemSlot.UnequipItem();
+        }
+        else
+        {
+            EquipmentManager.Instance.UneqipItemFromSlot((EquipmentSlot)_activeItemSlot, out Item undressedItem);
+            AddToInventoryUI(undressedItem);
+        }
+        ItemContextMenu.gameObject.SetActive(false);
+        _activeItemSlot = null;
     }
 
     public void OnDropButtonClick()
     {
         GameManager.Instance.PlayerController.DropItem(_activeItemSlot.Item);
         _activeItemSlot.gameObject.SetActive(false);
-        ItemContextMenu.SetActive(false);
+        ItemContextMenu.gameObject.SetActive(false);
+        _activeItemSlot = null;
+    }
+
+    private void AddToInventoryUI(Item item)
+    {
+        foreach(var slot in _inventorySlots)
+        {
+            if(slot.Item == null)
+            {
+                slot.gameObject.SetActive(true);
+                slot.Setup(item);
+                break;
+            }
+        }
     }
 }

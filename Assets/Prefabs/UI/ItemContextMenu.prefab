@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6703271118519194127}
   - component: {fileID: 4232305464618791236}
   - component: {fileID: 2021289817735643461}
-  - component: {fileID: 2090705849127512337}
+  - component: {fileID: 2067470920167294052}
   m_Layer: 5
   m_Name: DropButton
   m_TagString: Untagged
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2090705849127512337
+--- !u!114 &2067470920167294052
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 4428720276938280810}
   - component: {fileID: 9047512194364063762}
   - component: {fileID: 4341351883388423931}
-  - component: {fileID: 5953556770143737671}
+  - component: {fileID: 8622164382564068959}
   m_Layer: 5
   m_Name: EquipButton
   m_TagString: Untagged
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5953556770143737671
+--- !u!114 &8622164382564068959
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 4469454553391263999}
   - component: {fileID: 6690386342426892202}
   - component: {fileID: 7925777926215410880}
+  - component: {fileID: 8063642984406516826}
   m_Layer: 5
   m_Name: ItemContextMenu
   m_TagString: Untagged
@@ -382,7 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -398,6 +399,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8063642984406516826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3599472219656401676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ce4ea741ed6a64b87d35709913fd67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EquipmentButton: {fileID: 8622164382564068959}
+  EquipmentBtnText: {fileID: 5757338054077682565}
+  DropButton: {fileID: 2067470920167294052}
 --- !u!1 &9180919939142286795
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,7 +473,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
