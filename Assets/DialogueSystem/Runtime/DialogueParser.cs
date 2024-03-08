@@ -14,10 +14,10 @@ namespace DialogueSystem.Runtime
         [SerializeField] private Button _choicePrefab;
         [SerializeField] private Transform _buttonContainer;
         [SerializeField] private CharacteristicCheckPanel _characteristicCheckPanel;
-        [SerializeField] private Button _endDialogueButton; 
-        
+        [SerializeField] private Button _endDialogueButton;
+
         public PersonageInfo PlayerPersonageInfo => GameManager.Instance.PlayerPersonage.PersonageInfo;
-        public PersonageInfo SecondPersonageInfo;
+        [HideInInspector] public PersonageInfo SecondPersonageInfo;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject _dialogueDisplay;

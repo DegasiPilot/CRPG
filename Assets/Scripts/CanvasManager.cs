@@ -11,6 +11,7 @@ public class CanvasManager : MonoBehaviour
 
     public GameObject InventoryPanel;
     public ItemContextMenu ItemContextMenu;
+    public ItemInfoPanel ItemInfoPanel; 
     public GameObject PauseMenuPanel;
 
     public bool IsInventoryOpen { get; private set; } = false;
@@ -34,6 +35,10 @@ public class CanvasManager : MonoBehaviour
 
     private void Update()
     {
+        if (!InventoryPanel.activeInHierarchy)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             PointerEventData pointer = new PointerEventData(EventSystem.current);
@@ -52,13 +57,19 @@ public class CanvasManager : MonoBehaviour
                 }
                 else if(_raycastResultsList[0].gameObject.TryGetComponent(out Button button))
                 {
-                    if(button == ItemContextMenu.EquipmentButton)
+                    if (button == ItemContextMenu.EquipmentButton)
                     {
                         if (button.interactable)
                         {
                             OnEquipButtonClick();
                         }
-                        return;
+                    }
+                    else if (button == ItemContextMenu.InfoButton)
+                    {
+                        if (button.interactable)
+                        {
+                            OnInfoButtonClick();
+                        }
                     }
                     else if (button == ItemContextMenu.DropButton)
                     {
@@ -66,7 +77,10 @@ public class CanvasManager : MonoBehaviour
                         {
                             OnDropButtonClick();
                         }
-                        return;
+                    }
+                    else if(button == ItemInfoPanel.CloseButton)
+                    {
+                        ItemInfoPanel.Close();
                     }
                 }
             }
@@ -130,7 +144,13 @@ public class CanvasManager : MonoBehaviour
             EquipmentManager.Instance.UneqipItemFromSlot((EquipmentSlot)_activeItemSlot, out Item undressedItem);
             AddToInventoryUI(undressedItem);
         }
-        ItemContextMenu.gameObject.SetActive(false);
+        _activeItemSlot = null;
+    }
+
+    public void OnInfoButtonClick()
+    {
+        ItemInfoPanel.gameObject.SetActive(true);
+        ItemInfoPanel.Setup(_activeItemSlot.Item.ItemInfo);
         _activeItemSlot = null;
     }
 
@@ -138,7 +158,7 @@ public class CanvasManager : MonoBehaviour
     {
         GameManager.Instance.PlayerController.DropItem(_activeItemSlot.Item);
         _activeItemSlot.gameObject.SetActive(false);
-        ItemContextMenu.gameObject.SetActive(false);
+        ItemInfoPanel.Close();
         _activeItemSlot = null;
     }
 

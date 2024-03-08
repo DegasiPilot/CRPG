@@ -7,12 +7,14 @@ public class CameraController : MonoBehaviour
 
     public int MouseSensitivity;
     public int MoveSpeed;
+    public float MaxDistanceFromPlayer;
     public int RotateSpeed;
     public int ZoomSpeed;
-    public float MinDistance;
-    public float MaxDistance;
+    public float MinZoomDistance;
+    public float MaxZoomDistance;
 
     private float _standartAngleX;
+    private Vector3 _playerPosition => GameManager.Instance.PlayerController.gameObject.transform.position;
 
     public void Awake()
     {
@@ -56,22 +58,48 @@ public class CameraController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         transform.parent.Translate(new Vector3(h, 0, v) * Time.deltaTime * MoveSpeed);
+        Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
+        Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
+        float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
+        if(sqrDistance > MaxDistanceFromPlayer*MaxDistanceFromPlayer)
+        {
+            transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
+        }
     }
 
     private void Rotate()
     {
-        float rotation;
+        float hRotation;
         if (Input.GetKey(KeyCode.Q))
-            rotation = 1;
+        {
+            hRotation = 1;
+        }
         else if (Input.GetKey(KeyCode.E))
-            rotation = -1;
+        {
+            hRotation = -1;
+        }
         else if (Input.GetMouseButton(1))
-            rotation = Input.GetAxis("Mouse X") * MouseSensitivity;
+        {
+            hRotation = Input.GetAxis("Mouse X") * MouseSensitivity;
+            float currentXAngle = transform.eulerAngles.x;
+            float vRotation = -Input.GetAxis("Mouse Y") * MouseSensitivity * RotateSpeed * Time.deltaTime;
+            if (vRotation >= 90 - currentXAngle)
+            {
+                vRotation = (int)(90-currentXAngle);
+            }
+            else if (vRotation <= 15- currentXAngle)
+            {
+                vRotation = (int)(15 - currentXAngle);
+            }
+            transform.RotateAround(transform.parent.position, transform.parent.right, vRotation);
+        }
         else
+        {
             return;
+        }
 
-        rotation = rotation * RotateSpeed * Time.deltaTime;
-        transform.parent.Rotate(Vector3.up, rotation);
+        hRotation = hRotation * RotateSpeed * Time.deltaTime;
+        transform.parent.Rotate(Vector3.up, hRotation);
     }
 
     private void Zoom()
@@ -83,14 +111,14 @@ public class CameraController : MonoBehaviour
             var position = transform.position;
             var distance = Vector3.Distance(position, parentPosition);
             if (
-                (moveDistance > 0 && distance > MinDistance) ||
-                (moveDistance < 0 && distance < MaxDistance))
+                (moveDistance > 0 && distance > MinZoomDistance) ||
+                (moveDistance < 0 && distance < MaxZoomDistance))
             {
                 var newPosition = Vector3.MoveTowards(position, parentPosition, moveDistance);
                 var newDistance = Vector3.Distance(newPosition, parentPosition);
-                if (newDistance < MinDistance)
+                if (newDistance < MinZoomDistance)
                 {
-                    moveDistance = distance - MinDistance;
+                    moveDistance = distance - MinZoomDistance;
                 }
                 transform.position = Vector3.MoveTowards(position, parentPosition, moveDistance);
             }
@@ -109,6 +137,6 @@ public class CameraController : MonoBehaviour
     {
         transform.parent.eulerAngles = Vector3.zero;
         transform.localEulerAngles = new Vector3(_standartAngleX, 0, 0);
-        transform.localPosition = -transform.forward * MinDistance;
+        transform.localPosition = -transform.forward * MinZoomDistance;
     }
 }

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba8fcaf24ca2a7e44b882801203350d3, type: 3}
   m_Name: StickInfo
   m_EditorClassIdentifier: 
-  Name: Stick
+  Name: "\u041F\u0430\u043B\u043A\u0430"
+  ShortDescription: "\u041E\u0431\u044B\u0447\u043D\u0430\u044F \u0434\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043F\u0430\u043B\u043A\u0430"
   Icon: {fileID: 21300000, guid: bd32881468725614aafc9cefeb50d3c9, type: 3}
   Prefab: {fileID: 2313094977613659377, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}

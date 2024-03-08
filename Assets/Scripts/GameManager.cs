@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameObject Player;
-    public Personage SecondPersonage;
     public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
@@ -32,7 +31,6 @@ public class GameManager : MonoBehaviour
         DialogueParser.Instance.Setup();
         PlayerPersonage = Player.GetComponent<Personage>();
         PlayerPersonage.PersonageInfo = GameData.PlayerPersonage;
-        DialogueParser.Instance.SecondPersonageInfo = SecondPersonage.PersonageInfo;
         PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
         CameraController.Instance.Setup();

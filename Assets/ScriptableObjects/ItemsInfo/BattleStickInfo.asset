@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: BattleStickInfo
   m_EditorClassIdentifier: 
   Name: "\u0411\u043E\u0435\u0432\u0430\u044F \u043F\u0430\u043B\u043A\u0430"
+  ShortDescription: "\u0427\u0442\u043E-\u0442\u043E \u0432 \u044D\u0442\u043E\u0439
+    \u043F\u0430\u043B\u043A\u0435 \u0435\u0441\u0442\u044C \u043D\u0435\u043E\u0431\u044B\u0447\u043D\u043E\u0435..."
   Icon: {fileID: 21300000, guid: bd32881468725614aafc9cefeb50d3c9, type: 3}
   Prefab: {fileID: 2313094977613659377, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
   MaxAttackDistance: 1
   MinDamage: 1
   MaxDamage: 3
+  IsTwoHandled: 1
   usingCharacteristic: 0
-  IsTwoHandled: 0
