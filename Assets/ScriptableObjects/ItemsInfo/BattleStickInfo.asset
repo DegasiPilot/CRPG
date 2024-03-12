@@ -20,5 +20,5 @@ MonoBehaviour:
   MaxAttackDistance: 1
   MinDamage: 1
   MaxDamage: 3
-  IsTwoHandled: 1
+  IsTwoHandled: 0
   usingCharacteristic: 0

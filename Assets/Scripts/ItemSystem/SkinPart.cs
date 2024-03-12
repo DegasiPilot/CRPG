@@ -24,8 +24,8 @@ public class SkinPart : MonoBehaviour
         Mesh mesh = skin.GetComponentInChildren<MeshFilter>().mesh;
         Material material = skin.GetComponentInChildren<Renderer>().material;
 
+        transform.localScale = skin.transform.localScale;
         transform.localPosition = skin.transform.localPosition;
-        transform.localScale = transform.localScale;
         if (_isSkinedRender) (_renderer as SkinnedMeshRenderer).sharedMesh = mesh;
         else _meshFilter.mesh = mesh;
         _renderer.enabled = true;
@@ -41,7 +41,7 @@ public class SkinPart : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.zero;
+            transform.localPosition = Vector3.zero;
             transform.localScale = Vector3.one;
             Mesh mesh = toSpecial && _specialMesh != null ? _specialMesh : _defaultMesh;
             if (_isSkinedRender) (_renderer as SkinnedMeshRenderer).sharedMesh = mesh;
