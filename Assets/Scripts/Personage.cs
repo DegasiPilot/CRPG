@@ -7,10 +7,24 @@ public class Personage : MonoBehaviour
 {
     public string DefaultName;
 
-    public PersonageInfo PersonageInfo;
+    public int MaxHealth { get; private set; }
+
+    private PersonageInfo _personageInfo;
+    public PersonageInfo PersonageInfo => _personageInfo;
+
+    public int CurrentHealth;
 
     public void Setup()
     {
-        PersonageInfo ??= CRUD.GetPersonageInfo(DefaultName);
+        _personageInfo ??= CRUD.GetPersonageInfo(DefaultName);
+        _personageInfo.Setup();
+        CurrentHealth = _personageInfo.MaxHealth;
+    }
+
+    public void Setup(PersonageInfo personageInfo)
+    {
+        _personageInfo = personageInfo;
+        _personageInfo.Setup();
+        CurrentHealth = _personageInfo.MaxHealth;
     }
 }

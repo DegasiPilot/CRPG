@@ -8,6 +8,7 @@ public class RaceInfo : ScriptableObject
     public Race Race;
     public string Description;
     public int StandartSpeed;
+    public int BaseHealth;
 
     public int StrengthBonus { get; set; }
     public int DexterityBonus { get; set; }

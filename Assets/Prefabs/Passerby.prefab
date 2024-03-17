@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 5057756617465351894}
   - component: {fileID: 7863414642662084352}
   - component: {fileID: 5880779679031844078}
+  - component: {fileID: 6655648466084085824}
   m_Layer: 0
   m_Name: Passerby
   m_TagString: Untagged
@@ -155,6 +156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultName: "\u041F\u0440\u043E\u0445\u043E\u0436\u0438\u0439"
+  CurrentHealth: 0
 --- !u!114 &7863414642662084352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,3 +183,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5133f09b2e450d640a782b66f1227fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!208 &6655648466084085824
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8709186507766611781}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5

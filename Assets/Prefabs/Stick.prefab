@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4617173599661015543}
   - component: {fileID: 881536081083929883}
   - component: {fileID: 6314935280129305479}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 4361263049420648771}
   - component: {fileID: 8594732794545364931}
   - component: {fileID: 1784419311653349018}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

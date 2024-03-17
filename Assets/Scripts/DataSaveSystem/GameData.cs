@@ -10,6 +10,8 @@ public static class GameData
     public static List<Item> Inventory = new List<Item>();
     public static string[] InventoryAsNames { get; private set; }
 
+    public static RaceInfo[] RaceInfos;
+
     public static void NewGameSave()
     {
         GameSaveInfo gameSave = new GameSaveInfo()

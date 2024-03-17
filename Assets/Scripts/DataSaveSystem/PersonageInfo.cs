@@ -1,7 +1,10 @@
 using MongoDB.Bson;
+using System;
 
 public class PersonageInfo
 {
+    public Action OnStatsChanged;
+
     public ObjectId Id { get; set; }
     public string Name;
 
@@ -14,6 +17,10 @@ public class PersonageInfo
 
     public Race Race;
 
+    [NonSerialized] public RaceInfo RaceInfo;
+
+    public int MaxHealth => RaceInfo.BaseHealth + GetCharacteristicBonus(Characteristics.Constitution);
+
     public PersonageInfo(string name = "Unnammed")
     {
         Name = name;
@@ -23,6 +30,11 @@ public class PersonageInfo
         Intelligence = 10;
         Wisdom = 10;
         Charisma = 10;
+    }
+
+    public void Setup()
+    {
+        RaceInfo = GameData.RaceInfos[(int)Race];
     }
 
     public int this [Characteristics index]
@@ -52,6 +64,7 @@ public class PersonageInfo
                 case Characteristics.Charisma: Charisma = value; break;
                 default: throw new System.Exception($"Personage don't have {index} property");
             }
+            OnStatsChanged?.Invoke();
         }
     }
 

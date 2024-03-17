@@ -1,5 +1,6 @@
 using UnityEngine;
 using DialogueSystem.Runtime;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
@@ -28,14 +29,14 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0))
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 if (hit.collider.transform.TryGetComponent(out TerrainCollider _))
                 {
-                    GameManager.Instance.PlayerController.GoToPosition(hit.point);
+                    GameManager.Instance.PlayerController.OnGroundPressed(hit.point);
                 }
                 else if (hit.collider.transform.TryGetComponent(out DialogueActor dialogueActor))
                 {
@@ -58,13 +59,13 @@ public class CameraController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         transform.parent.Translate(new Vector3(h, 0, v) * Time.deltaTime * MoveSpeed);
-        Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
-        Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
-        float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
-        if(sqrDistance > MaxDistanceFromPlayer*MaxDistanceFromPlayer)
-        {
-            transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
-        }
+        //Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
+        //Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
+        //float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
+        //if(sqrDistance > MaxDistanceFromPlayer*MaxDistanceFromPlayer)
+        //{
+        //    transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
+        //}
     }
 
     private void Rotate()

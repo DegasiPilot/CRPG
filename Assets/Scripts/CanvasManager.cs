@@ -14,6 +14,10 @@ public class CanvasManager : MonoBehaviour
     public ItemInfoPanel ItemInfoPanel; 
     public GameObject PauseMenuPanel;
 
+    public Text PersonageNameText;
+    public Text LifesText;
+    public Image LifesImage;
+
     public bool IsInventoryOpen { get; private set; } = false;
     public bool IsPauseMenuOpen { get; private set; } = false;
 
@@ -21,6 +25,7 @@ public class CanvasManager : MonoBehaviour
     private ItemSlot _activeItemSlot;
     private GraphicRaycaster _graphicRaycaster;
     private readonly List<RaycastResult> _raycastResultsList = new List<RaycastResult>();
+    private PlayerController _playerController => GameManager.Instance.PlayerController;
 
     public void Awake()
     {
@@ -35,11 +40,7 @@ public class CanvasManager : MonoBehaviour
 
     private void Update()
     {
-        if (!InventoryPanel.activeInHierarchy)
-        {
-            return;
-        }
-        if (Input.GetMouseButtonDown(0))
+        if (InventoryPanel.activeInHierarchy && Input.GetMouseButtonDown(0))
         {
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = Input.mousePosition;
@@ -172,6 +173,26 @@ public class CanvasManager : MonoBehaviour
                 slot.Setup(item);
                 break;
             }
+        }
+    }
+
+    public void SetActivePersonage(Personage personage)
+    {
+        PersonageNameText.text = personage.PersonageInfo.Name;
+        int MaxHealth = personage.PersonageInfo.MaxHealth;
+        LifesText.text = $"Жизни: {personage.CurrentHealth}/{MaxHealth}";
+        LifesImage.fillAmount = personage.CurrentHealth / MaxHealth;
+    }
+
+    public void TogglePlayerAction(ActionType actionType)
+    {
+        if (_playerController.ActiveAction == actionType)
+        {
+            _playerController.SetDefaultAction();
+        }
+        else
+        {
+            _playerController.ActiveAction = actionType;
         }
     }
 }

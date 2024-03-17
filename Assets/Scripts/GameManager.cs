@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour
         SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
         DialogueParser.Instance.Setup();
         PlayerPersonage = Player.GetComponent<Personage>();
-        PlayerPersonage.PersonageInfo = GameData.PlayerPersonage;
+        PlayerPersonage.Setup(GameData.PlayerPersonage);
+        SetActivePersonage(PlayerPersonage);
         PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
         CameraController.Instance.Setup();
@@ -125,5 +126,11 @@ public class GameManager : MonoBehaviour
             CameraController.Instance.enabled = true;
             Time.timeScale = 1;
         }
+    }
+
+    public void SetActivePersonage(Personage personage)
+    {
+        PlayerPersonage = personage;
+        CanvasManager.Instance.SetActivePersonage(personage);
     }
 }
