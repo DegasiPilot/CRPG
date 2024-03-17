@@ -47,10 +47,12 @@ public class GameManager : MonoBehaviour
         {
             case GameMode.Dialogue:
                 CameraController.Instance.enabled = false;
+                CanvasManager.Instance.OnDialogueStart();
                 break;
             case GameMode.Free:
                 CameraController.Instance.enabled = true;
                 CameraController.Instance.StandartView();
+                CanvasManager.Instance.OnFreeModeEnter();
                 break;
         }
     }

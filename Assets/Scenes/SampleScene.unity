@@ -4426,6 +4426,8 @@ MonoBehaviour:
   ItemContextMenu: {fileID: 1132117727}
   ItemInfoPanel: {fileID: 103791063}
   PauseMenuPanel: {fileID: 1307610111}
+  PlayerPanel: {fileID: 1984266410}
+  PersonageCamera: {fileID: 796019992200727469}
   PersonageNameText: {fileID: 1199949804}
   LifesText: {fileID: 1229559806}
   LifesImage: {fileID: 1277623260}
@@ -9484,6 +9486,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 37235431491349573, guid: 2a498023343478c46870025ecddb2495, type: 3}
   m_PrefabInstance: {fileID: 796019992200727467}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &796019992200727469 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8523806164788039475, guid: 2a498023343478c46870025ecddb2495, type: 3}
+  m_PrefabInstance: {fileID: 796019992200727467}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &796019992200727475 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8346151116635786733, guid: 2a498023343478c46870025ecddb2495, type: 3}
@@ -9566,15 +9573,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 249.948
+      value: 250.051
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.383
+      value: 1.463
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 267.41
+      value: 267.3637
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalRotation.w

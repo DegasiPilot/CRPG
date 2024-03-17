@@ -50,6 +50,7 @@ namespace DialogueSystem.Runtime
                 var narrativeData = _dialogue.NodeLinks.First();
                 _endDialogueButton.gameObject.SetActive(false);
                 GameManager.Instance.ChangeGameMode(GameMode.Dialogue);
+                _dialogueDisplay.SetActive(true);
                 ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
             }
         }

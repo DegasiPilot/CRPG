@@ -13,6 +13,8 @@ public class CanvasManager : MonoBehaviour
     public ItemContextMenu ItemContextMenu;
     public ItemInfoPanel ItemInfoPanel; 
     public GameObject PauseMenuPanel;
+    public GameObject PlayerPanel;
+    public Camera PersonageCamera;
 
     public Text PersonageNameText;
     public Text LifesText;
@@ -194,5 +196,17 @@ public class CanvasManager : MonoBehaviour
         {
             _playerController.ActiveAction = actionType;
         }
+    }
+
+    public void OnDialogueStart()
+    {
+        PlayerPanel.SetActive(false);
+        PersonageCamera.enabled = false;
+    }
+
+    public void OnFreeModeEnter()
+    {
+        PlayerPanel.SetActive(true);
+        PersonageCamera.enabled = true;
     }
 }
