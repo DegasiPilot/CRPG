@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,14 +9,14 @@ public class PlayerController : MonoBehaviour
     public delegate void Interact(GameObject gameObject, Component interactComponent);
 
     public float Speed;
-    public ActionType ActiveAction { get => _activeAction; set => _activeAction = value; }
+
+    public ActionType ActiveAction => _activeAction;
 
     private NavMeshAgent _controller;
     private Rigidbody _rigidBody;
     private Interact _interact;
     private GameObject _interactObject;
     private Component _interactComponent;
-    private ActionType _activeAction;
 
     private bool _isGrounded = true;
     private bool _jumpStartJump;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private bool _isFree => _isGrounded;
 
     private ActionType _defaultAction = ActionType.Movement;
+    private ActionType _activeAction;
 
     public void Setup()
     {
@@ -54,6 +56,10 @@ public class PlayerController : MonoBehaviour
             case ActionType.Jumping:
                 JumpToPosition(hitPoint);
                 break;
+        }
+        if(_activeAction != _defaultAction)
+        {
+            SetDefaultAction();
         }
     }
 
@@ -133,6 +139,11 @@ public class PlayerController : MonoBehaviour
 
     public void SetDefaultAction()
     {
-        ActiveAction = _defaultAction;
+        SetActiveAction(_defaultAction);
+    }
+
+    public void SetActiveAction(ActionType actionType)
+    {
+        _activeAction = actionType;
     }
 }

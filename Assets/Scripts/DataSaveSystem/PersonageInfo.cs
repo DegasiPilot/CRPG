@@ -16,6 +16,7 @@ public class PersonageInfo
     public int Charisma { get; set; }
 
     public Race Race;
+    public int UnSpendedStatPoints;
 
     [NonSerialized] public RaceInfo RaceInfo;
 
@@ -24,12 +25,7 @@ public class PersonageInfo
     public PersonageInfo(string name = "Unnammed")
     {
         Name = name;
-        Strength = 10;
-        Dexterity = 10;
-        Constitution = 10;
-        Intelligence = 10;
-        Wisdom = 10;
-        Charisma = 10;
+        ResetStats();
     }
 
     public void Setup()
@@ -49,7 +45,7 @@ public class PersonageInfo
                 case Characteristics.Intelligence: return Intelligence;
                 case Characteristics.Wisdom: return Wisdom;
                 case Characteristics.Charisma: return Charisma;
-                default: throw new System.Exception($"Personage don't have {index} property");
+                default: throw new Exception($"Personage don't have {index} property");
             }
         }
         set
@@ -62,13 +58,21 @@ public class PersonageInfo
                 case Characteristics.Intelligence: Intelligence = value; break;
                 case Characteristics.Wisdom: Wisdom = value; break;
                 case Characteristics.Charisma: Charisma = value; break;
-                default: throw new System.Exception($"Personage don't have {index} property");
+                default: throw new Exception($"Personage don't have {index} property");
             }
             OnStatsChanged?.Invoke();
         }
     }
 
-    public int UnSpendedStatPoints = 12;
-
     public int GetCharacteristicBonus(Characteristics characteristic) => (this[characteristic] - 10) / 2;
+
+    public void ResetStats()
+    {
+        Strength = 8;
+        Dexterity = 8;
+        Constitution = 8;
+        Intelligence = 8;
+        Wisdom = 8;
+        Charisma = 8;
+    }
 }

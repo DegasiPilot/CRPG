@@ -10,12 +10,12 @@ public class RaceInfo : ScriptableObject
     public int StandartSpeed;
     public int BaseHealth;
 
-    public int StrengthBonus { get; set; }
-    public int DexterityBonus { get; set; }
-    public int ConstitutionBonus { get; set; }
-    public int IntelligenceBonus { get; set; }
-    public int WisdomBonus { get; set; }
-    public int CharismaBonus { get; set; }
+    public int StrengthBonus;
+    public int DexterityBonus;
+    public int ConstitutionBonus;
+    public int IntelligenceBonus;
+    public int WisdomBonus;
+    public int CharismaBonus;
 
     public int this[Characteristics index]
     {

@@ -11,6 +11,9 @@ public class CharacteristicRedactor : MonoBehaviour
     private Button _minusBtn;
     private Text _amontText;
     private Button _plusBtn;
+    private Text _bonusText;
+
+    private PersonageCreator _creator => PersonageCreator.Instance;
 
     public void Setup()
     {
@@ -19,33 +22,49 @@ public class CharacteristicRedactor : MonoBehaviour
         _plusBtn = buttons[1];
         _minusBtn.onClick.AddListener(RemovePoint);
         _plusBtn.onClick.AddListener(AddPoint);
-        _amontText = GetComponentsInChildren<Text>().First(x => x.name == "Amount");
-        _amontText.text = PersonageCreator.Instance.GetCharacteristicValue(Characteristic).ToString();
-        PersonageCreator.Instance.OnNoMoreStatPoints.AddListener(() => _plusBtn.interactable = false);
-        PersonageCreator.Instance.OnGetStatPoints.AddListener(TryActivatePlusButton);
+        var texts = GetComponentsInChildren<Text>();
+        _amontText = texts.First(x => x.name == "Amount");
+        _bonusText = texts.First(x => x.name == "Bonus");
+        _creator.OnNoMoreStatPoints.AddListener(() => _plusBtn.interactable = false);
+        _creator.OnGetStatPoints.AddListener(TryActivatePlusButton);
     }
 
     private void AddPoint()
     {
-        PersonageCreator.Instance.AddStatPoint(Characteristic, out bool canAddMore);
+        _creator.AddStatPoint(Characteristic);
         _minusBtn.interactable = true;
-        _plusBtn.interactable = canAddMore;
-        _amontText.text = PersonageCreator.Instance.GetCharacteristicValue(Characteristic).ToString();
+        _plusBtn.interactable = _creator.CanAddMore(Characteristic);
+        UpdateAmount();
     }
 
     private void RemovePoint()
     {
-        PersonageCreator.Instance.RemoveStatPoint(Characteristic, out bool canRemoveMore);
-        _minusBtn.interactable = canRemoveMore;
+        _creator.RemoveStatPoint(Characteristic);
+        _minusBtn.interactable = _creator.CanRemoveMore(Characteristic);
         _plusBtn.interactable = true;
-        _amontText.text = PersonageCreator.Instance.GetCharacteristicValue(Characteristic).ToString();
+        UpdateAmount();
     }
 
     private void TryActivatePlusButton()
     {
-        if(PersonageCreator.Instance.CanAddMore(Characteristic))
+        if(_creator.CanAddMore(Characteristic))
         {
             _plusBtn.interactable = true;
+        }
+    }
+
+    public void UpdateAmount()
+    {
+        var statValue = _creator.GetStatValue(Characteristic);
+        _amontText.text = $"{statValue.Item1 + statValue.Item2}";
+        if (statValue.Item2 > 0)
+        {
+            _bonusText.enabled = true;
+            _bonusText.text = $"+{statValue.Item2}";
+        }
+        else
+        {
+            _bonusText.enabled = false;
         }
     }
 }

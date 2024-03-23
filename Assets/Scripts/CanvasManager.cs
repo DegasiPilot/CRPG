@@ -186,15 +186,15 @@ public class CanvasManager : MonoBehaviour
         LifesImage.fillAmount = personage.CurrentHealth / MaxHealth;
     }
 
-    public void TogglePlayerAction(ActionType actionType)
+    public void TogglePlayerAction(ActionType actionType, bool activate)
     {
-        if (_playerController.ActiveAction == actionType)
+        if (activate)
         {
             _playerController.SetDefaultAction();
         }
         else
         {
-            _playerController.ActiveAction = actionType;
+            _playerController.SetActiveAction(actionType);
         }
     }
 
