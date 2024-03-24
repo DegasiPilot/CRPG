@@ -91,7 +91,7 @@ public class PersonageCreator : MonoBehaviour
         if (race != _personageInfo.Race)
         {
             var info = RaceInfos.First(x => x.Race == race);
-            string raceName = Translator.Translate(race.ToString());
+            string raceName = Translator.Translate(race);
             _raceBtnText.text = $"Раса\n{raceName}";
             RaceTitle.text = raceName;
             RaceDescription.text = $"{info.Description}\nСкорость: {info.StandartSpeed}\nБазовое здоровье: {info.BaseHealth}";

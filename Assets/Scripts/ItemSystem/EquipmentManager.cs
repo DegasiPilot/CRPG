@@ -1,15 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 internal class EquipmentManager : MonoBehaviour
 {
     public static EquipmentManager Instance { get; private set; }
+    public Item Weapon => _weapon;
+    public readonly HashSet<Item> Armor = new();
+    public int ArmorClass => (from armor in Armor select (armor.ItemInfo as ArmorInfo).ArmorClass).Sum();
 
     [SerializeField] private EquipmentSlot HealmetSlot;
     [SerializeField] private EquipmentSlot BodySlot;
     [SerializeField] private EquipmentSlot LeftHandSlot;
     [SerializeField] private EquipmentSlot RightHandSlot;
     [SerializeField] private EquipmentSlot BootsSlot;
+
+    private Item _weapon;
 
     private void Awake()
     {
@@ -37,11 +43,14 @@ internal class EquipmentManager : MonoBehaviour
         if (itemType == ItemType.Weapon)
         {
             EquipWeapon(item, undressedItems);
+            _weapon = item;
         }
         else if (itemType == ItemType.Armor)
         {
             EquipArmor(item, undressedItems);
+            Armor.Add(item);
         }
+        Armor.ExceptWith(undressedItems);
     }
 
     public void EquipWeapon(Item item, List<Item> undressedItems)

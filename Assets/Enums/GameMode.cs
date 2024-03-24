@@ -1,5 +1,6 @@
 public enum GameMode 
 {
     Dialogue = 0,
-    Free
+    Free,
+    Battle
 }

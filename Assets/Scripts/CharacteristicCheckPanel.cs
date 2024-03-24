@@ -31,7 +31,7 @@ namespace DialogueSystem.Runtime
             _checkNode = nodeData;
             _nodeLinkData = nodeLinks;
 
-            string characteristicName = Translator.Translate(_checkNode.Characteristic.ToString());
+            string characteristicName = Translator.Translate(_checkNode.Characteristic);
             CharacteristicCheckText.text = characteristicName;
             DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
             _bonus = personage.GetCharacteristicBonus(nodeData.Characteristic);
@@ -43,19 +43,11 @@ namespace DialogueSystem.Runtime
         {
             if (ResultText.text == "")
             {
-                int result = RoleDice();
-                if(result + _bonus >= _checkNode.CheckDifficulty)
-                {
-                    ResultText.text = "Успех";
-                    ResultText.color = Color.green;
-                    _nextNodeGIUD = _nodeLinkData[0].TargetNodeGUID;
-                }
-                else
-                {
-                    ResultText.text = "Провал";
-                    ResultText.color = Color.red;
-                    _nextNodeGIUD = _nodeLinkData[1].TargetNodeGUID;
-                }
+                CheckResult checkResult = CharacteristicChecker.Check(_bonus, _checkNode.CheckDifficulty);
+                ResultText.text = Translator.Translate(checkResult);
+                ResultText.color = checkResult < CheckResult.Succes ? Color.red : Color.green;
+                _nextNodeGIUD = checkResult < CheckResult.Succes ? _nodeLinkData[0].TargetNodeGUID :
+                    _nodeLinkData[1].TargetNodeGUID;
                 _confirmBtnText.text = "Продолжить";
             }
             else
@@ -65,13 +57,6 @@ namespace DialogueSystem.Runtime
                 gameObject.SetActive(false);
                 DialogueParser.Instance.ProceedToNarrative(_nextNodeGIUD);
             }
-        }
-
-        private int RoleDice()
-        {
-            int result = Random.Range(1, 21);
-            ResultNumberText.text = result.ToString();
-            return result;
         }
     }
 }

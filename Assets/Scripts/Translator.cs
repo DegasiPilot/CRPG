@@ -3,29 +3,44 @@ using System.Linq;
 
 public static class Translator
 {
-    private static Dictionary<string, string> _russianDictionary = new()
+    private static Dictionary<Characteristics, string> _characteristicsDictionary = new()
     {
-        { "Strength", "Сила"},
-        { "Dexterity", "Ловкость"},
-        { "Constitution", "Выносливость"},
-        { "Intelligence", "Интелект"},
-        { "Wisdom", "Мудрость"},
-        { "Charisma", "Харизма"},
-        { "Human", "Человек"},
-        { "Elf", "Эльф"},
-        { "Dwarf", "Дварф"},
-        { "Orc", "Орк"},
+        {Characteristics.Strength, "Сила"},
+        {Characteristics.Dexterity, "Ловкость"},
+        {Characteristics.Constitution, "Выносливость"},
+        {Characteristics.Intelligence, "Интелект"},
+        {Characteristics.Wisdom, "Мудрость"},
+        {Characteristics.Charisma, "Харизма"},
     };
 
-    public static string Translate(string englishString)
+    private static Dictionary<Race, string> _racesDictionary = new()
     {
-        if (_russianDictionary.Keys.Contains(englishString))
-        {
-            return _russianDictionary[englishString];
-        }
-        else
-        {
-            return englishString;
-        }
+        {Race.Human, "Человек"},
+        {Race.Elf, "Эльф"},
+        {Race.Dwarf, "Дварф"},
+        {Race.Orc, "Орк"},
+    };
+
+    private static Dictionary<CheckResult, string> _resultsDictionary = new()
+    {
+        {CheckResult.CriticalFail, "Критический провал"},
+        {CheckResult.Fail, "Провал"},
+        {CheckResult.Succes, "Успех"},
+        {CheckResult.CriticalSucces, "Критический успех"}
+    };
+
+    public static string Translate(Characteristics characteristic)
+    {
+        return _characteristicsDictionary[characteristic];
+    }
+
+    public static string Translate(Race race)
+    {
+        return _racesDictionary[race];
+    }
+
+    public static string Translate(CheckResult checkResult)
+    {
+        return _resultsDictionary[checkResult];
     }
 }

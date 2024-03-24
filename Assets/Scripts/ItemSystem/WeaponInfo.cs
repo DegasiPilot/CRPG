@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewWeaponInfo", menuName = "ScriptableObjects/WeaponInfo")]
-internal class WeaponInfo : ItemInfo
+public class WeaponInfo : ItemInfo
 {
     public float MaxAttackDistance;
     public int MinDamage;
@@ -22,7 +22,7 @@ internal class WeaponInfo : ItemInfo
         {
             stringBuilder.AppendLine("Двуручное");
         }
-        stringBuilder.AppendLine(Translator.Translate(usingCharacteristic.ToString()));
+        stringBuilder.AppendLine(Translator.Translate(usingCharacteristic));
         return stringBuilder.ToString();
     }
 }

@@ -14,9 +14,10 @@ public class GameManager : MonoBehaviour
     public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
-    [HideInInspector] public Personage PlayerPersonage;
+    public Personage PlayerPersonage => PlayerController.Personage;
     
-    private GameMode _gameMode;
+    private GameMode _gameMode = GameMode.Free;
+    public GameMode GameMode => _gameMode;
     private List<Personage> _personages;
 
     private void Awake()
@@ -29,20 +30,25 @@ public class GameManager : MonoBehaviour
     {
         SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
         DialogueParser.Instance.Setup();
-        PlayerPersonage = Player.GetComponent<Personage>();
-        PlayerPersonage.Setup(GameData.PlayerPersonage);
-        SetActivePersonage(PlayerPersonage);
         PlayerController = Player.GetComponent<PlayerController>();
         PlayerController.Setup();
-        CameraController.Instance.Setup();
-        CanvasManager.Instance.Setup();
+        PlayerPersonage.Setup(GameData.PlayerPersonage);
+        SetActivePersonage(PlayerPersonage);
         _personages = Personages.GetComponentsInChildren<Personage>().ToList();
         _personages.ForEach(p => p.Setup());
     }
 
     public void ChangeGameMode(GameMode gameMode)
     {
-        _gameMode = gameMode;
+        if (_gameMode != gameMode)
+        {
+            _gameMode = gameMode;
+        }
+        else
+        {
+            return;
+        }
+
         switch (gameMode)
         {
             case GameMode.Dialogue:
@@ -52,14 +58,30 @@ public class GameManager : MonoBehaviour
             case GameMode.Free:
                 CameraController.Instance.enabled = true;
                 CameraController.Instance.StandartView();
-                CanvasManager.Instance.OnFreeModeEnter();
+                CanvasManager.Instance.OnDialogueEnd();
+                break;
+            case GameMode.Battle:
+                CameraController.Instance.enabled = true;
+                CameraController.Instance.StandartView();
+                CanvasManager.Instance.OnDialogueEnd();
                 break;
         }
     }
 
-    public void OnDialogueActorPressed(DialogueActor dialogueActor)
+    public void OnPersonagePressed(Personage personage)
     {
-        PlayerController.InteractWith(dialogueActor.gameObject, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+        if (_gameMode == GameMode.Free)
+        {
+            if (PlayerController.ActiveAction == ActionType.Attack)
+            {
+                PlayerController.InteractWith(personage.gameObject, PlayerController.WeaponInfo.MaxAttackDistance, Attack, personage);
+                ChangeGameMode(GameMode.Battle);
+            }
+            else if(TryGetComponent(out DialogueActor dialogueActor))
+            {
+                PlayerController.InteractWith(dialogueActor.gameObject, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+            }
+        }
     }
 
     public void OnItemPressed(Item item)
@@ -77,6 +99,19 @@ public class GameManager : MonoBehaviour
     public void ItemInteract(GameObject itemObject, Component component)
     {
         PlayerController.PickupItem(component as Item);
+    }
+
+    public void Attack(GameObject attackingObject, Component component)
+    {
+        PlayerController.Attack(component as Personage);
+    }
+
+    public void OnGroundPressed(Vector3 hitPoint)
+    {
+        if(_gameMode == GameMode.Free)
+        {
+            PlayerController.OnGroundPressedInFree(hitPoint);
+        }
     }
 
     public void CreateNewGameSave()
@@ -132,7 +167,6 @@ public class GameManager : MonoBehaviour
 
     public void SetActivePersonage(Personage personage)
     {
-        PlayerPersonage = personage;
         CanvasManager.Instance.SetActivePersonage(personage);
     }
 }

@@ -20,10 +20,6 @@ public class CameraController : MonoBehaviour
     public void Awake()
     {
         Instance = this;
-    }
-
-    public void Setup()
-    {
         _standartAngleX = transform.eulerAngles.x;
     }
 
@@ -36,15 +32,14 @@ public class CameraController : MonoBehaviour
             {
                 if (hit.collider.transform.TryGetComponent(out TerrainCollider _))
                 {
-                    GameManager.Instance.PlayerController.OnGroundPressed(hit.point);
+                    GameManager.Instance.OnGroundPressed(hit.point);
                 }
-                else if (hit.collider.transform.TryGetComponent(out DialogueActor dialogueActor))
+                else if (hit.collider.transform.TryGetComponent(out Personage personage))
                 {
-                    GameManager.Instance.OnDialogueActorPressed(dialogueActor);
+                    GameManager.Instance.OnPersonagePressed(personage);
                 }
                 else if(hit.collider.transform.TryGetComponent(out Item item))
                 {
-                    Debug.Log(item != null);
                     GameManager.Instance.OnItemPressed(item);
                 }
             }

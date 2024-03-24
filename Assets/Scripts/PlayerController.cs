@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,15 +10,19 @@ public class PlayerController : MonoBehaviour
     public float Speed;
 
     public ActionType ActiveAction => _activeAction;
+    public Personage Personage => _personage;
+    public WeaponInfo WeaponInfo => EquipmentManager.Instance.Weapon.ItemInfo as WeaponInfo;
+    public int ArmorClass => EquipmentManager.Instance.ArmorClass;
 
     private NavMeshAgent _controller;
     private Rigidbody _rigidBody;
+    private Personage _personage;
     private Interact _interact;
     private GameObject _interactObject;
     private Component _interactComponent;
 
     private bool _isGrounded = true;
-    private bool _jumpStartJump;
+    private float _startJumpTime;
 
     private bool _isFree => _isGrounded;
 
@@ -30,6 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         _controller = GetComponent<NavMeshAgent>();
         _rigidBody = GetComponent<Rigidbody>();
+        _personage = GetComponent<Personage>();
         _activeAction = ActionType.Movement;
     }
 
@@ -45,7 +49,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnGroundPressed(Vector3 hitPoint)
+    public void OnGroundPressedInFree(Vector3 hitPoint)
     {
         if (!_isFree) return;
         switch (_activeAction)
@@ -99,7 +103,6 @@ public class PlayerController : MonoBehaviour
         _isGrounded = false;
         _controller.enabled = false;
         _rigidBody.isKinematic = false;
-        _jumpStartJump = true;
 
         float gravity = Physics.gravity.magnitude;
         float angle = 45 * Mathf.Deg2Rad;
@@ -120,16 +123,29 @@ public class PlayerController : MonoBehaviour
         Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
 
         _rigidBody.AddForce(finalVelocity, ForceMode.VelocityChange);
+        _startJumpTime = Time.timeSinceLevelLoad;
         SetDefaultAction();
+    }
+
+    public void Attack(Personage personage)
+    {
+        int bonus = _personage.PersonageInfo.GetCharacteristicBonus(WeaponInfo.usingCharacteristic);
+        int difficulty = personage.ArmorClass; //todo rework
+        CheckResult hitResult = CharacteristicChecker.Check(bonus,difficulty);
+        if(hitResult > CheckResult.Fail)
+        {
+            WeaponInfo weaponInfo = WeaponInfo;
+            int damage = Random.Range(weaponInfo.MinDamage, weaponInfo.MaxDamage);
+            damage += Personage.PersonageInfo.Race == Race.Orc ? Random.Range(1, 4) : 0;
+            personage.GetDamage(damage, DamageType.Physical);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_jumpStartJump)
-        {
-            _jumpStartJump = false;
-        }
-        else if (!_isGrounded && collision.GetContact(0).point.y < transform.position.y)
+        if (!_isGrounded && 
+            (Time.timeSinceLevelLoad - _startJumpTime) > Time.fixedDeltaTime
+            && collision.GetContact(0).point.y < transform.position.y)
         {
             _isGrounded = true;
             _controller.enabled = true;
@@ -140,6 +156,7 @@ public class PlayerController : MonoBehaviour
     public void SetDefaultAction()
     {
         SetActiveAction(_defaultAction);
+        CanvasManager.Instance.ForceChangeAction(_defaultAction);
     }
 
     public void SetActiveAction(ActionType actionType)

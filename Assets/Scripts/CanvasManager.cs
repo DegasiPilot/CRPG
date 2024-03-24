@@ -19,6 +19,7 @@ public class CanvasManager : MonoBehaviour
     public Text PersonageNameText;
     public Text LifesText;
     public Image LifesImage;
+    public ToggleGroup ActionsToggles;
 
     public bool IsInventoryOpen { get; private set; } = false;
     public bool IsPauseMenuOpen { get; private set; } = false;
@@ -33,10 +34,6 @@ public class CanvasManager : MonoBehaviour
     {
         Instance = this;
         _graphicRaycaster = GetComponent<GraphicRaycaster>();
-    }
-
-    public void Setup()
-    {
         _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>(true).ToList();
     }
 
@@ -96,6 +93,7 @@ public class CanvasManager : MonoBehaviour
         if (!IsInventoryOpen)
         {
             InventoryPanel.SetActive(true);
+            PlayerPanel.SetActive(false);
             int inventoryCount = GameData.Inventory.Count;
             for (int i = 0; i < inventoryCount; i++)
             {
@@ -114,6 +112,7 @@ public class CanvasManager : MonoBehaviour
         else
         {
             InventoryPanel.SetActive(false);
+            PlayerPanel.SetActive(true);
         }
         IsInventoryOpen = !IsInventoryOpen;
     }
@@ -126,9 +125,7 @@ public class CanvasManager : MonoBehaviour
 
     public void ActivateContextMenu(ItemSlot itemSlot)
     {
-        RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)InventoryPanel.transform, 
-            Input.mousePosition, null, out Vector2 localPos);
-        ((RectTransform)ItemContextMenu.transform).anchoredPosition = localPos;
+        ItemContextMenu.transform.position = itemSlot.transform.position;
         ItemContextMenu.gameObject.SetActive(true);
         ItemContextMenu.Setup(itemSlot.Item);
         _activeItemSlot = itemSlot;
@@ -190,11 +187,19 @@ public class CanvasManager : MonoBehaviour
     {
         if (activate)
         {
-            _playerController.SetDefaultAction();
+            _playerController.SetActiveAction(actionType);
         }
         else
         {
-            _playerController.SetActiveAction(actionType);
+            _playerController.SetDefaultAction();
+        }
+    }
+
+    public void ForceChangeAction(ActionType actionType)
+    {
+        if(actionType == ActionType.Movement)
+        {
+            ActionsToggles.SetAllTogglesOff();
         }
     }
 
@@ -204,9 +209,10 @@ public class CanvasManager : MonoBehaviour
         PersonageCamera.enabled = false;
     }
 
-    public void OnFreeModeEnter()
+    public void OnDialogueEnd()
     {
         PlayerPanel.SetActive(true);
         PersonageCamera.enabled = true;
     }
+
 }
