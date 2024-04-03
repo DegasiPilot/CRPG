@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -8,11 +9,17 @@ public class MainMenuScript : MonoBehaviour
 
     public Transform SavesTransformParent;
     public GameObject SaveSlotPrefab;
+    public Button ContinueBtn;
+    public Button LoadBtn;
+
     private List<GameSaveInfo> _saves;
 
     private void Awake()
     {
         Instance = this;
+        bool hasSaves = CRUD.HasAnySaves();
+        ContinueBtn.interactable = hasSaves;
+        LoadBtn.interactable = hasSaves;
     }
 
     public void StartNewGame()

@@ -14,20 +14,25 @@ public class CanvasManager : MonoBehaviour
     public ItemInfoPanel ItemInfoPanel; 
     public GameObject PauseMenuPanel;
     public GameObject PlayerPanel;
-    public Camera PersonageCamera;
+    public RawImage PersonageImage;
 
     public Text PersonageNameText;
     public Text LifesText;
     public Image LifesImage;
     public ToggleGroup ActionsToggles;
+    public GameObject PointerInfoPanel;
+    public BattlePanel BattlePanel;
 
     public bool IsInventoryOpen { get; private set; } = false;
     public bool IsPauseMenuOpen { get; private set; } = false;
 
+    private Canvas _canvas;
     private List<InventorySlot> _inventorySlots;
     private ItemSlot _activeItemSlot;
     private GraphicRaycaster _graphicRaycaster;
     private readonly List<RaycastResult> _raycastResultsList = new List<RaycastResult>();
+    private Text _pointerInfoText;
+
     private PlayerController _playerController => GameManager.Instance.PlayerController;
 
     public void Awake()
@@ -35,6 +40,8 @@ public class CanvasManager : MonoBehaviour
         Instance = this;
         _graphicRaycaster = GetComponent<GraphicRaycaster>();
         _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>(true).ToList();
+        _pointerInfoText = PointerInfoPanel.GetComponentInChildren<Text>();
+        _canvas = gameObject.GetComponent<Canvas>();
     }
 
     private void Update()
@@ -181,6 +188,7 @@ public class CanvasManager : MonoBehaviour
         int MaxHealth = personage.PersonageInfo.MaxHealth;
         LifesText.text = $"Жизни: {personage.CurrentHealth}/{MaxHealth}";
         LifesImage.fillAmount = personage.CurrentHealth / MaxHealth;
+        PersonageImage.texture = personage.PersonageInfo.PersonagePortrait;
     }
 
     public void TogglePlayerAction(ActionType actionType, bool activate)
@@ -203,16 +211,30 @@ public class CanvasManager : MonoBehaviour
         }
     }
 
-    public void OnDialogueStart()
+    public void OnChangeGameMode(GameMode lastGameMode, GameMode currentGameMode)
     {
-        PlayerPanel.SetActive(false);
-        PersonageCamera.enabled = false;
+        if(lastGameMode == GameMode.Dialogue)
+        {
+            PlayerPanel.SetActive(true);
+            HideInfoUnderPointer();
+        }
+        else if(currentGameMode == GameMode.Dialogue)
+        {
+            PlayerPanel.SetActive(false);
+        }
     }
 
-    public void OnDialogueEnd()
+    public void ShowInfoUnderPosition(string info, Vector3 position)
     {
-        PlayerPanel.SetActive(true);
-        PersonageCamera.enabled = true;
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle((_canvas.transform as RectTransform), screenPoint, Camera.main, out Vector2 localPoint);
+        (PointerInfoPanel.transform as RectTransform).anchoredPosition = localPoint;
+        PointerInfoPanel.SetActive(true);
+        _pointerInfoText.text = info;
     }
-
+    
+    public void HideInfoUnderPointer()
+    {
+        PointerInfoPanel.SetActive(false);
+    }
 }

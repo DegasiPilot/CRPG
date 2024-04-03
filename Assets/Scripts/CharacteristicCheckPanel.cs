@@ -43,10 +43,11 @@ namespace DialogueSystem.Runtime
         {
             if (ResultText.text == "")
             {
-                CheckResult checkResult = CharacteristicChecker.Check(_bonus, _checkNode.CheckDifficulty);
+                CheckResult checkResult = CharacteristicChecker.Check(_bonus, _checkNode.CheckDifficulty, out int diceResult, out int finalResult);
+                ResultNumberText.text = diceResult.ToString();
                 ResultText.text = Translator.Translate(checkResult);
                 ResultText.color = checkResult < CheckResult.Succes ? Color.red : Color.green;
-                _nextNodeGIUD = checkResult < CheckResult.Succes ? _nodeLinkData[0].TargetNodeGUID :
+                _nextNodeGIUD = checkResult >= CheckResult.Succes ? _nodeLinkData[0].TargetNodeGUID :
                     _nodeLinkData[1].TargetNodeGUID;
                 _confirmBtnText.text = "Продолжить";
             }

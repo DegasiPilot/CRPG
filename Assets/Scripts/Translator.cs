@@ -28,6 +28,13 @@ public static class Translator
         {CheckResult.Succes, "Успех"},
         {CheckResult.CriticalSucces, "Критический успех"}
     };
+    
+    private static Dictionary<ArmorWeight, string> _armorWeightDictionary = new()
+    {
+        {ArmorWeight.Light, "Легкий"},
+        {ArmorWeight.Medium, "Средний"},
+        {ArmorWeight.Heavy, "Тяжелый"},
+    };
 
     public static string Translate(Characteristics characteristic)
     {

@@ -5,9 +5,8 @@ using System.Linq;
 internal class EquipmentManager : MonoBehaviour
 {
     public static EquipmentManager Instance { get; private set; }
+
     public Item Weapon => _weapon;
-    public readonly HashSet<Item> Armor = new();
-    public int ArmorClass => (from armor in Armor select (armor.ItemInfo as ArmorInfo).ArmorClass).Sum();
 
     [SerializeField] private EquipmentSlot HealmetSlot;
     [SerializeField] private EquipmentSlot BodySlot;
@@ -16,6 +15,7 @@ internal class EquipmentManager : MonoBehaviour
     [SerializeField] private EquipmentSlot BootsSlot;
 
     private Item _weapon;
+    private readonly HashSet<Item> Armor = new();
 
     private void Awake()
     {
@@ -33,6 +33,15 @@ internal class EquipmentManager : MonoBehaviour
                 EquipItem(item, out _);
             }
         }
+    }
+
+    public (int ArmorClass,ArmorWeight maxArmorWeight) GetArmorInfo()
+    {
+        var armorInfos = from armor in Armor select (armor.ItemInfo as ArmorInfo);
+        (int ArmorClass, ArmorWeight ArmorWeight) info;
+        info.ArmorClass = (from armorInfo in armorInfos select armorInfo.ArmorClass).Sum();
+        info.ArmorWeight = (from armorInfo in armorInfos select armorInfo.ArmorWeight).Max();
+        return info;
     }
 
     public void EquipItem(Item item, out List<Item> undressedItems)
@@ -79,7 +88,7 @@ internal class EquipmentManager : MonoBehaviour
     public void EquipArmor(Item item, List<Item> undressedItems)
     {
         Item undressedArmor = null;
-        switch ((item.ItemInfo as ArmorInfo).wearableBodyPart)
+        switch ((item.ItemInfo as ArmorInfo).WearableBodyPart)
         {
             case BodyPart.Head:
                 HealmetSlot.EquipItem(item, out undressedArmor);

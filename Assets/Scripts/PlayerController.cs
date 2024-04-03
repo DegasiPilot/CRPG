@@ -2,21 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
     public delegate void Interact(GameObject gameObject, Component interactComponent);
 
     public float Speed;
+    public float PathEndHitAccuracy; //Ќасколько близко надо нажать к концу пути
+    public LineRenderer AccesableLineRenderer;
+    public LineRenderer UnaccesableLineRenderer;
 
     public ActionType ActiveAction => _activeAction;
     public Personage Personage => _personage;
-    public WeaponInfo WeaponInfo => EquipmentManager.Instance.Weapon.ItemInfo as WeaponInfo;
-    public int ArmorClass => EquipmentManager.Instance.ArmorClass;
+    public WeaponInfo WeaponInfo => EquipmentManager.Instance.Weapon?.ItemInfo as WeaponInfo;
+
+    public int ArmorClass
+    {
+        get
+        {
+            var info = EquipmentManager.Instance.GetArmorInfo();
+            if(info.maxArmorWeight == ArmorWeight.Heavy)
+            {
+                return info.ArmorClass;
+            }
+            else if(info.maxArmorWeight == ArmorWeight.Medium)
+            {
+                return info.ArmorClass + Mathf.Min(2, Personage.PersonageInfo.GetCharacteristicBonus(Characteristics.Dexterity));
+            }
+            else
+            {
+                return info.ArmorClass + Personage.PersonageInfo.GetCharacteristicBonus(Characteristics.Dexterity);
+            }
+        }
+    }
 
     private NavMeshAgent _controller;
     private Rigidbody _rigidBody;
     private Personage _personage;
+
     private Interact _interact;
     private GameObject _interactObject;
     private Component _interactComponent;
@@ -28,12 +52,17 @@ public class PlayerController : MonoBehaviour
 
     private ActionType _defaultAction = ActionType.Movement;
     private ActionType _activeAction;
+    private NavMeshPath _navMeshPath;
+    private float _pathLength;
+    private Vector3 _lastAccessablePathDot;
+    private Vector3 _lastHitPoint;
 
     public void Setup()
     {
         _controller = GetComponent<NavMeshAgent>();
         _rigidBody = GetComponent<Rigidbody>();
         _personage = GetComponent<Personage>();
+        _navMeshPath = new();
         _activeAction = ActionType.Movement;
     }
 
@@ -67,10 +96,108 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnGroundPressedInBattle(Vector3 hitPoint)
+    {
+        if (!_isFree) return;
+        if(_activeAction == ActionType.Movement && BattleManager.RemainMovement > 0 && BattleManager.ActivePersonage == Personage)
+        {
+            Debug.Log($"{hitPoint} {_lastHitPoint} {PathEndHitAccuracy}");
+            if(_lastHitPoint != Vector3.positiveInfinity && _navMeshPath != null && _navMeshPath.status == NavMeshPathStatus.PathComplete &&
+                Vector3.Distance(hitPoint, _lastHitPoint) <= PathEndHitAccuracy)
+            {
+                Debug.Log("я погнал");
+                _controller.destination = _lastAccessablePathDot;
+                _navMeshPath.ClearCorners();
+                _lastHitPoint = Vector3.positiveInfinity;
+                UnaccesableLineRenderer.enabled = false;
+                AccesableLineRenderer.enabled = false;
+                BattleManager.RemainMovement -= Mathf.Min(BattleManager.RemainMovement, _pathLength);
+                _pathLength = 0;
+                return;
+            }
+            _controller.CalculatePath(hitPoint, _navMeshPath);
+            _lastHitPoint = hitPoint;
+
+            if(_navMeshPath.status == NavMeshPathStatus.PathComplete)
+            {
+                _pathLength = PathLength(_navMeshPath);
+                if (_pathLength > BattleManager.RemainMovement)
+                {
+                    UnaccesableLineRenderer.enabled = true;
+                    AccesableLineRenderer.enabled = true;
+                    _lastAccessablePathDot = CutPath(_navMeshPath, BattleManager.RemainMovement, out int lastIndex);
+                    var accesablePath = _navMeshPath.corners.Take(lastIndex + 1).ToArray();
+                    accesablePath[lastIndex] = _lastAccessablePathDot;
+                    AccesableLineRenderer.positionCount = accesablePath.Length;
+                    AccesableLineRenderer.SetPositions(accesablePath);
+                    var unaccesablePath = _navMeshPath.corners.TakeLast(_navMeshPath.corners.Length -
+                        accesablePath.Length + 2).ToArray();
+                    unaccesablePath[0] = _lastAccessablePathDot;
+                    UnaccesableLineRenderer.positionCount = unaccesablePath.Length;
+                    UnaccesableLineRenderer.SetPositions(unaccesablePath);
+                }
+                else
+                {
+                    UnaccesableLineRenderer.enabled = false;
+                    AccesableLineRenderer.enabled = true;
+                    _lastAccessablePathDot = _navMeshPath.corners.Last();
+                    AccesableLineRenderer.positionCount = _navMeshPath.corners.Count();
+                    AccesableLineRenderer.SetPositions(_navMeshPath.corners);
+                }
+            }
+            else
+            {
+                AccesableLineRenderer.enabled = false;
+                UnaccesableLineRenderer.enabled = true;
+                _lastAccessablePathDot = Vector3.zero;
+                UnaccesableLineRenderer.positionCount = 2;
+                UnaccesableLineRenderer.SetPositions(new Vector3[2] { transform.position, hitPoint});
+            }
+        }
+    }
+
+    float PathLength(NavMeshPath path)
+    {
+        if (path.corners.Length < 2)
+            return 0;
+
+        float lengthSoFar = 0.0F;
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            lengthSoFar += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+        }
+        return lengthSoFar;
+    }
+
+    Vector3 CutPath(NavMeshPath path, float maxDistance,out int lastIndex)
+    {
+        float lengthSoFar = 0.0F;
+        float distanceToNext;
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            distanceToNext = Vector3.Distance(path.corners[i - 1], path.corners[i]);
+            if (lengthSoFar + distanceToNext > maxDistance)
+            {
+                lastIndex = i;
+                return Vector3.MoveTowards(path.corners[i - 1], path.corners[i], maxDistance - lengthSoFar);
+            }
+            lengthSoFar += distanceToNext;
+        }
+        lastIndex = 0;
+        return Vector3.zero;
+    }
+
     private void GoToPosition(Vector3 position, float maxTargetOffset = 0.1f)
     {
         _controller.SetDestination(position);
         _controller.stoppingDistance = maxTargetOffset;
+        _interact = null;
+        _interactObject = null;
+    }
+
+    public void ForceStop()
+    {
+        _controller.ResetPath();
         _interact = null;
         _interactObject = null;
     }
@@ -127,18 +254,58 @@ public class PlayerController : MonoBehaviour
         SetDefaultAction();
     }
 
+    public void GetAttackInfo(Personage personage, out int bonus, out int difficulty, out Characteristics characteristic)
+    {
+        if (WeaponInfo)
+        {
+            characteristic = WeaponInfo.usingCharacteristic;
+        }
+        else
+        {
+            characteristic = Characteristics.Strength;
+        }
+        bonus = _personage.PersonageInfo.GetCharacteristicBonus(characteristic);
+        difficulty = personage.ArmorClass; //Todo: rework
+    }
+
     public void Attack(Personage personage)
     {
-        int bonus = _personage.PersonageInfo.GetCharacteristicBonus(WeaponInfo.usingCharacteristic);
-        int difficulty = personage.ArmorClass; //todo rework
-        CheckResult hitResult = CharacteristicChecker.Check(bonus,difficulty);
+        GetAttackInfo(personage, out int bonus, out int difficulty, out Characteristics characteristic);
+        CheckResult hitResult = CharacteristicChecker.Check(bonus,difficulty, out int diceResult, out int finalResult);
         if(hitResult > CheckResult.Fail)
         {
             WeaponInfo weaponInfo = WeaponInfo;
-            int damage = Random.Range(weaponInfo.MinDamage, weaponInfo.MaxDamage);
-            damage += Personage.PersonageInfo.Race == Race.Orc ? Random.Range(1, 4) : 0;
+            int damage = 1;
+            if (weaponInfo)
+            {
+                if (hitResult == CheckResult.CriticalSucces)
+                {
+                    damage = weaponInfo.MaxDamage;
+                }
+                else
+                {
+                    damage = Random.Range(weaponInfo.MinDamage, weaponInfo.MaxDamage);
+                }
+            }
+            else
+            {
+                damage = Random.Range(1, 4);
+            }
+
+            if(Personage.PersonageInfo.Race == Race.Orc)
+            {
+                if (hitResult == CheckResult.CriticalSucces)
+                {
+                    damage += 4;
+                }
+                else
+                {
+                    damage = Random.Range(1,4);
+                }
+            }
             personage.GetDamage(damage, DamageType.Physical);
         }
+        SetDefaultAction();
     }
 
     private void OnCollisionEnter(Collision collision)

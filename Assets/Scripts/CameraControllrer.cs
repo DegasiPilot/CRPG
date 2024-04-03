@@ -15,6 +15,8 @@ public class CameraController : MonoBehaviour
     public float MaxZoomDistance;
 
     private float _standartAngleX;
+    private RaycastHit _cursorRaycastHit;
+
     private Vector3 _playerPosition => GameManager.Instance.PlayerController.gameObject.transform.position;
 
     public void Awake()
@@ -25,23 +27,50 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0))
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
+            bool IsClick = Input.GetMouseButtonDown(0);
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            if (Physics.Raycast(ray, out _cursorRaycastHit, 100f))
             {
-                if (hit.collider.transform.TryGetComponent(out TerrainCollider _))
+                if (_cursorRaycastHit.collider.transform.TryGetComponent(out TerrainCollider _))
                 {
-                    GameManager.Instance.OnGroundPressed(hit.point);
+                    GameManager.Instance.NothingUnderPointer();
+                    if (IsClick)
+                    {
+                        GameManager.Instance.OnGroundPressed(_cursorRaycastHit.point);
+                    }
                 }
-                else if (hit.collider.transform.TryGetComponent(out Personage personage))
+                else if (_cursorRaycastHit.collider.transform.TryGetComponent(out Personage personage))
                 {
-                    GameManager.Instance.OnPersonagePressed(personage);
+                    if (IsClick)
+                    {
+                        GameManager.Instance.OnPersonagePressed(personage);
+                    }
+                    else
+                    {
+                        GameManager.Instance.OnPersonageUnderPointer(personage);
+                    }
                 }
-                else if(hit.collider.transform.TryGetComponent(out Item item))
+                else if(_cursorRaycastHit.collider.transform.TryGetComponent(out Item item))
                 {
-                    GameManager.Instance.OnItemPressed(item);
+                    if (IsClick)
+                    {
+                        GameManager.Instance.OnItemPressed(item);
+                    }
+                    else
+                    {
+                        GameManager.Instance.OnItemUnderPointer(item);
+                    }
                 }
+                else
+                {
+                    GameManager.Instance.NothingUnderPointer();
+                }
+            }
+            else
+            {
+                GameManager.Instance.NothingUnderPointer();
             }
         }
         Move();
@@ -54,13 +83,13 @@ public class CameraController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         transform.parent.Translate(new Vector3(h, 0, v) * Time.deltaTime * MoveSpeed);
-        //Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
-        //Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
-        //float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
-        //if(sqrDistance > MaxDistanceFromPlayer*MaxDistanceFromPlayer)
-        //{
-        //    transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
-        //}
+        Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
+        Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
+        float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
+        if (sqrDistance > MaxDistanceFromPlayer * MaxDistanceFromPlayer)
+        {
+            transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
+        }
     }
 
     private void Rotate()

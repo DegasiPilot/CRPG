@@ -2,18 +2,19 @@
 
 public static class CharacteristicChecker
 {
-    public static CheckResult Check(int bonus, int difficulty)
+    public static CheckResult Check(int bonus, int difficulty, out int diceResult, out int finalResult)
     {
-        int result = RoleD20();
-        if(result == 1)
+        diceResult = RoleD20();
+        finalResult = diceResult + bonus;
+        if(diceResult == 1 || finalResult <= difficulty - 20)
         {
             return CheckResult.CriticalFail;
         }
-        else if(result == 20)
+        else if(diceResult == 20 || finalResult >= difficulty + 20)
         {
             return CheckResult.CriticalSucces;
         }
-        else if(result + bonus >= difficulty)
+        else if(finalResult >= difficulty)
         {
             return CheckResult.Succes;
         }
@@ -21,6 +22,13 @@ public static class CharacteristicChecker
         {
             return CheckResult.Fail;
         }
+    }
+
+    public static int RoleCharacteristic(PersonageInfo personageInfo, Characteristics characteristic)
+    {
+        int diceResult = RoleD20();
+        int bonus = personageInfo.GetCharacteristicBonus(characteristic);
+        return diceResult + bonus;
     }
 
     private static int RoleD20()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DialogueSystem.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,14 +12,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameObject Player;
-    public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
     public Personage PlayerPersonage => PlayerController.Personage;
     
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
-    private List<Personage> _personages;
+    private Component _currentComponentUnderPointer;
 
     private void Awake()
     {
@@ -34,38 +34,70 @@ public class GameManager : MonoBehaviour
         PlayerController.Setup();
         PlayerPersonage.Setup(GameData.PlayerPersonage);
         SetActivePersonage(PlayerPersonage);
-        _personages = Personages.GetComponentsInChildren<Personage>().ToList();
-        _personages.ForEach(p => p.Setup());
     }
 
-    public void ChangeGameMode(GameMode gameMode)
+    public void ChangeGameMode(GameMode gameMode) //TODO: rename
     {
         if (_gameMode != gameMode)
         {
+            CanvasManager.Instance.OnChangeGameMode(_gameMode, gameMode);
+            if (_gameMode == GameMode.Dialogue)
+            {
+                CameraController.Instance.enabled = true;
+            }
+            
+            if(gameMode == GameMode.Dialogue)
+            {
+                CameraController.Instance.enabled = false;
+            }
+            else if(gameMode == GameMode.Battle)
+            {
+                PlayerController.ForceStop();
+            }
             _gameMode = gameMode;
         }
-        else
-        {
-            return;
-        }
+    }
 
-        switch (gameMode)
+    public void OnPersonageUnderPointer(Personage personage)
+    {
+        if (_currentComponentUnderPointer != personage)
         {
-            case GameMode.Dialogue:
-                CameraController.Instance.enabled = false;
-                CanvasManager.Instance.OnDialogueStart();
-                break;
-            case GameMode.Free:
-                CameraController.Instance.enabled = true;
-                CameraController.Instance.StandartView();
-                CanvasManager.Instance.OnDialogueEnd();
-                break;
-            case GameMode.Battle:
-                CameraController.Instance.enabled = true;
-                CameraController.Instance.StandartView();
-                CanvasManager.Instance.OnDialogueEnd();
-                break;
+            Debug.Log(_gameMode.ToString());
+            if (_gameMode == GameMode.Free)
+            {
+                if (PlayerController.ActiveAction == ActionType.Attack)
+                {
+                    ShowAttackInfo(personage);
+                }
+                else
+                {
+                    CanvasManager.Instance.ShowInfoUnderPosition(personage.PersonageInfo.Name, personage.transform.position);
+                }
+            }
+            else if(_gameMode == GameMode.Battle)
+            {
+                if(personage.battleTeam == BattleTeam.Allies)
+                {
+                    CanvasManager.Instance.ShowInfoUnderPosition(personage.PersonageInfo.Name, personage.transform.position);
+                }
+                else
+                {
+                    ShowAttackInfo(personage);
+                }
+            }
+            _currentComponentUnderPointer = personage;
         }
+    }
+
+    private void ShowAttackInfo(Personage personage)
+    {
+        PlayerController.GetAttackInfo(personage, out int bonus, out int difficulty, out Characteristics characteristic);
+        StringBuilder attackInfoBuider = new();
+        attackInfoBuider.Append(bonus >= 0 ? "Бонус от " : "Штраф от ");
+        attackInfoBuider.Append(Translator.Translate(characteristic));
+        attackInfoBuider.AppendLine(bonus >= 0 ? $" +{bonus}" : $" {bonus}");
+        attackInfoBuider.Append($"Броня: {difficulty}");
+        CanvasManager.Instance.ShowInfoUnderPosition(attackInfoBuider.ToString(), personage.transform.position);
     }
 
     public void OnPersonagePressed(Personage personage)
@@ -74,19 +106,35 @@ public class GameManager : MonoBehaviour
         {
             if (PlayerController.ActiveAction == ActionType.Attack)
             {
-                PlayerController.InteractWith(personage.gameObject, PlayerController.WeaponInfo.MaxAttackDistance, Attack, personage);
-                ChangeGameMode(GameMode.Battle);
+                float attackDistance = PlayerController.WeaponInfo ? 
+                    PlayerController.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
+                PlayerController.InteractWith(personage.gameObject, attackDistance, Attack, personage);
             }
-            else if(TryGetComponent(out DialogueActor dialogueActor))
+            else if(personage.TryGetComponent(out DialogueActor dialogueActor))
             {
                 PlayerController.InteractWith(dialogueActor.gameObject, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
             }
         }
     }
 
+    public void OnItemUnderPointer(Item item)
+    {
+        if (_currentComponentUnderPointer != item)
+        {
+            CanvasManager.Instance.ShowInfoUnderPosition(item.ItemInfo.Name, item.transform.position);
+            _currentComponentUnderPointer = item;
+        }
+    }
+
     public void OnItemPressed(Item item)
     {
         PlayerController.InteractWith(item.gameObject, 1, ItemInteract, item);
+    }
+
+    public void NothingUnderPointer()
+    {
+        CanvasManager.Instance.HideInfoUnderPointer();
+        _currentComponentUnderPointer = null;
     }
 
     public void StartDialogue(GameObject focusObject, Component component)
@@ -104,6 +152,10 @@ public class GameManager : MonoBehaviour
     public void Attack(GameObject attackingObject, Component component)
     {
         PlayerController.Attack(component as Personage);
+        if(_gameMode != GameMode.Battle)
+        {
+            BattleManager.StartBattle(new Personage[2] { PlayerPersonage, component as Personage}); // TODO: add more personages in battle
+        }
     }
 
     public void OnGroundPressed(Vector3 hitPoint)
@@ -111,6 +163,10 @@ public class GameManager : MonoBehaviour
         if(_gameMode == GameMode.Free)
         {
             PlayerController.OnGroundPressedInFree(hitPoint);
+        }
+        else if(_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
+        {
+            PlayerController.OnGroundPressedInBattle(hitPoint);
         }
     }
 

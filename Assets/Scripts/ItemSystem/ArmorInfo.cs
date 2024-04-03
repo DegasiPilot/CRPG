@@ -4,6 +4,8 @@
 internal class ArmorInfo : ItemInfo
 {
     public int ArmorClass;
-    public BodyPart wearableBodyPart;
+    public BodyPart WearableBodyPart;
+    public ArmorWeight ArmorWeight;
+
     public override ItemType ItemType => ItemType.Armor;
 }

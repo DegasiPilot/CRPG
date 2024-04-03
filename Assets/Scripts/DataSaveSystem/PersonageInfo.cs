@@ -1,36 +1,39 @@
 using MongoDB.Bson;
 using System;
+using UnityEngine;
+using MongoDB.Bson.Serialization.Attributes;
 
-public class PersonageInfo
+[CreateAssetMenu(fileName = "NewPersonageInfo", menuName = "ScriptableObjects/PersonageInfo")]
+public class PersonageInfo : ScriptableObject
 {
-    public Action OnStatsChanged;
+    [BsonIgnore] public Action OnStatsChanged;
 
     public ObjectId Id { get; set; }
     public string Name;
 
-    public int Strength { get; set; }
-    public int Dexterity { get; set; }
-    public int Constitution { get; set; }
-    public int Intelligence { get; set; }
-    public int Wisdom { get; set; }
-    public int Charisma { get; set; }
+    public int Strength;
+    public int Dexterity;
+    public int Constitution;
+    public int Intelligence;
+    public int Wisdom;
+    public int Charisma;
 
     public Race Race;
     public int UnSpendedStatPoints;
 
-    [NonSerialized] public RaceInfo RaceInfo;
+    [NonSerialized, BsonIgnore] public RaceInfo RaceInfo;
 
     public int MaxHealth => RaceInfo.BaseHealth + GetCharacteristicBonus(Characteristics.Constitution);
 
-    public PersonageInfo(string name = "Unnammed")
-    {
-        Name = name;
-        ResetStats();
-    }
+    public int Speed => RaceInfo.StandartSpeed;
+
+    public byte[] ImageBytes { get; set; }
+    [BsonIgnore] public Texture2D PersonagePortrait;
+    public Color PersonagePortraitColor = Color.white;
 
     public void Setup()
     {
-        RaceInfo = GameData.RaceInfos[(int)Race];
+        RaceInfo = GameData.RaceInfos[(int)Race - 1];
     }
 
     public int this [Characteristics index]

@@ -18,6 +18,7 @@ public class PersonageCreator : MonoBehaviour
     public Text RaceDescription;
     public Text StatPointsText;
     public List<RaceInfo> RaceInfos;
+    public Texture2D PersonagePortrait;
 
     private PersonageInfo _personageInfo;
     private Text _raceBtnText;
@@ -31,7 +32,9 @@ public class PersonageCreator : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _personageInfo = new PersonageInfo();
+        _personageInfo = ScriptableObject.CreateInstance<PersonageInfo>();
+        _personageInfo.Name = name;
+        _personageInfo.ResetStats();
         _personageInfo.UnSpendedStatPoints = _maxStatPointForSpent;
         _raceBtnText = RaceButton.GetComponentInChildren<Text>();
         _statRedactors = StatsParent.GetComponentsInChildren<CharacteristicRedactor>();
@@ -144,9 +147,10 @@ public class PersonageCreator : MonoBehaviour
 
     public void TrySavePersonage()
     {
-        if(_personageInfo.Race != Race.None && _personageInfo.UnSpendedStatPoints == 0 && !string.IsNullOrEmpty(_personageInfo.Name))
+        if(_personageInfo.UnSpendedStatPoints == 0 && !string.IsNullOrEmpty(_personageInfo.Name))
         {
             ApplyBonuses();
+            _personageInfo.PersonagePortrait = PersonagePortrait; //Заглушка
             CRUD.CreatePersonageInfo(_personageInfo);
             GameData.PlayerPersonage = _personageInfo;
             GameData.NewGameSave();

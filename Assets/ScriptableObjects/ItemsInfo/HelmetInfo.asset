@@ -17,4 +17,5 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 27a40b2d2f0a41a4189299646563cd32, type: 3}
   Prefab: {fileID: 2842969916496634680, guid: b2810691e7fc2744b8c06d1a7b00c233, type: 3}
   ArmorClass: 2
-  wearableBodyPart: 0
+  WearableBodyPart: 0
+  ArmorWeight: 1

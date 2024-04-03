@@ -12,6 +12,8 @@ public static class GameData
 
     public static RaceInfo[] RaceInfos;
 
+    public const float MaxUnarmedAttackDistance = 1;
+
     public static void NewGameSave()
     {
         GameSaveInfo gameSave = new GameSaveInfo()
