@@ -12,9 +12,12 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameObject Player;
+    public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
+    public List<PlayerController> PlayerControllers;
     public Personage PlayerPersonage => PlayerController.Personage;
+    public PersonageController[] PersonageControllers;
     
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
@@ -31,12 +34,19 @@ public class GameManager : MonoBehaviour
         SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
         DialogueParser.Instance.Setup();
         PlayerController = Player.GetComponent<PlayerController>();
-        PlayerController.Setup();
+        PlayerControllers = new() { PlayerController }; // TODO: More player controllers
+        PersonageControllers = Personages.GetComponentsInChildren<PersonageController>();
+
+        foreach(var controller in PersonageControllers)
+        {
+            controller.Setup();
+        }
+
         PlayerPersonage.Setup(GameData.PlayerPersonage);
         SetActivePersonage(PlayerPersonage);
     }
 
-    public void ChangeGameMode(GameMode gameMode) //TODO: rename
+    public void ChangeGameMode(GameMode gameMode)
     {
         if (_gameMode != gameMode)
         {
@@ -106,8 +116,8 @@ public class GameManager : MonoBehaviour
         {
             if (PlayerController.ActiveAction == ActionType.Attack)
             {
-                float attackDistance = PlayerController.WeaponInfo ? 
-                    PlayerController.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
+                WeaponInfo weaponInfo = PlayerController.WeaponInfo;
+                float attackDistance = weaponInfo ? weaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
                 PlayerController.InteractWith(personage.gameObject, attackDistance, Attack, personage);
             }
             else if(personage.TryGetComponent(out DialogueActor dialogueActor))

@@ -9,6 +9,7 @@ public class WeaponInfo : ItemInfo
     public int MaxDamage;
     public bool IsTwoHandled;
     public Characteristics usingCharacteristic;
+    public DamageType DamageType;
 
     public override ItemType ItemType => ItemType.Weapon;
 

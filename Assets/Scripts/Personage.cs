@@ -9,6 +9,7 @@ public class Personage : MonoBehaviour
     public List<Item> Armor;
     public BattleTeam battleTeam;
     public PersonageInfo PersonageInfo;
+    [HideInInspector] public PersonageController Controller;
 
     public int ArmorClass {
         get
@@ -38,6 +39,7 @@ public class Personage : MonoBehaviour
 
     private void Awake()
     {
+        Controller = GetComponent<PersonageController>();
         if(PersonageInfo != null)
         {
             PersonageInfo.Setup();
@@ -55,7 +57,7 @@ public class Personage : MonoBehaviour
     public void GetDamage(int damage, DamageType damageType)
     {
         float blockedDamage = 0;
-        if(PersonageInfo.Race == Race.Elf)
+        if(PersonageInfo.Race == Race.Elf && damageType == DamageType.Magic)
         {
             blockedDamage = Mathf.Max(1f, damage * 0.15f);
         }

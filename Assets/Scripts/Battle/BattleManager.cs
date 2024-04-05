@@ -20,8 +20,8 @@ public static class BattleManager
         _activePersonageIndex = 0;
         SetupActivePersonage();
         GameManager.Instance.ChangeGameMode(GameMode.Battle);
-        BattlePanel.Instance.gameObject.SetActive(true);
-        BattlePanel.Instance.Setup(_participantPersonages);
+        BattleUIManager.Instance.gameObject.SetActive(true);
+        BattleUIManager.Instance.Setup(_participantPersonages);
     }
 
     private static void SetInitiative()
@@ -37,7 +37,7 @@ public static class BattleManager
 
     public static void SetNextActivePersonage()
     {
-        BattlePanel.Instance.SetNextActivePersonage();
+        BattleUIManager.Instance.SetNextActivePersonage();
         if (_activePersonageIndex < _participantPersonages.Length)
         {
             _activePersonageIndex++;
@@ -55,19 +55,7 @@ public static class BattleManager
         HasAction = true;
     }
 
-    public static bool CanAttack(this Personage attacker, Personage target, WeaponInfo weapon)
-    {
-        if(HasAction && Vector3.Distance(attacker.transform.position, target.transform.position) <= weapon.MaxAttackDistance)
-        {
-            if(AttackRaycast(attacker.transform.position, target.transform.position, weapon.MaxAttackDistance, target))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
+    public static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
     {
         Ray ray = new Ray(attackerPos, (targetPos - attackerPos).normalized);
         if(Physics.Raycast(ray, out RaycastHit hit, maxDistance)
@@ -83,8 +71,21 @@ public static class BattleManager
 
     public static void EndBattle()
     {
-        BattlePanel.Instance.OnBattleEnd();
+        BattleUIManager.Instance.OnBattleEnd();
         _participantPersonages = null;
         _personagesInitiative.Clear();
+    }
+
+    public static bool TryEndTurn()
+    {
+        if (ActivePersonage.Controller.IsFree)
+        {
+            SetNextActivePersonage();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

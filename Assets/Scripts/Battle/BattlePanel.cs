@@ -3,18 +3,10 @@ using UnityEngine;
 
 public class BattlePanel : MonoBehaviour
 {
-    public static BattlePanel Instance;
-
     public BattlePortraitController PortraitPrefab;
 
     private readonly List<BattlePortraitController> _portraitControllers = new();
     private int _activePortraitIndex;
-
-    private void Awake()
-    {
-        Instance = this;
-        gameObject.SetActive(false);
-    }
 
     public void Setup(Personage[] personages)
     {
@@ -51,6 +43,5 @@ public class BattlePanel : MonoBehaviour
             Destroy(controller);
         }
         _portraitControllers.Clear();
-        gameObject.SetActive(false);
     }
 }
