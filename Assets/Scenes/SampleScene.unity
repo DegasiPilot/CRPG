@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: cb20c710b0721ef4d88cabbec2aa4da7, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.4693504, g: 0.5885913, b: 0.5951542, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2133,7 +2133,7 @@ Transform:
   m_GameObject: {fileID: 289038993}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250.548, y: 0, z: 264.733}
+  m_LocalPosition: {x: 241.66, y: 6.01, z: 261.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2218,7 +2218,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 683de28a53931644ab836de7b832e205, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2257,7 +2257,7 @@ Transform:
   m_GameObject: {fileID: 307605216}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 249.669, y: 0.59, z: 267.36374}
+  m_LocalPosition: {x: 249.62, y: 0.59, z: 267.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4132,6 +4132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 705507995}
   - component: {fileID: 705507994}
+  - component: {fileID: 705507996}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -4216,6 +4217,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &705507996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705507993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1001 &718947260
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7741,7 +7765,7 @@ Terrain:
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -7978,7 +8002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: 0
-  m_CollectObjects: 0
+  m_CollectObjects: 2
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
@@ -10746,15 +10770,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 37235431491349573, guid: 2a498023343478c46870025ecddb2495, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 250.5
+      value: 243.409
       objectReference: {fileID: 0}
     - target: {fileID: 37235431491349573, guid: 2a498023343478c46870025ecddb2495, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.15
+      value: 2.58
       objectReference: {fileID: 0}
     - target: {fileID: 37235431491349573, guid: 2a498023343478c46870025ecddb2495, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 264.5
+      value: 261.805
       objectReference: {fileID: 0}
     - target: {fileID: 37235431491349573, guid: 2a498023343478c46870025ecddb2495, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10916,7 +10940,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2050220313455351826, guid: b2810691e7fc2744b8c06d1a7b00c233, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.526
+      value: 0.247
       objectReference: {fileID: 0}
     - target: {fileID: 2050220313455351826, guid: b2810691e7fc2744b8c06d1a7b00c233, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10973,7 +10997,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 250.051
+      value: 249.969
       objectReference: {fileID: 0}
     - target: {fileID: 8367354243428640676, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
       propertyPath: m_LocalPosition.y
