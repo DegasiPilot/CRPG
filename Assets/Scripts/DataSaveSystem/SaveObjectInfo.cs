@@ -9,6 +9,5 @@
     public int RotZ;
 
     public bool IsActive;
-    public bool IsInInventory;
-    public bool IsEquiped;
+    public bool IsPickuped;
 }

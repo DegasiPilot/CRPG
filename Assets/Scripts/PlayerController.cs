@@ -8,6 +8,8 @@ public class PlayerController : PersonageController
     public LineRenderer AccesableLineRenderer;
     public LineRenderer UnaccesableLineRenderer;
 
+    public GameObject Inventory;
+
     public void OnGroundPressedInFree(Vector3 hitPoint)
     {
         if (!IsFree) return;
@@ -90,5 +92,22 @@ public class PlayerController : PersonageController
     {
         base.SetDefaultAction();
         CanvasManager.Instance.ForceChangeAction(_defaultAction);
+    }
+
+    public void PickupItem(Item item)
+    {
+        GameData.Inventory.Add(item);
+        item.transform.SetParent(Inventory.transform);
+        item.gameObject.SetActive(false);
+        item.IsInInventory = true;
+    }
+
+    public void DropItem(Item item)
+    {
+        GameData.Inventory.Remove(item);
+        item.transform.SetParent(null);
+        item.transform.position = gameObject.transform.position + gameObject.transform.forward;
+        item.gameObject.SetActive(true);
+        item.IsInInventory = false;
     }
 }

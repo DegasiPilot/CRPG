@@ -5,14 +5,14 @@ using System.Linq;
 [RequireComponent(typeof(NavMeshAgent))]
 public abstract class PersonageController : MonoBehaviour
 {
-    public delegate void Interact(GameObject gameObject, Component interactComponent);
+    public delegate void Interact(Component interactComponent);
 
     public float Speed;
 
     public ActionType ActiveAction => _activeAction;
     public Personage Personage => _personage;
-    public WeaponInfo WeaponInfo => _personage.Weapon?.ItemInfo as WeaponInfo;
-    public bool IsFree => _isGrounded && (GameManager.Instance.GameMode != GameMode.Battle || !_controller.hasPath);
+    public float MaxAttackDistance => _personage.WeaponInfo != null ? _personage.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
+    public bool IsFree => _isGrounded && (GameManager.Instance.GameMode != GameMode.Battle || (!_controller.pathPending && !_controller.hasPath) || _controller.remainingDistance < _controller.stoppingDistance);
 
     public int ArmorClass
     {
@@ -36,12 +36,13 @@ public abstract class PersonageController : MonoBehaviour
         }
     }
 
+    private WeaponInfo WeaponInfo => _personage.WeaponInfo;
+
     protected NavMeshAgent _controller;
     protected Rigidbody _rigidBody;
     protected Personage _personage;
 
     protected Interact _interact;
-    protected GameObject _interactObject;
     protected Component _interactComponent;
 
     protected bool _isGrounded = true;
@@ -65,11 +66,10 @@ public abstract class PersonageController : MonoBehaviour
 
     protected void Update()
     {
-        if (_interact != null && _interactObject && _interactComponent && (!_controller.hasPath || _controller.remainingDistance <= _controller.stoppingDistance))
+        if (_interact != null && _interactComponent && (!_controller.hasPath || _controller.remainingDistance <= _controller.stoppingDistance))
         {
-            _interact.Invoke(_interactObject, _interactComponent);
+            _interact.Invoke(_interactComponent);
             _interact = null;
-            _interactObject = null;
             _interactComponent = null;
             _controller.ResetPath();
         }
@@ -111,37 +111,19 @@ public abstract class PersonageController : MonoBehaviour
         _controller.SetDestination(position);
         _controller.stoppingDistance = maxTargetOffset;
         _interact = null;
-        _interactObject = null;
     }
 
     public void ForceStop()
     {
         _controller.ResetPath();
         _interact = null;
-        _interactObject = null;
     }
 
-    public void InteractWith(GameObject interactObject, float maxInteractDistance, Interact interact, Component interactComponent)
+    public void InteractWith(float maxInteractDistance, Interact interact, Component interactComponent)
     {
-        GoToPosition(interactObject.transform.position, maxInteractDistance);
+        GoToPosition(interactComponent.transform.position, maxInteractDistance);
         _interact = interact;
-        _interactObject = interactObject;
         _interactComponent = interactComponent;
-    }
-
-    public void PickupItem(Item item)
-    {
-        GameData.Inventory.Add(item);
-        item.gameObject.SetActive(false);
-        item.IsInInventory = true;
-    }
-
-    public void DropItem(Item item)
-    {
-        GameData.Inventory.Remove(item);
-        item.transform.position = gameObject.transform.position + gameObject.transform.forward;
-        item.gameObject.SetActive(true);
-        item.IsInInventory = false;
     }
 
     public void JumpToPosition(Vector3 target)

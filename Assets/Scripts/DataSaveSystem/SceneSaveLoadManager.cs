@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 internal class SceneSaveLoadManager : MonoBehaviour
 {
     public static SceneSaveLoadManager Instance;
 
-    public List<ItemInfo> Itemsinfos;
     public List<SaveableGameobject> ObjectsToSave;
+    public Vector3 StartPlayerPosition;
+    public Vector3 StartPlayerRotation;
 
     private void Awake()
     {
@@ -26,28 +26,6 @@ internal class SceneSaveLoadManager : MonoBehaviour
         for (int i = 0; i < Math.Min(ObjectsToSave.Count, objectInfos.Count); i++)
         {
             ObjectsToSave[i].LoadSaveInfo(objectInfos[i]);
-        }
-
-        List<Item> ItemsInLevel = new ();
-        foreach(SaveableGameobject SGO in ObjectsToSave)
-        {
-            if(SGO.TryGetComponent(out Item item))
-            {
-                ItemsInLevel.Add(item);
-            }
-        }
-
-        for (int i = 0; i < GameData.InventoryAsNames.Length; i++)
-        {
-            string itemName = GameData.InventoryAsNames[i];
-            if (ItemsInLevel.Exists(x => x.IsInInventory && x.ItemInfo.Name == itemName))
-            {
-                GameData.Inventory.Add(ItemsInLevel.First(x => x.IsInInventory && x.ItemInfo.Name == itemName));
-            }
-            else
-            {
-                GameObject go = Instantiate(Itemsinfos.First(x => x.Name == itemName).Prefab);
-            }
         }
     }
 

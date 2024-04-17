@@ -15,6 +15,15 @@ public class SaveableGameobject : MonoBehaviour
 
     public SaveObjectInfo GetSaveInfo()
     {
+        if (itemComponent != null)
+        {
+            if (itemComponent.IsInInventory)
+            {
+                SaveObjectInfo destroyedInfo = new SaveObjectInfo();
+                destroyedInfo.IsPickuped = itemComponent.IsInInventory;
+                return destroyedInfo;
+            }
+        }
         SaveObjectInfo info = new SaveObjectInfo()
         {
             PosX = transform.position.x,
@@ -25,24 +34,25 @@ public class SaveableGameobject : MonoBehaviour
             RotZ = (int)transform.eulerAngles.z,
             IsActive = isActiveAndEnabled,
         };
-        if(itemComponent != null)
+        if (itemComponent != null)
         {
-            info.IsInInventory = itemComponent.IsInInventory;
-            info.IsEquiped = itemComponent.IsEquiped;
+            info.IsPickuped = false;
         }
         return info;
     }
 
     public void LoadSaveInfo(SaveObjectInfo info)
     {
+        if (itemComponent != null)
+        {
+            if (info.IsPickuped)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
         transform.position.Set(info.PosX, info.PosY, info.PosZ);
         transform.eulerAngles = new Vector3(info.RotX, info.RotY, info.RotZ);
         gameObject.SetActive(info.IsActive);
-
-        if(itemComponent != null)
-        {
-            itemComponent.IsInInventory = info.IsInInventory;
-            itemComponent.IsEquiped = info.IsEquiped;
-        }
     }
 }

@@ -30,6 +30,17 @@ public class PersonageInfo : ScriptableObject
     public byte[] ImageBytes { get; set; }
     [BsonIgnore] public Texture2D PersonagePortrait;
     public Color PersonagePortraitColor = Color.white;
+    public Gender Gender;
+    public AppearanceStruct Appearance;
+
+    public struct AppearanceStruct
+    {
+        public int HairIndex;
+        public int BeardIndex;
+        public Color HairsColor;
+        public int FaceIndex;
+        public Color SkinColor;
+    }
 
     public void Setup()
     {

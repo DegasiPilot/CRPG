@@ -38,7 +38,7 @@ public static class BattleManager
     public static void SetNextActivePersonage()
     {
         BattleUIManager.Instance.SetNextActivePersonage();
-        if (_activePersonageIndex < _participantPersonages.Length)
+        if (_activePersonageIndex < _participantPersonages.Length - 1)
         {
             _activePersonageIndex++;
         }
@@ -53,6 +53,23 @@ public static class BattleManager
     {
         RemainMovement = ActivePersonage.PersonageInfo.Speed;
         HasAction = true;
+        if (ActivePersonage.battleTeam == BattleTeam.Enemies)
+        {
+            (ActivePersonage.Controller as NPCController).MakeTurnInBattle();
+        }
+    }
+
+    public static bool CanAttack(Personage personage)
+    {
+        if (HasAction &&
+            AttackRaycast(ActivePersonage.transform.position, personage.transform.position, ActivePersonage.Controller.MaxAttackDistance, personage))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
@@ -78,6 +95,7 @@ public static class BattleManager
 
     public static bool TryEndTurn()
     {
+        Debug.Log(ActivePersonage.Controller.IsFree);
         if (ActivePersonage.Controller.IsFree)
         {
             SetNextActivePersonage();

@@ -1,10 +1,9 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using UnityEngine;
+﻿using UnityEngine;
 
-[BsonKnownTypes(typeof(WeaponInfo),typeof(ArmorInfo))]
 [CreateAssetMenu(fileName = "NewItemInfo", menuName = "ScriptableObjects/ItemInfo")]
 public class ItemInfo : ScriptableObject
 {
+    public int Id;
     public string Name;
     public string ShortDescription;
     public Sprite Icon;

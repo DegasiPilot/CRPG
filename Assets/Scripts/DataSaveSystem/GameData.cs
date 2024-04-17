@@ -1,52 +1,41 @@
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using MongoDB.Bson;
 using UnityEngine;
 
 public static class GameData
 {
-    public static PersonageInfo PlayerPersonage;
+    public static PersonageInfo PlayerPersonageInfo;
     public static SceneSaveInfo SceneSaveInfo;
-    public static List<Item> Inventory = new List<Item>();
-    public static string[] InventoryAsNames { get; private set; }
-
+    public static List<Item> Inventory;
     public static RaceInfo[] RaceInfos;
+    public static PlayerCustomizer PlayerCustomizer;
+    public static PlayerController PlayerController;
 
-    public const float MaxUnarmedAttackDistance = 1;
+    public const float MaxUnarmedAttackDistance = 2;
 
     public static void NewGameSave()
     {
         GameSaveInfo gameSave = new GameSaveInfo()
         {
             DateTime = BsonDateTime.Create(DateTime.Now),
-            MainPersonageId = PlayerPersonage.Id,
+            MainPersonageId = PlayerPersonageInfo.Id,
             SceneSaveInfo = SceneSaveInfo,
         };
 
-        gameSave.InventoryItemsNames = new string[Inventory.Count];
-        for(int i = 0; i < Inventory.Count; i++)
+        if (Inventory != null)
         {
-            gameSave.InventoryItemsNames[i] = Inventory[i].ItemInfo.Name;
+            gameSave.InventoryItems = new GameSaveInfo.InventoryItem[Inventory.Count];
+            for (int i = 0; i < Inventory.Count; i++)
+            {
+                gameSave.InventoryItems[i] = new GameSaveInfo.InventoryItem()
+                {
+                    ItemId = Inventory[i].ItemInfo.Id,
+                    IsEquiped = Inventory[i].IsEquiped,
+                };
+            }
         }
 
         CRUD.CreateGameSaveInfo(gameSave);
-    }
-
-    public static void LoadLastGameSave()
-    {
-        GameSaveInfo gameSave = CRUD.GetLastGameSave();
-        LoadGameSave(gameSave);
-    }
-
-    public static void LoadGameSave(GameSaveInfo gameSave)
-    {
-        PlayerPersonage = CRUD.GetPersonageInfo(gameSave.MainPersonageId);
-        SceneSaveInfo = gameSave.SceneSaveInfo;
-        InventoryAsNames = new string[gameSave.InventoryItemsNames.Length];
-        for (int i = 0; i < gameSave.InventoryItemsNames.Length; i++)
-        {
-            InventoryAsNames[i] = gameSave.InventoryItemsNames[i];
-        }
-        Inventory = new List<Item>(gameSave.InventoryItemsNames.Length);
     }
 }

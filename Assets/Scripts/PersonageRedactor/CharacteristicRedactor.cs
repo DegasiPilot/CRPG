@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,55 +6,56 @@ public class CharacteristicRedactor : MonoBehaviour
 {
     public Characteristics Characteristic;
 
-    private Button _minusBtn;
-    private Text _amontText;
-    private Button _plusBtn;
+    private ControlGroup statControl;
     private Text _bonusText;
 
     private PersonageCreator _creator => PersonageCreator.Instance;
 
     public void Setup()
     {
-        var buttons = GetComponentsInChildren<Button>();
-        _minusBtn = buttons[0];
-        _plusBtn = buttons[1];
-        _minusBtn.onClick.AddListener(RemovePoint);
-        _plusBtn.onClick.AddListener(AddPoint);
         var texts = GetComponentsInChildren<Text>();
-        _amontText = texts.First(x => x.name == "Amount");
         _bonusText = texts.First(x => x.name == "Bonus");
-        _creator.OnNoMoreStatPoints.AddListener(() => _plusBtn.interactable = false);
-        _creator.OnGetStatPoints.AddListener(TryActivatePlusButton);
+        statControl = GetComponentInChildren<ControlGroup>();
+        statControl.Setup(AddPoint, RemovePoint, CanAddMore, CanRemoveMore, GetAmount);
+        _creator.OnNoMoreStatPoints.AddListener(statControl.DeactivatePlusButton);
+        _creator.OnGetStatPoints.AddListener(statControl.TryActivatePlusButton);
     }
 
     private void AddPoint()
     {
         _creator.AddStatPoint(Characteristic);
-        _minusBtn.interactable = true;
-        _plusBtn.interactable = _creator.CanAddMore(Characteristic);
-        UpdateAmount();
     }
 
     private void RemovePoint()
     {
         _creator.RemoveStatPoint(Characteristic);
-        _minusBtn.interactable = _creator.CanRemoveMore(Characteristic);
-        _plusBtn.interactable = true;
-        UpdateAmount();
     }
 
-    private void TryActivatePlusButton()
+    private bool CanAddMore()
     {
-        if(_creator.CanAddMore(Characteristic))
-        {
-            _plusBtn.interactable = true;
-        }
+        return _creator.CanAddMore(Characteristic);
+    }
+
+    private bool CanRemoveMore()
+    {
+        return _creator.CanRemoveMore(Characteristic);
     }
 
     public void UpdateAmount()
     {
+        statControl.UpdateAmount();
         var statValue = _creator.GetStatValue(Characteristic);
-        _amontText.text = $"{statValue.Item1 + statValue.Item2}";
+        UpdateBonus(statValue);
+    }
+
+    public int GetAmount()
+    {
+        var statValue = _creator.GetStatValue(Characteristic);
+        return statValue.Item1 + statValue.Item2;
+    }
+
+    public void UpdateBonus((int,int) statValue)
+    {
         if (statValue.Item2 > 0)
         {
             _bonusText.enabled = true;

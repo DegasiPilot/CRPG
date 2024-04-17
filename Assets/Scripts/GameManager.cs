@@ -11,11 +11,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameObject Player;
     public GameObject Personages;
 
     [HideInInspector] public PlayerController PlayerController;
-    public List<PlayerController> PlayerControllers;
+    [HideInInspector] public List<PlayerController> PlayerControllers;
     public Personage PlayerPersonage => PlayerController.Personage;
     public PersonageController[] PersonageControllers;
     
@@ -33,16 +32,19 @@ public class GameManager : MonoBehaviour
     {
         SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
         DialogueParser.Instance.Setup();
-        PlayerController = Player.GetComponent<PlayerController>();
+        PlayerController = GameData.PlayerController;
         PlayerControllers = new() { PlayerController }; // TODO: More player controllers
         PersonageControllers = Personages.GetComponentsInChildren<PersonageController>();
 
         foreach(var controller in PersonageControllers)
         {
+            if(controller == PlayerController)
+            {
+                continue;
+            }
             controller.Setup();
         }
 
-        PlayerPersonage.Setup(GameData.PlayerPersonage);
         SetActivePersonage(PlayerPersonage);
     }
 
@@ -72,7 +74,6 @@ public class GameManager : MonoBehaviour
     {
         if (_currentComponentUnderPointer != personage)
         {
-            Debug.Log(_gameMode.ToString());
             if (_gameMode == GameMode.Free)
             {
                 if (PlayerController.ActiveAction == ActionType.Attack)
@@ -103,10 +104,21 @@ public class GameManager : MonoBehaviour
     {
         PlayerController.GetAttackInfo(personage, out int bonus, out int difficulty, out Characteristics characteristic);
         StringBuilder attackInfoBuider = new();
+        float distance = Vector3.Distance(PlayerController.transform.position, personage.transform.position);
+        if (distance > PlayerController.MaxAttackDistance)
+        {
+            attackInfoBuider.AppendLine("Цель слишком далеко!");
+        }
+        else if(!BattleManager.AttackRaycast(PlayerController.transform.position, personage.transform.position, PlayerController.MaxAttackDistance, personage))
+        {
+            attackInfoBuider.AppendLine("Цель за укрытием");
+        }
+        attackInfoBuider.AppendLine($"Расстояние до цели {(int)distance}");
         attackInfoBuider.Append(bonus >= 0 ? "Бонус от " : "Штраф от ");
         attackInfoBuider.Append(Translator.Translate(characteristic));
         attackInfoBuider.AppendLine(bonus >= 0 ? $" +{bonus}" : $" {bonus}");
-        attackInfoBuider.Append($"Броня: {difficulty}");
+        attackInfoBuider.AppendLine($"Броня: {difficulty}");
+        attackInfoBuider.AppendLine($"Шанс попадания {(20 + bonus - difficulty)*100/20}%");
         CanvasManager.Instance.ShowInfoUnderPosition(attackInfoBuider.ToString(), personage.transform.position);
     }
 
@@ -116,13 +128,20 @@ public class GameManager : MonoBehaviour
         {
             if (PlayerController.ActiveAction == ActionType.Attack)
             {
-                WeaponInfo weaponInfo = PlayerController.WeaponInfo;
-                float attackDistance = weaponInfo ? weaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
-                PlayerController.InteractWith(personage.gameObject, attackDistance, Attack, personage);
+                float attackDistance = PlayerController.MaxAttackDistance;
+                PlayerController.InteractWith(attackDistance, AttackInteract, personage);
             }
             else if(personage.TryGetComponent(out DialogueActor dialogueActor))
             {
-                PlayerController.InteractWith(dialogueActor.gameObject, dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+                PlayerController.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+            }
+        }
+        else if(_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
+        {
+            if (BattleManager.CanAttack(personage))
+            {
+                BattleManager.HasAction = false;
+                PlayerController.Attack(personage);
             }
         }
     }
@@ -138,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     public void OnItemPressed(Item item)
     {
-        PlayerController.InteractWith(item.gameObject, 1, ItemInteract, item);
+        PlayerController.InteractWith(1, ItemInteract, item);
     }
 
     public void NothingUnderPointer()
@@ -147,24 +166,25 @@ public class GameManager : MonoBehaviour
         _currentComponentUnderPointer = null;
     }
 
-    public void StartDialogue(GameObject focusObject, Component component)
+    public void StartDialogue(Component component)
     {
         DialogueParser.Instance.SetSecondDialogueActor(component as DialogueActor);
-        CameraController.Instance.FocusOn(focusObject);
+        CameraController.Instance.FocusOn(component.gameObject);
         DialogueParser.Instance.TryStartDialogue();
     }
 
-    public void ItemInteract(GameObject itemObject, Component component)
+    public void ItemInteract(Component component)
     {
         PlayerController.PickupItem(component as Item);
     }
 
-    public void Attack(GameObject attackingObject, Component component)
+    public void AttackInteract(Component component)
     {
         PlayerController.Attack(component as Personage);
         if(_gameMode != GameMode.Battle)
         {
-            BattleManager.StartBattle(new Personage[2] { PlayerPersonage, component as Personage}); // TODO: add more personages in battle
+            (component as Personage).battleTeam = BattleTeam.Enemies;
+            BattleManager.StartBattle(new Personage[2] { PlayerPersonage, component as Personage}); // TODO: add more 
         }
     }
 

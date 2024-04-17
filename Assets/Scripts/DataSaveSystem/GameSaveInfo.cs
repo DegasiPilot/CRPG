@@ -9,5 +9,11 @@ public class GameSaveInfo
 
     public SceneSaveInfo SceneSaveInfo { get; set; }
 
-    public string[] InventoryItemsNames { get; set; }
+    public InventoryItem[] InventoryItems { get; set; }
+
+    public struct InventoryItem
+    {
+        public int ItemId;
+        public bool IsEquiped;
+    }
 }

@@ -5,11 +5,15 @@ using System.Linq;
 
 public class Personage : MonoBehaviour
 {
+    public Material MainMaterial;
+    public Transform HitPoint;
     public Item Weapon;
     public List<Item> Armor;
     public BattleTeam battleTeam;
     public PersonageInfo PersonageInfo;
     [HideInInspector] public PersonageController Controller;
+
+    public WeaponInfo WeaponInfo => Weapon?.ItemInfo as WeaponInfo;
 
     public int ArmorClass {
         get
