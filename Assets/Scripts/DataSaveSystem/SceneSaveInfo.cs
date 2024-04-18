@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using UnityEngine;
 public class SceneSaveInfo
 {
-    public List<SaveObjectInfo> saveObjectInfos;
+    public SaveObjectInfo[] saveObjectInfos;
+    public Vector3 PlayerPos;
+    public Vector3 PlayerRot;
 }

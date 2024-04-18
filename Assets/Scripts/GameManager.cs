@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
             }
             else if(_gameMode == GameMode.Battle)
             {
-                if(personage.battleTeam == BattleTeam.Allies)
+                if(personage.BattleTeam == BattleTeam.Allies)
                 {
                     CanvasManager.Instance.ShowInfoUnderPosition(personage.PersonageInfo.Name, personage.transform.position);
                 }
@@ -183,7 +183,7 @@ public class GameManager : MonoBehaviour
         PlayerController.Attack(component as Personage);
         if(_gameMode != GameMode.Battle)
         {
-            (component as Personage).battleTeam = BattleTeam.Enemies;
+            (component as Personage).BattleTeam = BattleTeam.Enemies;
             BattleManager.StartBattle(new Personage[2] { PlayerPersonage, component as Personage}); // TODO: add more 
         }
     }
@@ -208,6 +208,8 @@ public class GameManager : MonoBehaviour
 
     public void ExitToMainMenu()
     {
+        Destroy(GameData.PlayerController.Inventory);
+        Destroy(GameData.PlayerController.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
 

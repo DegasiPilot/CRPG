@@ -24,7 +24,7 @@ public class NPCController : PersonageController
         _obstacleComponent.enabled = false;
         _controller.enabled = true;
         Personage target;
-        if (Personage.battleTeam == BattleTeam.Enemies)
+        if (Personage.BattleTeam == BattleTeam.Enemies)
         {
             target = GameManager.Instance.PlayerPersonage; //TODO: replace to nearest player;
         }

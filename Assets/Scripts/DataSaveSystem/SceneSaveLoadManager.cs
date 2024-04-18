@@ -9,6 +9,7 @@ internal class SceneSaveLoadManager : MonoBehaviour
     public List<SaveableGameobject> ObjectsToSave;
     public Vector3 StartPlayerPosition;
     public Vector3 StartPlayerRotation;
+    public Transform CameraCenter;
 
     private void Awake()
     {
@@ -17,16 +18,25 @@ internal class SceneSaveLoadManager : MonoBehaviour
 
     public void LoadSceneFromSave(SceneSaveInfo sceneSaveInfo)
     {
-        if(sceneSaveInfo == null || sceneSaveInfo.saveObjectInfos == null)
+        if(sceneSaveInfo == null)
         {
+            GameData.PlayerController.transform.position = StartPlayerPosition;
+            GameData.PlayerController.transform.eulerAngles = StartPlayerRotation;
             return;
         }
 
-        List<SaveObjectInfo> objectInfos = sceneSaveInfo.saveObjectInfos;
-        for (int i = 0; i < Math.Min(ObjectsToSave.Count, objectInfos.Count); i++)
+        if (sceneSaveInfo.saveObjectInfos != null)
         {
-            ObjectsToSave[i].LoadSaveInfo(objectInfos[i]);
+            SaveObjectInfo[] objectInfos = sceneSaveInfo.saveObjectInfos;
+            for (int i = 0; i < Math.Min(ObjectsToSave.Count, objectInfos.Length); i++)
+            {
+                ObjectsToSave[i].LoadSaveInfo(objectInfos[i]);
+            }
         }
+        GameData.PlayerController.SetPositonAndRotation(sceneSaveInfo.PlayerPos, sceneSaveInfo.PlayerRot);
+        Vector3 cameraPos = sceneSaveInfo.PlayerPos;
+        cameraPos.y = 0;
+        CameraCenter.position = cameraPos;
     }
 
     public void SaveScene()
@@ -37,11 +47,13 @@ internal class SceneSaveLoadManager : MonoBehaviour
     public SceneSaveInfo GetSceneSave()
     {
         SceneSaveInfo sceneInfo = new SceneSaveInfo();
-        sceneInfo.saveObjectInfos = new List<SaveObjectInfo>(ObjectsToSave.Count);
+        sceneInfo.saveObjectInfos = new SaveObjectInfo[ObjectsToSave.Count];
         for (int i = 0; i < ObjectsToSave.Count; i++)
         {
-            sceneInfo.saveObjectInfos.Add(ObjectsToSave[i].GetSaveInfo());
+            sceneInfo.saveObjectInfos[i] = ObjectsToSave[i].GetSaveInfo();
         }
+        sceneInfo.PlayerPos = GameData.PlayerController.transform.position + Vector3.up;
+        sceneInfo.PlayerRot = GameData.PlayerController.transform.eulerAngles;
         return sceneInfo;
     }
 }

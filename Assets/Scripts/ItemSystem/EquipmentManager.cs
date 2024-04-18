@@ -6,16 +6,17 @@ internal class EquipmentManager : MonoBehaviour
 {
     public static EquipmentManager Instance { get; private set; }
 
-    public Item Weapon => _weapon;
-
     [SerializeField] private EquipmentSlot HealmetSlot;
     [SerializeField] private EquipmentSlot BodySlot;
     [SerializeField] private EquipmentSlot LeftHandSlot;
     [SerializeField] private EquipmentSlot RightHandSlot;
     [SerializeField] private EquipmentSlot BootsSlot;
 
-    private Item _weapon;
-    private readonly HashSet<Item> Armor = new();
+    private Item _weapon { 
+        get => GameData.PlayerController.Personage.Weapon;
+        set => GameData.PlayerController.Personage.Weapon = value;
+    }
+    private List<Item> _armor => GameData.PlayerController.Personage.Armor;
 
     private void Awake()
     {
@@ -29,7 +30,6 @@ internal class EquipmentManager : MonoBehaviour
         {
             if (item.IsEquiped)
             {
-                item.IsEquiped = false;
                 EquipItem(item, out _);
             }
         }
@@ -37,7 +37,7 @@ internal class EquipmentManager : MonoBehaviour
 
     public (int ArmorClass,ArmorWeight maxArmorWeight) GetArmorInfo()
     {
-        var armorInfos = from armor in Armor select (armor.ItemInfo as ArmorInfo);
+        var armorInfos = from armor in _armor select (armor.ItemInfo as ArmorInfo);
         (int ArmorClass, ArmorWeight ArmorWeight) info;
         info.ArmorClass = (from armorInfo in armorInfos select armorInfo.ArmorClass).Sum();
         info.ArmorWeight = (from armorInfo in armorInfos select armorInfo.ArmorWeight).Max();
@@ -57,13 +57,17 @@ internal class EquipmentManager : MonoBehaviour
         else if (itemType == ItemType.Armor)
         {
             EquipArmor(item, undressedItems);
-            Armor.Add(item);
+            _armor.Add(item);
         }
-        Armor.ExceptWith(undressedItems);
+        foreach(Item armor in _armor)
+        {
+            _armor.Remove(armor);
+        }
     }
 
     public void EquipWeapon(Item item, List<Item> undressedItems)
     {
+        _weapon = item;
         WeaponInfo newWeaponInfo = item.ItemInfo as WeaponInfo;
         if (RightHandSlot.Item != null && (RightHandSlot.Item.ItemInfo as WeaponInfo).IsTwoHandled)
         {
@@ -87,6 +91,7 @@ internal class EquipmentManager : MonoBehaviour
 
     public void EquipArmor(Item item, List<Item> undressedItems)
     {
+        _armor.Add(item);
         Item undressedArmor = null;
         switch ((item.ItemInfo as ArmorInfo).WearableBodyPart)
         {
@@ -122,6 +127,14 @@ internal class EquipmentManager : MonoBehaviour
         {
             uneqipedItem = slot.Item;
             slot.UnequipItem();
+        }
+        if(uneqipedItem.ItemInfo.ItemType == ItemType.Weapon)
+        {
+            _weapon = null;
+        }
+        else
+        {
+            _armor.Remove(uneqipedItem);
         }
     }
 }

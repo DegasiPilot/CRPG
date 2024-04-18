@@ -53,7 +53,7 @@ public static class BattleManager
     {
         RemainMovement = ActivePersonage.PersonageInfo.Speed;
         HasAction = true;
-        if (ActivePersonage.battleTeam == BattleTeam.Enemies)
+        if (ActivePersonage.BattleTeam == BattleTeam.Enemies)
         {
             (ActivePersonage.Controller as NPCController).MakeTurnInBattle();
         }

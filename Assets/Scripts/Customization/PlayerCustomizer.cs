@@ -44,7 +44,15 @@ public class PlayerCustomizer : MonoBehaviour
         Faces.ForEach(x => x.SetActive(false));
         Faces[_appearance.FaceIndex].SetActive(true);
         ApplyPart(_appearance.HairIndex, Hairs);
-        if (_gender == Gender.Male) ApplyPart(_appearance.BeardIndex, Beards);
+        if (_gender == Gender.Male) 
+        {
+            if (MaleObject != null) Destroy(MaleObject);
+            ApplyPart(_appearance.BeardIndex, Beards); 
+        }
+        else
+        {
+            if (FemaleObject != null) Destroy(FemaleObject);
+        }
     }
 
     public void ChangeHairColor(Color color)

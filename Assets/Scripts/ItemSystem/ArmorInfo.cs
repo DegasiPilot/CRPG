@@ -3,6 +3,7 @@
 [CreateAssetMenu(fileName = "NewArmorInfo", menuName = "ScriptableObjects/ArmorInfo")]
 internal class ArmorInfo : ItemInfo
 {
+    public int SkinIndex;
     public int ArmorClass;
     public BodyPart WearableBodyPart;
     public ArmorWeight ArmorWeight;

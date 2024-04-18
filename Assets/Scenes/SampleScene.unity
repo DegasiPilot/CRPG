@@ -2133,7 +2133,7 @@ Transform:
   m_GameObject: {fileID: 289038993}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 243.409, y: 0, z: 261.805}
+  m_LocalPosition: {x: 246, y: 0, z: 253}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4006,7 +4006,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 0.81509435, a: 1}
-  m_Intensity: 1.4
+  m_Intensity: 1.3
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -4955,11 +4955,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectsToSave:
-  - {fileID: 0}
   - {fileID: 7999855392203423798}
   - {fileID: 1062223307}
   - {fileID: 2113489487}
-  - {fileID: 0}
+  StartPlayerPosition: {x: 246, y: 0, z: 253}
+  StartPlayerRotation: {x: 0, y: 0, z: 0}
+  CameraCenter: {fileID: 289038994}
 --- !u!4 &918219454
 Transform:
   m_ObjectHideFlags: 0
@@ -8305,7 +8306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bbd7ff7a661104b934869c3ef6ae4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
   Personages: {fileID: 642472895}
   PlayerController: {fileID: 0}
   PlayerControllers: []

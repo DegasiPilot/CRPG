@@ -26,12 +26,8 @@ public class SaveableGameobject : MonoBehaviour
         }
         SaveObjectInfo info = new SaveObjectInfo()
         {
-            PosX = transform.position.x,
-            PosY = transform.position.y,
-            PosZ = transform.position.z,
-            RotX = (int)transform.eulerAngles.x,
-            RotY = (int)transform.eulerAngles.y,
-            RotZ = (int)transform.eulerAngles.z,
+            Pos = transform.position,
+            Rot = transform.eulerAngles,
             IsActive = isActiveAndEnabled,
         };
         if (itemComponent != null)
@@ -51,8 +47,7 @@ public class SaveableGameobject : MonoBehaviour
                 return;
             }
         }
-        transform.position.Set(info.PosX, info.PosY, info.PosZ);
-        transform.eulerAngles = new Vector3(info.RotX, info.RotY, info.RotZ);
+        transform.SetPositionAndRotation(info.Pos, Quaternion.Euler(info.Rot));
         gameObject.SetActive(info.IsActive);
     }
 }

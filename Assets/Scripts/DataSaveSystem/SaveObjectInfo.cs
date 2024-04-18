@@ -1,12 +1,9 @@
-﻿public class SaveObjectInfo
+﻿using UnityEngine;
+public class SaveObjectInfo
 {
-    public float PosX;
-    public float PosY;
-    public float PosZ;
+    public Vector3 Pos;
 
-    public int RotX;
-    public int RotY;
-    public int RotZ;
+    public Vector3 Rot;
 
     public bool IsActive;
     public bool IsPickuped;

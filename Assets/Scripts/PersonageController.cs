@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public abstract class PersonageController : MonoBehaviour
@@ -13,28 +12,6 @@ public abstract class PersonageController : MonoBehaviour
     public Personage Personage => _personage;
     public float MaxAttackDistance => _personage.WeaponInfo != null ? _personage.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
     public bool IsFree => _isGrounded && (GameManager.Instance.GameMode != GameMode.Battle || (!_controller.pathPending && !_controller.hasPath) || _controller.remainingDistance < _controller.stoppingDistance);
-
-    public int ArmorClass
-    {
-        get
-        {
-            var ArmorInfo = from armor in _personage.Armor select armor.ItemInfo as ArmorInfo;
-            ArmorWeight maxArmorWeight = ArmorInfo.Max(x => x.ArmorWeight);
-            int armorClass = ArmorInfo.Sum(x => x.ArmorClass);
-            if (maxArmorWeight == ArmorWeight.Heavy)
-            {
-                return armorClass;
-            }
-            else if (maxArmorWeight == ArmorWeight.Medium)
-            {
-                return armorClass + Mathf.Min(2, Personage.PersonageInfo.GetCharacteristicBonus(Characteristics.Dexterity));
-            }
-            else
-            {
-                return armorClass + Personage.PersonageInfo.GetCharacteristicBonus(Characteristics.Dexterity);
-            }
-        }
-    }
 
     private WeaponInfo WeaponInfo => _personage.WeaponInfo;
 
@@ -229,5 +206,21 @@ public abstract class PersonageController : MonoBehaviour
     public void SetActiveAction(ActionType actionType)
     {
         _activeAction = actionType;
+    }
+
+    public void SetPositonAndRotation(Vector3 pos, Vector3 rot)
+    {
+        if (_controller.enabled)
+        {
+            _controller.enabled = false;
+            transform.position = pos;
+            transform.eulerAngles = rot;
+            _controller.enabled = true;
+        }
+        else
+        {
+            transform.position = pos;
+            transform.eulerAngles = rot;
+        }
     }
 }
