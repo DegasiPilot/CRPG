@@ -12,7 +12,10 @@ public static class GameData
     public static PlayerCustomizer PlayerCustomizer;
     public static PlayerController PlayerController;
 
-    public const float MaxUnarmedAttackDistance = 2;
+    public static User CurrentUser;
+
+    public const float MaxUnarmedAttackDistance = 0.8f;
+    public const float MaxJumpDistance = 10;
 
     public static void NewGameSave()
     {
@@ -35,6 +38,7 @@ public static class GameData
                 };
             }
         }
+        gameSave.UserLogin = CurrentUser.Login;
 
         CRUD.CreateGameSaveInfo(gameSave);
     }

@@ -26,11 +26,14 @@ internal class EquipmentManager : MonoBehaviour
         LeftHandSlot.Setup(BodyPart.LeftHand);
         RightHandSlot.Setup(BodyPart.RightHand);
         BootsSlot.Setup(BodyPart.Legs);
-        foreach (var item in GameData.Inventory)
+        if (GameData.Inventory != null)
         {
-            if (item.IsEquiped)
+            foreach (var item in GameData.Inventory)
             {
-                EquipItem(item, out _);
+                if (item.IsEquiped)
+                {
+                    EquipItem(item, out _);
+                }
             }
         }
     }

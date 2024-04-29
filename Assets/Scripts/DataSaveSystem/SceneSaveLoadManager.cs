@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 internal class SceneSaveLoadManager : MonoBehaviour
 {
     public static SceneSaveLoadManager Instance;
+
+    [NonSerialized] public static UnityEvent OnSceneLoaded = new();
 
     public List<SaveableGameobject> ObjectsToSave;
     public Vector3 StartPlayerPosition;
@@ -18,10 +21,10 @@ internal class SceneSaveLoadManager : MonoBehaviour
 
     public void LoadSceneFromSave(SceneSaveInfo sceneSaveInfo)
     {
-        if(sceneSaveInfo == null)
+        OnSceneLoaded.Invoke();
+        if (sceneSaveInfo == null)
         {
-            GameData.PlayerController.transform.position = StartPlayerPosition;
-            GameData.PlayerController.transform.eulerAngles = StartPlayerRotation;
+            GameData.PlayerController.SetPositonAndRotation(StartPlayerPosition, StartPlayerRotation);
             return;
         }
 

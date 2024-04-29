@@ -6,6 +6,7 @@ public class GameSaveInfo
 
     public BsonDateTime DateTime;
     public ObjectId MainPersonageId { get; set; }
+    public string UserLogin { get; set; }
 
     public SceneSaveInfo SceneSaveInfo { get; set; }
 

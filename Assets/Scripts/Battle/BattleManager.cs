@@ -62,7 +62,7 @@ public static class BattleManager
     public static bool CanAttack(Personage personage)
     {
         if (HasAction &&
-            AttackRaycast(ActivePersonage.transform.position, personage.transform.position, ActivePersonage.Controller.MaxAttackDistance, personage))
+            AttackRaycast(ActivePersonage.HitPoint.position, personage.HitPoint.position, ActivePersonage.Controller.MaxAttackDistance, personage))
         {
             return true;
         }
@@ -74,7 +74,7 @@ public static class BattleManager
 
     public static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
     {
-        Ray ray = new Ray(attackerPos, (targetPos - attackerPos).normalized);
+        Ray ray = new Ray(attackerPos, targetPos - attackerPos);
         if(Physics.Raycast(ray, out RaycastHit hit, maxDistance)
             && hit.collider.gameObject.TryGetComponent(out Personage personage) && personage == targetPersonage)
         {
@@ -82,6 +82,7 @@ public static class BattleManager
         }
         else
         {
+            Debug.DrawRay(attackerPos, targetPos - attackerPos, Color.red, maxDistance);
             return false;
         }
     }
@@ -95,7 +96,6 @@ public static class BattleManager
 
     public static bool TryEndTurn()
     {
-        Debug.Log(ActivePersonage.Controller.IsFree);
         if (ActivePersonage.Controller.IsFree)
         {
             SetNextActivePersonage();

@@ -15,7 +15,6 @@ public class ArmorSkinPart : MonoBehaviour
     public void ResetSkin()
     {
         SkinVariants[ActiveIndex].SetActive(false);
-        SkinVariants[0].SetActive(true);
         ActiveIndex = 0;
     }
 }

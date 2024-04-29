@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
             if (_gameMode == GameMode.Dialogue)
             {
                 CameraController.Instance.enabled = true;
+                CameraController.Instance.StandartView();
             }
             
             if(gameMode == GameMode.Dialogue)
@@ -109,7 +110,7 @@ public class GameManager : MonoBehaviour
         {
             attackInfoBuider.AppendLine("Цель слишком далеко!");
         }
-        else if(!BattleManager.AttackRaycast(PlayerController.transform.position, personage.transform.position, PlayerController.MaxAttackDistance, personage))
+        else if(!BattleManager.AttackRaycast(PlayerPersonage.HitPoint.position, personage.HitPoint.position, PlayerController.MaxAttackDistance, personage))
         {
             attackInfoBuider.AppendLine("Цель за укрытием");
         }
@@ -122,26 +123,35 @@ public class GameManager : MonoBehaviour
         CanvasManager.Instance.ShowInfoUnderPosition(attackInfoBuider.ToString(), personage.transform.position);
     }
 
-    public void OnPersonagePressed(Personage personage)
+    public void OnPersonagePressed(PersonageController personageController)
     {
-        if (_gameMode == GameMode.Free)
+        StartCoroutine(OnGroundPressed());
+
+        IEnumerator OnGroundPressed()
         {
-            if (PlayerController.ActiveAction == ActionType.Attack)
+            if (_gameMode == GameMode.Free)
             {
-                float attackDistance = PlayerController.MaxAttackDistance;
-                PlayerController.InteractWith(attackDistance, AttackInteract, personage);
+                if (PlayerController.ActiveAction == ActionType.Attack)
+                {
+                    float attackDistance = PlayerController.MaxAttackDistance;
+                    PlayerController.InteractWith(attackDistance, AttackInteract, personageController);
+                }
+                else if (personageController.TryGetComponent(out DialogueActor dialogueActor))
+                {
+                    PlayerController.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+                }
             }
-            else if(personage.TryGetComponent(out DialogueActor dialogueActor))
+            else if (_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
             {
-                PlayerController.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
-            }
-        }
-        else if(_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
-        {
-            if (BattleManager.CanAttack(personage))
-            {
-                BattleManager.HasAction = false;
-                PlayerController.Attack(personage);
+                if (BattleManager.CanAttack(personageController.Personage))
+                {
+                    BattleManager.HasAction = false;
+                    do
+                    {
+                        yield return PlayerController.Attack(personageController);
+                    } 
+                    while (PlayerController.IsAttacking);
+                }
             }
         }
     }
@@ -166,25 +176,36 @@ public class GameManager : MonoBehaviour
         _currentComponentUnderPointer = null;
     }
 
-    public void StartDialogue(Component component)
+    public void StartDialogue(Component dialogueActor)
     {
-        DialogueParser.Instance.SetSecondDialogueActor(component as DialogueActor);
-        CameraController.Instance.FocusOn(component.gameObject);
+        DialogueParser.Instance.SetSecondDialogueActor(dialogueActor as DialogueActor);
+        CameraController.Instance.FocusOn(dialogueActor as DialogueActor);
         DialogueParser.Instance.TryStartDialogue();
+        ChangeGameMode(GameMode.Dialogue);
     }
 
-    public void ItemInteract(Component component)
+    public void ItemInteract(Component item)
     {
-        PlayerController.PickupItem(component as Item);
+        PlayerController.PickupItem(item as Item);
     }
 
     public void AttackInteract(Component component)
     {
-        PlayerController.Attack(component as Personage);
-        if(_gameMode != GameMode.Battle)
+        StartCoroutine(AttackInteract());
+
+        IEnumerator AttackInteract()
         {
-            (component as Personage).BattleTeam = BattleTeam.Enemies;
-            BattleManager.StartBattle(new Personage[2] { PlayerPersonage, component as Personage}); // TODO: add more 
+            PersonageController personageController = component as PersonageController;
+            do
+            {
+                yield return PlayerController.Attack(personageController);
+            }
+            while (PlayerController.IsAttacking);
+            if (_gameMode != GameMode.Battle)
+            {
+                personageController.Personage.BattleTeam = BattleTeam.Enemies;
+                BattleManager.StartBattle(new Personage[2] { PlayerPersonage, personageController.Personage }); // TODO: add more 
+            }
         }
     }
 

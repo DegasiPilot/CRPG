@@ -23,7 +23,7 @@ public class GameDataManager : MonoBehaviour
 
     public void LoadLastGameSave()
     {
-        GameSaveInfo gameSave = CRUD.GetLastGameSave();
+        GameSaveInfo gameSave = CRUD.GetLastGameSave(GameData.CurrentUser);
         LoadGameSave(gameSave);
     }
 
@@ -41,6 +41,7 @@ public class GameDataManager : MonoBehaviour
                 Item item = AllItems.First(item => item.ItemInfo.Id == gameSave.InventoryItems[i].ItemId);
                 item.IsEquiped = gameSave.InventoryItems[i].IsEquiped;
                 item.transform.SetParent(Inventory.transform);
+                item.OnTaked();
                 GameData.Inventory.Add(item);
             }
         }

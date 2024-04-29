@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using DialogueSystem.DataContainers;
 
-[RequireComponent(typeof(Personage))]
+[RequireComponent(typeof(PersonageController))]
 public class DialogueActor : MonoBehaviour
 {
     public DialogueContainer Dialogue;
     public float MaxDialogueDistance;
+    public Transform PlaceForCamera;
 
-    public PersonageInfo PersonageInfo
+    public PersonageInfo PersonageInfo => _personageController.Personage.PersonageInfo;
+
+    private PersonageController _personageController;
+
+    private void Awake()
     {
-        get
-        {
-            if (_personageInfo == null)
-                _personageInfo = GetComponent<Personage>().PersonageInfo;
-            return _personageInfo;
-        }
+        _personageController = GetComponent<PersonageController>();
     }
 
-    private PersonageInfo _personageInfo;
+    public void OnStartDialogue()
+    {
+        _personageController.AnimatorManager.StartDialogueAnim();
+    }
+
+    public void OnEndDialogue()
+    {
+        _personageController.AnimatorManager.EndDialogueAnim();
+    }
 }

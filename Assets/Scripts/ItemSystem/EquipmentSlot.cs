@@ -29,7 +29,7 @@ public class EquipmentSlot : ItemSlot
         Item = item;
         _iconImage.sprite = item.ItemInfo.Icon;
         _iconImage.color = darkened? _darkenedColor : Color.white;
-        EqipmentCustomizer.Instance.EquipSkin(item, _bodyPart);
+        GameData.PlayerCustomizer.EquipmentCustomizer.EquipSkin(item, _bodyPart);
     }
 
     public override void UnequipItem()
@@ -38,6 +38,6 @@ public class EquipmentSlot : ItemSlot
         Item = null;
         _iconImage.sprite = defaultSprite;
         _iconImage.color = _darkenedColor;
-        EqipmentCustomizer.Instance.ResetSkin(_bodyPart);
+        GameData.PlayerCustomizer.EquipmentCustomizer.ResetSkin(_bodyPart);
     }
 }

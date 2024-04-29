@@ -218,6 +218,8 @@ public class PersonageCreator : MonoBehaviour
             appearance.SkinColor = SkinColorImage.color;
             _personageInfo.Appearance = appearance;
             _personageInfo.ImageBytes = SavePersonagePortrait();
+            _personageInfo.PersonagePortrait = new Texture2D(256, 256);
+            _personageInfo.PersonagePortrait.LoadImage(_personageInfo.ImageBytes);
             CRUD.CreatePersonageInfo(_personageInfo);
 
             GameData.PlayerPersonageInfo = _personageInfo;

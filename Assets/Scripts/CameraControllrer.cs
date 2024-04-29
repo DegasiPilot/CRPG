@@ -41,15 +41,15 @@ public class CameraController : MonoBehaviour
                         GameManager.Instance.OnGroundPressed(_cursorRaycastHit.point);
                     }
                 }
-                else if (_cursorRaycastHit.collider.transform.TryGetComponent(out Personage personage))
+                else if (_cursorRaycastHit.collider.transform.TryGetComponent(out PersonageController personageController))
                 {
                     if (IsClick)
                     {
-                        GameManager.Instance.OnPersonagePressed(personage);
+                        GameManager.Instance.OnPersonagePressed(personageController);
                     }
                     else
                     {
-                        GameManager.Instance.OnPersonageUnderPointer(personage);
+                        GameManager.Instance.OnPersonageUnderPointer(personageController.Personage);
                     }
                 }
                 else if(_cursorRaycastHit.collider.transform.TryGetComponent(out Item item))
@@ -150,11 +150,11 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void FocusOn(GameObject focusObject)
+    public void FocusOn(DialogueActor dialogueActor)
     {
-        transform.position = focusObject.transform.position;
-        transform.parent.eulerAngles = focusObject.transform.eulerAngles + new Vector3(0, 180, 0);
-        transform.localPosition = new Vector3(0, 1, -2);
+        transform.parent.position = dialogueActor.transform.position;
+        transform.parent.rotation = dialogueActor.PlaceForCamera.rotation;
+        transform.position = dialogueActor.PlaceForCamera.position;
         transform.localEulerAngles = Vector3.zero;
     }
 

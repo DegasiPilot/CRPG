@@ -17,7 +17,7 @@ namespace DialogueSystem.Runtime
         [SerializeField] private Button _endDialogueButton;
 
         public PersonageInfo PlayerPersonageInfo => GameManager.Instance.PlayerPersonage.PersonageInfo;
-        [HideInInspector] public PersonageInfo SecondPersonageInfo;
+        [HideInInspector] public DialogueActor SecondDialogueActor;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject _dialogueDisplay;
@@ -36,7 +36,7 @@ namespace DialogueSystem.Runtime
 
         public void SetSecondDialogueActor(DialogueActor dialogueActor)
         {
-            SecondPersonageInfo = dialogueActor.PersonageInfo;
+            SecondDialogueActor = dialogueActor;
             _dialogue = dialogueActor.Dialogue;
         }
 
@@ -49,8 +49,8 @@ namespace DialogueSystem.Runtime
                 allNodes.UnionWith(_dialogue.CharacteristicNodeData);
                 var narrativeData = _dialogue.NodeLinks.First();
                 _endDialogueButton.gameObject.SetActive(false);
-                GameManager.Instance.ChangeGameMode(GameMode.Dialogue);
                 _dialogueDisplay.SetActive(true);
+                SecondDialogueActor.OnStartDialogue();
                 ProceedToNarrative(narrativeData.TargetNodeGUID); //Entrypoint node
             }
         }
@@ -66,7 +66,7 @@ namespace DialogueSystem.Runtime
 
                 var _dialogueNode = nodeData as DialogueNodeData;
                 string text = _dialogueNode.DialogueText;
-                _dialogueText.text = SecondPersonageInfo.Name + ": " + ProcessProperties(text);
+                _dialogueText.text = SecondDialogueActor.PersonageInfo.Name + ": " + ProcessProperties(text);
                 var buttons = _buttonContainer.GetComponentsInChildren<Button>();
                 for (int i = 0; i < buttons.Length; i++)
                 {
@@ -114,6 +114,7 @@ namespace DialogueSystem.Runtime
         {
             _dialogueDisplay.SetActive(false);
             _dialogue = null;
+            SecondDialogueActor.OnEndDialogue();
             GameManager.Instance.ChangeGameMode(GameMode.Free);
         }
     }

@@ -7,8 +7,18 @@ public class PlayerController : PersonageController
     public float PathEndHitAccuracy; //Ќасколько близко надо нажать к концу пути
     public LineRenderer AccesableLineRenderer;
     public LineRenderer UnaccesableLineRenderer;
+    public GameObject Sphere;
+    public float JumpSpeedMultiplier;
 
-    public GameObject Inventory;
+    [System.NonSerialized] public GameObject Inventory;
+
+    private float _normalAgentSpeed;
+
+    public override void Setup()
+    {
+        base.Setup();
+        _normalAgentSpeed = _controller.speed;
+    }
 
     public void OnGroundPressedInFree(Vector3 hitPoint)
     {
@@ -19,7 +29,10 @@ public class PlayerController : PersonageController
                 GoToPosition(hitPoint);
                 break;
             case ActionType.Jumping:
-                JumpToPosition(hitPoint);
+                if(Vector3.Distance(hitPoint, transform.position) < GameData.MaxJumpDistance)
+                {
+                    JumpToPosition(hitPoint);
+                }
                 break;
         }
         if(_activeAction != _defaultAction)
@@ -33,12 +46,10 @@ public class PlayerController : PersonageController
         if (!IsFree) return;
         if(_activeAction == ActionType.Movement && BattleManager.RemainMovement > 0 && BattleManager.ActivePersonage == Personage)
         {
-            Debug.Log($"{hitPoint} {_lastHitPoint} {PathEndHitAccuracy}");
             if(_lastHitPoint != Vector3.positiveInfinity && _navMeshPath != null && _navMeshPath.status == NavMeshPathStatus.PathComplete &&
                 Vector3.Distance(hitPoint, _lastHitPoint) <= PathEndHitAccuracy)
             {
-                Debug.Log("я погнал");
-                _controller.destination = _lastAccessablePathDot;
+                GoToPosition(_lastAccessablePathDot);
                 _navMeshPath.ClearCorners();
                 _lastHitPoint = Vector3.positiveInfinity;
                 UnaccesableLineRenderer.enabled = false;
@@ -94,10 +105,35 @@ public class PlayerController : PersonageController
         CanvasManager.Instance.ForceChangeAction(_defaultAction);
     }
 
+    public override void SetActiveAction(ActionType actionType)
+    {
+        base.SetActiveAction(actionType);
+        if(actionType == ActionType.Jumping)
+        {
+            DisplaySphere(GameData.MaxJumpDistance);
+        }
+        else
+        {
+            HideSphere();
+        }
+    }
+
+    private void DisplaySphere(float sphereSize)
+    {
+        Sphere.SetActive(true);
+        Sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
+    }
+
+    private void HideSphere()
+    {
+        Sphere.SetActive(false);
+    }
+
     public void PickupItem(Item item)
     {
         GameData.Inventory.Add(item);
         item.transform.SetParent(Inventory.transform);
+        item.OnTaked();
         item.gameObject.SetActive(false);
         item.IsInInventory = true;
     }
@@ -108,6 +144,26 @@ public class PlayerController : PersonageController
         item.transform.SetParent(null);
         item.transform.position = gameObject.transform.position + gameObject.transform.forward;
         item.gameObject.SetActive(true);
+        item.OnDropped();
         item.IsInInventory = false;
+    }
+
+    protected override void GoToPosition(Vector3 position, float maxTargetOffset = 0.1F)
+    {
+        base.GoToPosition(position, maxTargetOffset);
+        if (Vector3.Distance(transform.position, position) > _normalAgentSpeed * 2)
+        {
+            _controller.speed = _normalAgentSpeed * 2;
+        }
+        else
+        {
+            _controller.speed = _normalAgentSpeed;
+        }
+    }
+
+    public override void JumpToPosition(Vector3 target)
+    {
+        base.JumpToPosition(target);
+        AnimatorManager.StartJumpAnim(target);
     }
 }

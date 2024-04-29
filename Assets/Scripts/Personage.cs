@@ -1,13 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Events;
 
 public class Personage : MonoBehaviour
 {
+    [System.NonSerialized] public UnityEvent OnDeath = new();
+    [System.NonSerialized] public UnityEvent OnHealthChanged = new();
+
     public Transform HitPoint;
     public Item Weapon;
-    public readonly List<Item> Armor = new List<Item>();
+    public List<Item> Armor = new List<Item>();
     public BattleTeam BattleTeam;
     public PersonageInfo PersonageInfo;
     [HideInInspector] public PersonageController Controller;
@@ -65,6 +68,7 @@ public class Personage : MonoBehaviour
             blockedDamage = Mathf.Max(1f, damage * 0.15f);
         }
         CurrentHealth -= (int)Mathf.Round(Mathf.Max(damage - blockedDamage));
+        OnHealthChanged.Invoke();
         Debug.Log($"{PersonageInfo.Name} получил урон теперь у него {CurrentHealth} жизней");
         if(CurrentHealth <= 0)
         {
@@ -74,6 +78,6 @@ public class Personage : MonoBehaviour
 
     private void Death()
     {
-        Destroy(gameObject);
+        OnDeath.Invoke();
     }
 }

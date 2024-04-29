@@ -17,7 +17,8 @@ public class BattlePortraitController : MonoBehaviour
         PortaitImage.texture = personage.PersonageInfo.PersonagePortrait;
         _baseColor = personage.PersonageInfo.PersonagePortraitColor;
         PortaitImage.color = _baseColor;
-        OnUpdateHealth();
+        Personage.OnHealthChanged.AddListener(UpdateHealth);
+        UpdateHealth();
     }
 
     public void SetPrepaired()
@@ -36,7 +37,7 @@ public class BattlePortraitController : MonoBehaviour
         PortaitImage.color = Color.grey;
     }
 
-    public void OnUpdateHealth()
+    public void UpdateHealth()
     {
         DamagedImage.fillAmount = _damagedPart;
     }

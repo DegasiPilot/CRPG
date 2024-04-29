@@ -8,6 +8,8 @@ public class ItemSkin : MonoBehaviour
     {
         _activeSkin = skin;
         skin.transform.SetParent(transform);
+        skin.transform.localPosition = Vector3.zero;
+        skin.transform.localRotation = Quaternion.identity;
         _activeSkin.SetActive(true);
     }
 

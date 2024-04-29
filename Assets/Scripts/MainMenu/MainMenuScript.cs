@@ -16,15 +16,21 @@ public class MainMenuScript : MonoBehaviour
     public Button ContinueBtn;
     public Button LoadBtn;
     public GameDataManager GameDataManager;
+    public Text UserNameText;
 
     private List<GameSaveInfo> _saves;
 
     private void Awake()
     {
         Instance = this;
-        bool hasSaves = CRUD.HasAnySaves();
+    }
+
+    public void AfterUserEnter()
+    {
+        bool hasSaves = CRUD.HasAnySaves(GameData.CurrentUser);
         ContinueBtn.interactable = hasSaves;
         LoadBtn.interactable = hasSaves;
+        UserNameText.text = GameData.CurrentUser.Login;
     }
 
     public void StartNewGame()
@@ -54,7 +60,7 @@ public class MainMenuScript : MonoBehaviour
     {
         if(_saves == null)
         {
-            _saves = CRUD.GetAllGameSaves();
+            _saves = CRUD.GetAllGameSaves(GameData.CurrentUser);
             foreach(var save in _saves)
             {
                 GameObject saveObject = Instantiate(SaveSlotPrefab, SavesTransformParent);

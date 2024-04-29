@@ -23,10 +23,10 @@ public class NPCController : PersonageController
         }
         _obstacleComponent.enabled = false;
         _controller.enabled = true;
-        Personage target;
+        PersonageController target;
         if (Personage.BattleTeam == BattleTeam.Enemies)
         {
-            target = GameManager.Instance.PlayerPersonage; //TODO: replace to nearest player;
+            target = GameManager.Instance.PlayerController; //TODO: replace to nearest player;
         }
         else
         {
@@ -35,6 +35,8 @@ public class NPCController : PersonageController
             return;
         }
         _controller.CalculatePath(target.transform.position, _navMeshPath);
+        Vector3 targetPos = Vector3.MoveTowards(_navMeshPath.corners[_navMeshPath.corners.Length - 1], _navMeshPath.corners[_navMeshPath.corners.Length - 2], _controller.radius + target.Radius + 0.01f);
+        _controller.CalculatePath(targetPos, _navMeshPath);
 
         Vector3 lastPoint = CutPath(_navMeshPath, BattleManager.RemainMovement, out int lastIndex);
         float remainMovent = BattleManager.RemainMovement;
@@ -46,7 +48,7 @@ public class NPCController : PersonageController
             {
                 remainMovent -= Vector3.Distance(corner, _navMeshPath.corners[i -1]);
             }
-            if (BattleManager.AttackRaycast(transform.position, target.transform.position, MaxAttackDistance + remainMovent, target))
+            if (BattleManager.AttackRaycast(Personage.HitPoint.position, target.Personage.HitPoint.position, MaxAttackDistance + remainMovent, target.Personage))
             {
                 float distanceToTarget = Vector3.Distance(corner, target.transform.position);
                 if(distanceToTarget <= MaxAttackDistance)
@@ -60,23 +62,32 @@ public class NPCController : PersonageController
                 break;
             }
         }
-        if(finalPos != null)
+        if (finalPos != null)
         {
             _controller.SetDestination((Vector3)finalPos);
-            StartCoroutine(SheduleAction(target, Attack));
+            StartCoroutine(SheduleAction(target, Attack, () => !IsAttacking));
         }
         else
         {
+            Debug.Log("Enemy finalPos is null\n lastPoint is " + lastPoint);
             _controller.SetDestination(lastPoint);
-            StartCoroutine(SheduleAction(target, null));
+            StartCoroutine(SheduleAction(target, null, null));
         }
     }
 
-    private IEnumerator SheduleAction(Personage personage, Action<Personage> action)
+    private IEnumerator SheduleAction(PersonageController personageController, Func<PersonageController, IEnumerator> coroutine, Func<bool> coroutineEndCheck)
     {
+        yield return null;
         yield return new WaitUntil(() => IsFree);
-        action?.Invoke(personage);
+        if(coroutine != null)
+        {
+            do
+            {
+                yield return coroutine(personageController);
+            } while (!coroutineEndCheck());
+        }
         _controller.enabled = false;
+        _obstacleComponent.enabled = true;
         Debug.Log("End enemy turn");
         BattleManager.SetNextActivePersonage();
     }

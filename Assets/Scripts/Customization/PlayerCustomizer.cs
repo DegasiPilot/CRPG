@@ -11,6 +11,7 @@ public class PlayerCustomizer : MonoBehaviour
     public List<GameObject> MaleFaces;
     public List<GameObject> FemaleFaces;
     public List<GameObject> Beards;
+    public EquipmentCustomizer EquipmentCustomizer;
 
     [System.NonSerialized] public List<GameObject> Hairs;
     [System.NonSerialized] public List<GameObject> Faces;
@@ -46,12 +47,14 @@ public class PlayerCustomizer : MonoBehaviour
         ApplyPart(_appearance.HairIndex, Hairs);
         if (_gender == Gender.Male) 
         {
-            if (MaleObject != null) Destroy(MaleObject);
-            ApplyPart(_appearance.BeardIndex, Beards); 
+            Destroy(FemaleObject);
+            ApplyPart(_appearance.BeardIndex, Beards);
+            EquipmentCustomizer = MaleObject.GetComponent<EquipmentCustomizer>();
         }
         else
         {
-            if (FemaleObject != null) Destroy(FemaleObject);
+            Destroy(MaleObject);
+            EquipmentCustomizer = FemaleObject.GetComponent<EquipmentCustomizer>();
         }
     }
 

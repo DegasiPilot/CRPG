@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 internal static class CRUD
 {
@@ -68,18 +69,28 @@ internal static class CRUD
         GetCollection<GameSaveInfo>().InsertOne(gameSave);
     }
 
-    public static GameSaveInfo GetLastGameSave()
+    public static GameSaveInfo GetLastGameSave(User user)
     {
-        return GetCollection<GameSaveInfo>().AsQueryable().OrderByDescending(x => x.DateTime).First();
+        return GetCollection<GameSaveInfo>().AsQueryable().Where(x => x.UserLogin == user.Login).OrderByDescending(x => x.DateTime).First();
     }
 
-    public static List<GameSaveInfo> GetAllGameSaves()
+    public static List<GameSaveInfo> GetAllGameSaves(User user)
     {
-        return GetCollection<GameSaveInfo>().AsQueryable().ToList();
+        return GetCollection<GameSaveInfo>().AsQueryable().Where(x => x.UserLogin == user.Login).ToList();
     }
 
-    public static bool HasAnySaves()
+    public static bool HasAnySaves(User user)
     {
-        return GetCollection<GameSaveInfo>().AsQueryable().Any();
+        return GetCollection<GameSaveInfo>().AsQueryable().Where(x => x.UserLogin == user.Login).Any();
+    }
+
+    public static void CreateUser(User user)
+    {
+        GetCollection<User>().InsertOne(user);
+    }
+
+    public static Task<User> GetUserWithLoginAsync(string login)
+    {
+        return GetCollection<User>().AsQueryable().FirstOrDefaultAsync(x => x.Login == login);
     }
 }
