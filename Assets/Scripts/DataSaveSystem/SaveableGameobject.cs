@@ -1,12 +1,11 @@
-﻿using MongoDB.Bson;
-using System;
-using System.Collections;
+﻿using System;
 using UnityEngine;
 
 [Serializable]
 public class SaveableGameobject : MonoBehaviour
 {
     private Item itemComponent;
+    private Personage personageComponent;
 
     private void Awake()
     {
@@ -15,12 +14,13 @@ public class SaveableGameobject : MonoBehaviour
 
     public SaveObjectInfo GetSaveInfo()
     {
+        TryGetComponent(out itemComponent);
         if (itemComponent != null)
         {
             if (itemComponent.IsInInventory)
             {
                 SaveObjectInfo destroyedInfo = new SaveObjectInfo();
-                destroyedInfo.IsPickuped = itemComponent.IsInInventory;
+                destroyedInfo.IsDestroyed = itemComponent.IsInInventory;
                 return destroyedInfo;
             }
         }
@@ -32,16 +32,20 @@ public class SaveableGameobject : MonoBehaviour
         };
         if (itemComponent != null)
         {
-            info.IsPickuped = false;
+            info.IsDestroyed = false;
+        }
+        if(personageComponent != null)
+        {
+            info.IsDestroyed = personageComponent.IsDead;
         }
         return info;
     }
 
     public void LoadSaveInfo(SaveObjectInfo info)
     {
-        if (itemComponent != null)
+        if (itemComponent != null || personageComponent != null)
         {
-            if (info.IsPickuped)
+            if (info.IsDestroyed)
             {
                 Destroy(gameObject);
                 return;

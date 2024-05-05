@@ -13,4 +13,6 @@ Orc head iconby Delapouite under CC BY 3.0
 Goblin by Caro Asercion under CC BY 3.0
 Duration icon by Delapouite under CC BY 3.0
 Blade bite icon by Lorc under CC BY 3.0
+Музыка с opengameart.org:
+RPG - To Arms! Battle Music 1 by Hitctrl under CC BY 3.0
 Ссылка на лицензию СС BY 3.0: http://creativecommons.org/licenses/by/3.0/

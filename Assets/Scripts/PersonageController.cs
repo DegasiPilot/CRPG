@@ -308,6 +308,23 @@ public abstract class PersonageController : MonoBehaviour
 
     private void OnDeath()
     {
+        if (Personage.Weapon != null)
+        {
+            DropItem(Personage.Weapon);
+        }
+        if(Personage.Armor != null)
+        {
+            foreach(Item item in Personage.Armor)
+            {
+                DropItem(item);
+            }
+        }
         AnimatorManager.StartDeathAnim();
+    }
+
+    public virtual void DropItem(Item item)
+    {
+        item.transform.SetParent(null);
+        item.OnDropped();
     }
 }

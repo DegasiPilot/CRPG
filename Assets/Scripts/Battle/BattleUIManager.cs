@@ -9,6 +9,12 @@ public class BattleUIManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        BattleManager.OnBattleStartEvent.AddListener(() =>
+        {
+            gameObject.SetActive(true);
+            Setup(BattleManager.ParticipantPersonages.ToArray());
+        });
+        BattleManager.OnBattleEndEvent.AddListener(OnBattleEnd);
         gameObject.SetActive(false);
     }
 

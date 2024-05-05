@@ -8,6 +8,7 @@ public class Personage : MonoBehaviour
     [System.NonSerialized] public UnityEvent OnDeath = new();
     [System.NonSerialized] public UnityEvent OnHealthChanged = new();
 
+    public bool IsDead;
     public Transform HitPoint;
     public Item Weapon;
     public List<Item> Armor = new List<Item>();

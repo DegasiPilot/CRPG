@@ -1,15 +1,17 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DialogueSystem.Runtime;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    [System.NonSerialized] public UnityEvent OnHealthChanged = new();
 
     public GameObject Personages;
 
@@ -17,7 +19,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<PlayerController> PlayerControllers;
     public Personage PlayerPersonage => PlayerController.Personage;
     public PersonageController[] PersonageControllers;
-    
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
     private Component _currentComponentUnderPointer;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         Time.timeScale = 1;
+        BattleManager.OnBattleStartEvent.AddListener(() => ChangeGameMode(GameMode.Battle));
     }
 
     void Start()
@@ -35,7 +37,6 @@ public class GameManager : MonoBehaviour
         PlayerController = GameData.PlayerController;
         PlayerControllers = new() { PlayerController }; // TODO: More player controllers
         PersonageControllers = Personages.GetComponentsInChildren<PersonageController>();
-
         foreach(var controller in PersonageControllers)
         {
             if(controller == PlayerController)
@@ -44,8 +45,7 @@ public class GameManager : MonoBehaviour
             }
             controller.Setup();
         }
-
-        SetActivePersonage(PlayerPersonage);
+        SetActivePersonage(PlayerController);
     }
 
     public void ChangeGameMode(GameMode gameMode)
@@ -242,7 +242,14 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePauseMenu();
+            if (CanvasManager.Instance.IsInventoryOpen)
+            {
+                ToggleInvenoty();
+            }
+            else
+            {
+                TogglePauseMenu();
+            }
         }
     }
     
@@ -274,8 +281,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetActivePersonage(Personage personage)
+    public void SetActivePersonage(PlayerController playerController)
     {
-        CanvasManager.Instance.SetActivePersonage(personage);
+        PlayerController.Personage.OnHealthChanged.RemoveListener(OnHealthChanged.Invoke);
+        PlayerController = playerController;
+        PlayerController.Personage.OnHealthChanged.AddListener(OnHealthChanged.Invoke);
+        CanvasManager.Instance.SetActivePersonage(playerController.Personage);
     }
 }

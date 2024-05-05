@@ -5,5 +5,4 @@ public enum Race
     Elf,
     Dwarf,
     Orc,
-    Goblin,
 }

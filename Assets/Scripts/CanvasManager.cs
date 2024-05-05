@@ -13,6 +13,7 @@ public class CanvasManager : MonoBehaviour
     public ItemContextMenu ItemContextMenu;
     public ItemInfoPanel ItemInfoPanel; 
     public GameObject PauseMenuPanel;
+    public Button SaveButton;
     public GameObject PlayerPanel;
     public RawImage PersonageImage;
 
@@ -42,6 +43,18 @@ public class CanvasManager : MonoBehaviour
         _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>(true).ToList();
         _pointerInfoText = PointerInfoPanel.GetComponentInChildren<Text>();
         _canvas = gameObject.GetComponent<Canvas>();
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.OnHealthChanged.AddListener(UpdateHealtBar);
+    }
+
+    private void UpdateHealtBar()
+    {
+        LifesImage.fillAmount = (float)GameManager.Instance.PlayerPersonage.CurrentHealth / GameManager.Instance.PlayerPersonage.MaxHealth;
+        Personage player = GameManager.Instance.PlayerPersonage;
+        LifesText.text = $"{player.CurrentHealth}/{player.MaxHealth}";
     }
 
     private void Update()
@@ -128,6 +141,7 @@ public class CanvasManager : MonoBehaviour
     {
         IsPauseMenuOpen = !IsPauseMenuOpen;
         PauseMenuPanel.SetActive(IsPauseMenuOpen);
+        SaveButton.interactable = GameManager.Instance.GameMode == GameMode.Free;
     }
 
     public void ActivateContextMenu(ItemSlot itemSlot)

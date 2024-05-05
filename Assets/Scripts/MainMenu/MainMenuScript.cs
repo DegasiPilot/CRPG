@@ -68,4 +68,9 @@ public class MainMenuScript : MonoBehaviour
             }
         }
     }
+
+    public void ExitApp()
+    {
+        Application.Quit();
+    }
 }

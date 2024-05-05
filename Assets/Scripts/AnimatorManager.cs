@@ -37,6 +37,7 @@ public class AnimatorManager : MonoBehaviour
 
     public void SetVelocity(Vector2 velocity)
     {
+        Debug.Log("Velocity is" + velocity);
         Animator.SetFloat(_animSpeedVId, velocity.y);
         Animator.SetFloat(_animSpeedHId, velocity.x);
         Animator.SetBool(_animIsMovingId, Mathf.Abs(velocity.x + velocity.y) > 0);

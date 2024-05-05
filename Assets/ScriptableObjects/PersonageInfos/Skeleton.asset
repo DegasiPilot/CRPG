@@ -19,7 +19,7 @@ MonoBehaviour:
   Intelligence: 8
   Wisdom: 8
   Charisma: 6
-  Race: 5
+  Race: 1
   UnSpendedStatPoints: 0
   PersonagePortrait: {fileID: 2800000, guid: 32380ccd393e6b845adcadfabbc1544b, type: 3}
   PersonagePortraitColor: {r: 1, g: 1, b: 1, a: 1}

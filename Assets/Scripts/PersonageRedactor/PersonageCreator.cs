@@ -225,6 +225,7 @@ public class PersonageCreator : MonoBehaviour
             GameData.PlayerPersonageInfo = _personageInfo;
             GameData.PlayerController.Personage.Setup(GameData.PlayerPersonageInfo);
             GameData.NewGameSave();
+            GameData.Inventory = new List<Item>();
             SceneManager.LoadScene("SampleScene");
         }
         else

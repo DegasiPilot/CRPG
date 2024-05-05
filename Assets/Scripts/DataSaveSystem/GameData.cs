@@ -26,7 +26,7 @@ public static class GameData
             SceneSaveInfo = SceneSaveInfo,
         };
 
-        if (Inventory != null)
+        if (Inventory != null && Inventory.Count > 0)
         {
             gameSave.InventoryItems = new GameSaveInfo.InventoryItem[Inventory.Count];
             for (int i = 0; i < Inventory.Count; i++)

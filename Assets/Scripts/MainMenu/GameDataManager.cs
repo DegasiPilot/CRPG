@@ -39,8 +39,10 @@ public class GameDataManager : MonoBehaviour
             for (int i = 0; i < gameSave.InventoryItems.Length; i++)
             {
                 Item item = AllItems.First(item => item.ItemInfo.Id == gameSave.InventoryItems[i].ItemId);
+                item = Instantiate(item, Inventory.transform);
+                item.IsInInventory = true;
                 item.IsEquiped = gameSave.InventoryItems[i].IsEquiped;
-                item.transform.SetParent(Inventory.transform);
+                item.gameObject.SetActive(false);
                 item.OnTaked();
                 GameData.Inventory.Add(item);
             }

@@ -6,5 +6,5 @@ public class SaveObjectInfo
     public Vector3 Rot;
 
     public bool IsActive;
-    public bool IsPickuped;
+    public bool IsDestroyed;
 }

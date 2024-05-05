@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 59573b088aaea0442bf29e0a0e9d1339, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -2574,8 +2574,8 @@ RectTransform:
   m_Children:
   - {fileID: 2020709456}
   - {fileID: 1016686351}
-  - {fileID: 409725994}
   - {fileID: 1036202294}
+  - {fileID: 409725994}
   - {fileID: 1962831419}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3663,7 +3663,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 403.07025, y: 0.0000038146973}
+  m_AnchoredPosition: {x: 403.07025, y: 0}
   m_SizeDelta: {x: 415, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1036202295

@@ -138,13 +138,12 @@ public class PlayerController : PersonageController
         item.IsInInventory = true;
     }
 
-    public void DropItem(Item item)
+    public override void DropItem(Item item)
     {
+        base.DropItem(item);
         GameData.Inventory.Remove(item);
-        item.transform.SetParent(null);
-        item.transform.position = gameObject.transform.position + gameObject.transform.forward;
+        item.transform.position = gameObject.transform.position + gameObject.transform.forward + Vector3.up;
         item.gameObject.SetActive(true);
-        item.OnDropped();
         item.IsInInventory = false;
     }
 

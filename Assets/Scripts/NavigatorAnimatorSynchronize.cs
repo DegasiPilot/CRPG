@@ -10,7 +10,6 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
     public bool NormalizeSpeed;
 
     private Transform _rootTransform;
-    private Vector2 _smoothDeltaPosition;
 
     private float normalAgentSpeed;
 
@@ -41,7 +40,7 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
             if (deltaPos != Vector3.zero)
             {
                 target.y = _rootTransform.position.y;
-                Vector2 velocity = MakeSmoothStep(deltaPos);
+                Vector2 velocity = ToLocalSpace(deltaPos);
                 if (NormalizeSpeed)
                 {
                     velocity /= normalAgentSpeed;
@@ -58,11 +57,12 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
                 {
                     AnimatorManager.SetVelocity(velocity);
                 }
-                Agent.transform.position = Agent.nextPosition;
+                _rootTransform.position = Agent.nextPosition;
             }
         }
-        else
+        else if(Agent.nextPosition != _rootTransform.position)
         {
+            _rootTransform.position = Agent.nextPosition;
             if (IsSynchronizeRotation)
             {
                 AnimatorManager.SetVelocity(0);
@@ -74,22 +74,17 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
         }
     }
 
-    public Vector2 MakeSmoothStep(Vector3 worldDeltaPosition)
+    public Vector2 ToLocalSpace(Vector3 deltaPos)
     {
-        // Map 'worldDeltaPosition' to local space
-        float dx = Vector3.Dot(transform.right, worldDeltaPosition);
-        float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
-        Vector2 deltaPosition = new Vector2(dx, dy);
+        //Map 'worldDeltaPosition' to local space
+        float dx = Vector3.Dot(_rootTransform.right, deltaPos);
+        float dy = Vector3.Dot(_rootTransform.forward, deltaPos);
+        Vector2 currentVelocity = new Vector2(dx, dy);
 
-        // Low-pass filter the deltaMove
-        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
-        _smoothDeltaPosition = Vector2.Lerp(_smoothDeltaPosition, deltaPosition, smooth);
-
-        Vector3 currentVelocity;
         // Update velocity if time advances.
         if (Time.deltaTime > 0)
         {
-            currentVelocity = _smoothDeltaPosition / Time.deltaTime;
+            currentVelocity = currentVelocity / Time.deltaTime;
         }
         else
         {

@@ -1,27 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class BattleManager
 {
+    [System.NonSerialized] public static UnityEvent OnBattleStartEvent = new();
+    [System.NonSerialized] public static UnityEvent OnBattleEndEvent = new();
+
     public static Personage ActivePersonage => _participantPersonages[_activePersonageIndex];
+    public static List<Personage> ParticipantPersonages => _participantPersonages;
+
     public static float RemainMovement;
     public static bool HasAction;
 
     private static int _activePersonageIndex;
-    private static Personage[] _participantPersonages;
+    private static List<Personage> _participantPersonages;
     private readonly static Dictionary<Personage, int> _personagesInitiative = new();
 
     public static void StartBattle(Personage[] participantPersonages)
     {
-        _participantPersonages = participantPersonages;
+        _participantPersonages = participantPersonages.ToList();
+        foreach(Personage personage in _participantPersonages)
+        {
+            personage.OnDeath.AddListener(() => OnPersonageDeath(personage));
+        }
         _personagesInitiative.TrimExcess(participantPersonages.Length);
         SetInitiative();
         _activePersonageIndex = 0;
         SetupActivePersonage();
-        GameManager.Instance.ChangeGameMode(GameMode.Battle);
-        BattleUIManager.Instance.gameObject.SetActive(true);
-        BattleUIManager.Instance.Setup(_participantPersonages);
+        OnBattleStartEvent.Invoke();
     }
 
     private static void SetInitiative()
@@ -32,13 +40,13 @@ public static class BattleManager
             _personagesInitiative[personage] = initiative;
             Debug.Log(personage.PersonageInfo.Name + " инициатива " + initiative);
         }
-        _participantPersonages = (from pers in _personagesInitiative orderby pers.Value descending select pers.Key).ToArray();
+        _participantPersonages = (from pers in _personagesInitiative orderby pers.Value descending select pers.Key).ToList();
     }
 
     public static void SetNextActivePersonage()
     {
         BattleUIManager.Instance.SetNextActivePersonage();
-        if (_activePersonageIndex < _participantPersonages.Length - 1)
+        if (_activePersonageIndex < _participantPersonages.Count - 1)
         {
             _activePersonageIndex++;
         }
@@ -89,7 +97,7 @@ public static class BattleManager
 
     public static void EndBattle()
     {
-        BattleUIManager.Instance.OnBattleEnd();
+        OnBattleEndEvent.Invoke();
         _participantPersonages = null;
         _personagesInitiative.Clear();
     }
@@ -104,6 +112,15 @@ public static class BattleManager
         else
         {
             return false;
+        }
+    }
+
+    private static void OnPersonageDeath(Personage personage)
+    {
+        _participantPersonages.Remove(personage);
+        if(!_participantPersonages.Any(p => p.BattleTeam == BattleTeam.Enemies) || !_participantPersonages.Any(p => p.BattleTeam == BattleTeam.Allies))
+        {
+            EndBattle();
         }
     }
 }
