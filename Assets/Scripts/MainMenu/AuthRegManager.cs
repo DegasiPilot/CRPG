@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using System.Diagnostics;
 
 public class AuthRegManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class AuthRegManager : MonoBehaviour
 
     private void Awake()
     {
+        Process.Start(@"D:\Programs\mongodb-win32-x86_64-windows-6.0.13\bin\mongod.exe");
         User user = LocalCashManager.LoadUserCash();
         if(user != null)
         {

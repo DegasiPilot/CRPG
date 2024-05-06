@@ -32,6 +32,11 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
 
     private void OnAnimatorMove()
     {
+        if(Agent == null)
+        {
+            Destroy(this);
+            return;
+        }
         if (Agent.enabled && PersonageController.IsMoving)
         {
             Vector3 target = Agent.nextPosition;

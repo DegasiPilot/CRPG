@@ -227,25 +227,18 @@ public abstract class PersonageController : MonoBehaviour
             {
                 if (hitResult == CheckResult.CriticalSucces)
                 {
-                    damage = 4;
+                    damage = 2;
                     MessageBoxManager.ShowMessage("Критическое попадание!");
                 }
                 else
                 {
-                    damage = Random.Range(1, 4);
+                    damage = 1;
                     MessageBoxManager.ShowMessage("Попадание");
                 }
             }
-            if (Personage.PersonageInfo.Race == Race.Orc)
+            if (Personage.PersonageInfo.Race == Race.Orc && hitResult == CheckResult.CriticalSucces)
             {
-                if (hitResult == CheckResult.CriticalSucces)
-                {
-                    damage += 4;
-                }
-                else
-                {
-                    damage = Random.Range(1, 4);
-                }
+                damage += Random.Range(1, 4);
             }
             personageController.GetDamage(damage, DamageType.Physical);
         }

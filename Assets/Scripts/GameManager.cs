@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         Time.timeScale = 1;
         BattleManager.OnBattleStartEvent.AddListener(() => ChangeGameMode(GameMode.Battle));
+        BattleManager.OnBattleEndEvent.AddListener(() => ChangeGameMode(GameMode.Free));
     }
 
     void Start()
@@ -167,7 +168,23 @@ public class GameManager : MonoBehaviour
 
     public void OnItemPressed(Item item)
     {
-        PlayerController.InteractWith(1, ItemInteract, item);
+        if (GameMode == GameMode.Free)
+        {
+            PlayerController.InteractWith(1, ItemInteract, item);
+        }
+        else if(GameMode == GameMode.Battle)
+        {
+            Vector3 distVector = item.transform.position - PlayerController.transform.position;
+            Vector3 distVector2 = item.transform.position - PlayerController.Personage.HitPoint.position;
+            if (Vector3.SqrMagnitude(distVector) <= 1 || Vector3.SqrMagnitude(distVector2) <= 1)
+            {
+                ItemInteract(item);
+            }
+            else
+            {
+                MessageBoxManager.ShowMessage("Предмет слишком далеко!");
+            }
+        }
     }
 
     public void NothingUnderPointer()

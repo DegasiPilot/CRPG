@@ -40,7 +40,7 @@ public class BattlePanel : MonoBehaviour
     {
         foreach(var controller in _portraitControllers)
         {
-            Destroy(controller);
+            Destroy(controller.gameObject);
         }
         _portraitControllers.Clear();
     }

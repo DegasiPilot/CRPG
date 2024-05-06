@@ -12,6 +12,7 @@ public class NPCController : PersonageController
         base.Setup();
         _controller.enabled = false;
         _obstacleComponent = GetComponent<NavMeshObstacle>();
+        Personage.OnDeath.AddListener(OnDeath);
     }
 
     public void MakeTurnInBattle()
@@ -106,5 +107,16 @@ public class NPCController : PersonageController
         _obstacleComponent.enabled = true;
         Debug.Log("End enemy turn");
         BattleManager.SetNextActivePersonage();
+    }
+
+    private void OnDeath()
+    {
+        Destroy(_collider);
+        if(TryGetComponent(out DialogueActor dialogueActor))
+        {
+            Destroy(dialogueActor);
+        }
+        Destroy(this);
+        Destroy(_controller);
     }
 }
