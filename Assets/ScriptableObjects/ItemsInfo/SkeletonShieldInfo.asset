@@ -15,8 +15,8 @@ MonoBehaviour:
   Id: 2
   Name: "\u0421\u0442\u0430\u0440\u044B\u0439 \u0449\u0438\u0442"
   ShortDescription: 
-  Icon: {fileID: 0}
-  Prefab: {fileID: 8473688253239793128, guid: 5b77f444d83ab8c48a1d0ef40e6fcfa6, type: 3}
+  Icon: {fileID: 21300000, guid: 10169c86dc9e9124189ef6d0836a5e2c, type: 3}
+  Prefab: {fileID: 910769282805784300, guid: 26ba48c108a7195489456fb112f236f3, type: 3}
   SkinIndex: -1
   ArmorClass: 2
   WearableBodyPart: 2

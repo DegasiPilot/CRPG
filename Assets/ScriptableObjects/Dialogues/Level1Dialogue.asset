@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5121f3bef2086334fbeeaae1a6cabe65, type: 3}
+  m_Name: Level1Dialogue
+  m_EditorClassIdentifier: 
+  NodeLinks:
+  - BaseNodeGUID: f808f908-5993-4524-ab8e-269dae110e37
+    PortName: "\u0414\u0430\u043B\u044C\u0448\u0435"
+    TargetNodeGUID: d3fdf67d-7955-41a1-8d2c-48dd10c86d3c
+  - BaseNodeGUID: 1bc12b7d-551b-4d2a-be37-b33a90b760fa
+    PortName: Next
+    TargetNodeGUID: f808f908-5993-4524-ab8e-269dae110e37
+  - BaseNodeGUID: d3fdf67d-7955-41a1-8d2c-48dd10c86d3c
+    PortName: "\u0414\u0430\u043B\u044C\u0448\u0435"
+    TargetNodeGUID: d52131b9-c21c-4cfb-b9f3-5a65b4d9ce84
+  - BaseNodeGUID: d52131b9-c21c-4cfb-b9f3-5a65b4d9ce84
+    PortName: "\u041D\u0435\u0442, \u044F \u043D\u0435 \u0441\u0442\u0430\u043D\u0443
+      \u044D\u0442\u0438\u043C \u0437\u0430\u043D\u0438\u043C\u0430\u0442\u044C\u0441\u044F."
+    TargetNodeGUID: 0b15c132-b894-4bdf-96e3-3834788fda7b
+  - BaseNodeGUID: d52131b9-c21c-4cfb-b9f3-5a65b4d9ce84
+    PortName: "\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u0437\u0430\u0439\u043C\u0443\u0441\u044C
+      \u044D\u0442\u0438\u043C"
+    TargetNodeGUID: bd2151fb-d33a-4ad9-9af9-f4b1b3584576
+  - BaseNodeGUID: d52131b9-c21c-4cfb-b9f3-5a65b4d9ce84
+    PortName: "\u0421\u0440\u0430\u0436\u0430\u0442\u044C\u0441\u044F \u0441\u043E
+      \u0441\u043A\u0435\u043B\u0435\u0442\u043E\u043C \u043E\u0434\u043D\u043E\u0439
+      \u043F\u0430\u043B\u043A\u043E\u0439, \u0442\u044B \u0448\u0443\u0442\u0438\u0448\u044C?
+      [\u0425\u0430\u0440\u0438\u0437\u043C\u0430]"
+    TargetNodeGUID: 03d57dd1-03d4-4617-b550-fd62fe1bd587
+  - BaseNodeGUID: 03d57dd1-03d4-4617-b550-fd62fe1bd587
+    PortName: Boolean
+    TargetNodeGUID: e0ea727c-986a-451b-92b2-1355b19f0e1f
+  - BaseNodeGUID: 03d57dd1-03d4-4617-b550-fd62fe1bd587
+    PortName: Boolean
+    TargetNodeGUID: ad221e9e-2b6e-455c-a18e-f53e3ad2a1b7
+  - BaseNodeGUID: ad221e9e-2b6e-455c-a18e-f53e3ad2a1b7
+    PortName: "\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u0437\u0430\u0439\u043C\u0443\u0441\u044C
+      \u044D\u0442\u0438\u043C"
+    TargetNodeGUID: bd2151fb-d33a-4ad9-9af9-f4b1b3584576
+  - BaseNodeGUID: e0ea727c-986a-451b-92b2-1355b19f0e1f
+    PortName: "\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u0437\u0430\u0439\u043C\u0443\u0441\u044C
+      \u044D\u0442\u0438\u043C"
+    TargetNodeGUID: bd2151fb-d33a-4ad9-9af9-f4b1b3584576
+  DialogueNodeData:
+  - NodeGUID: f808f908-5993-4524-ab8e-269dae110e37
+    Position: {x: 262.4, y: 190.4}
+    DialogueTitle: 
+    DialogueText: "\u041F\u0440\u0438\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E
+      \u0442\u0435\u0431\u044F \u043F\u0443\u0442\u043D\u0438\u043A, \u043E\u0442\u043A\u0443\u0434\u0430
+      \u0431\u044B \u0442\u044B \u043D\u0438 \u0431\u044B\u043B! \u0423\u0434\u0430\u0447\u043D\u043E,
+      \u0447\u0442\u043E \u0442\u044B \u0442\u0443\u0442 \u043E\u043A\u0430\u0437\u0430\u043B\u0441\u044F."
+  - NodeGUID: d3fdf67d-7955-41a1-8d2c-48dd10c86d3c
+    Position: {x: 807.2, y: 190.4}
+    DialogueTitle: 
+    DialogueText: "\u0412\u0438\u0434\u0438\u0448\u044C \u0442\u043E\u0433\u043E
+      \u0441\u043A\u0435\u043B\u0435\u0442\u0430 \u0437\u0430 \u0434\u0435\u0440\u0435\u0432\u043E\u043C?
+      \u041E\u043D \u0434\u0443\u043C\u0430\u0435\u0442, \u0447\u0442\u043E \u0435\u0433\u043E
+      \u043D\u0435 \u0432\u0438\u0434\u043D\u043E \u0438 \u0433\u043E\u0442\u043E\u0432\u0438\u0442
+      \u043D\u0430 \u043C\u0435\u043D\u044F \u0437\u0430\u0441\u0430\u0434\u0443."
+  - NodeGUID: d52131b9-c21c-4cfb-b9f3-5a65b4d9ce84
+    Position: {x: 1350.4, y: 190.4}
+    DialogueTitle: 
+    DialogueText: "\u041C\u043E\u0436\u0435\u0448\u044C \u0441 \u043D\u0438\u043C
+      \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u0442\u044C\u0441\u044F? \u041F\u0430\u043B\u043A\u0430,
+      \u043B\u0435\u0436\u0430\u0449\u0430\u044F \u0440\u044F\u0434\u043E\u043C \u0441\u043E
+      \u043C\u043D\u043E\u0439, \u043F\u043E\u043C\u043E\u0436\u0435\u0442 \u0442\u0435\u0431\u0435
+      \u0432 \u044D\u0442\u043E\u043C \u0431\u043E\u044E."
+  - NodeGUID: 0b15c132-b894-4bdf-96e3-3834788fda7b
+    Position: {x: 1944, y: 411.2}
+    DialogueTitle: 
+    DialogueText: "\u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439\u0441\u044F,
+      \u0435\u0441\u043B\u0438 \u043F\u0435\u0440\u0435\u0434\u0443\u043C\u0430\u0435\u0448\u044C."
+  - NodeGUID: e0ea727c-986a-451b-92b2-1355b19f0e1f
+    Position: {x: 2180, y: 123.2}
+    DialogueTitle: 
+    DialogueText: "\u041D\u0443 \u0434\u0430, \u0430 \u0447\u0442\u043E \u0442\u0430\u043A\u043E\u0433\u043E?"
+  - NodeGUID: bd2151fb-d33a-4ad9-9af9-f4b1b3584576
+    Position: {x: 2797.6, y: 274.40002}
+    DialogueTitle: 
+    DialogueText: "\u0412\u043F\u0435\u0440\u0435\u0434 \u0438 \u0443\u0434\u0430\u0447\u0438!"
+  - NodeGUID: ad221e9e-2b6e-455c-a18e-f53e3ad2a1b7
+    Position: {x: 2195.2, y: -31.199999}
+    DialogueTitle: 
+    DialogueText: "\u0427\u0442\u043E \u0437\u043D\u0430\u0447\u0438\u0442, \u0442\u0435\u0431\u0435
+      \u043D\u0435 \u043D\u0440\u0430\u0432\u0438\u0442\u0441\u044F \u0438\u0434\u0435\u044F
+      \u0441\u0440\u0430\u0436\u0430\u0442\u044C\u0441\u044F \u0441\u043E \u0441\u043A\u0435\u043B\u0435\u0442\u043E\u043C
+      \u043E\u0434\u043D\u043E\u0439 \u043F\u0430\u043B\u043A\u043E\u0439? \u041B\u0430\u0434\u043D\u043E,
+      \u0441\u043F\u0440\u0430\u0432\u0430 \u043E\u0442 \u043C\u0435\u043D\u044F
+      \u0435\u0441\u0442\u044C \u0442\u0430\u0439\u043D\u0438\u043A \u0441 \u0431\u0440\u043E\u043D\u0435\u0439,
+      \u043C\u043E\u0436\u0435\u0448\u044C \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C
+      \u0435\u0435."
+  CharacteristicNodeData:
+  - NodeGUID: 03d57dd1-03d4-4617-b550-fd62fe1bd587
+    Position: {x: 1944, y: 42.4}
+    Characteristic: 5
+    CheckDifficulty: 10
+  ExposedProperties: []

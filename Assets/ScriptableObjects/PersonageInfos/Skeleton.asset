@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Skeleton
   m_EditorClassIdentifier: 
   Name: "\u0421\u043A\u0435\u043B\u0435\u0442"
-  Strength: 10
-  Dexterity: 10
+  Strength: 8
+  Dexterity: 8
   Constitution: 10
   Intelligence: 8
   Wisdom: 8

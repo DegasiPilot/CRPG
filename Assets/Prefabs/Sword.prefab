@@ -193,6 +193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 777576633bb49d44fbd08119bd98ae70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemInfo: {fileID: 11400000, guid: b0979fdbbf2fb124392eaaac26ce1fb7, type: 2}
+  ItemInfo: {fileID: 11400000, guid: 6e4f702d79968f343b3d48d3100acc40, type: 2}
   IsInInventory: 0
   IsEquiped: 0

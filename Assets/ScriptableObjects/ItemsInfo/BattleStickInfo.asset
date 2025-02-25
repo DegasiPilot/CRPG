@@ -20,7 +20,7 @@ MonoBehaviour:
   Prefab: {fileID: 2313094977613659377, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
   MaxAttackDistance: 1
   MinDamage: 1
-  MaxDamage: 6
+  MaxDamage: 4
   IsTwoHandled: 0
   usingCharacteristic: 0
   DamageType: 0

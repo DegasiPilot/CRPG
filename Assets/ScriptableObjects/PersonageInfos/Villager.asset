@@ -21,6 +21,6 @@ MonoBehaviour:
   Charisma: 8
   Race: 1
   UnSpendedStatPoints: 0
-  PersonagePortrait: {fileID: 2800000, guid: c49bd6e773b7481499fb12e0aa7ac8f0, type: 3}
+  PersonagePortrait: {fileID: 2800000, guid: 6ee2ed350b2004442be62630e07582eb, type: 3}
   PersonagePortraitColor: {r: 1, g: 1, b: 1, a: 1}
   Gender: 1
