@@ -9,6 +9,7 @@ public class GameSaveInfo
     public string UserLogin { get; set; }
 
     public SceneSaveInfo SceneSaveInfo { get; set; }
+    public PersonageInfo MainPersonageInfo { get; set; }
 
     public InventoryItem[] InventoryItems { get; set; }
 

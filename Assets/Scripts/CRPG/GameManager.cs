@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using CRPG.DI;
 using DialogueSystem.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,7 +19,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerController PlayerController;
     [HideInInspector] public List<PlayerController> PlayerControllers;
     public Personage PlayerPersonage => PlayerController.Personage;
-    public PersonageController[] PersonageControllers;
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
     private Component _currentComponentUnderPointer;
@@ -37,15 +37,6 @@ public class GameManager : MonoBehaviour
         DialogueParser.Instance.Setup();
         PlayerController = GameData.PlayerController;
         PlayerControllers = new() { PlayerController };
-        PersonageControllers = Personages.GetComponentsInChildren<PersonageController>();
-        foreach(var controller in PersonageControllers)
-        {
-            if(controller == PlayerController)
-            {
-                continue;
-            }
-            controller.Setup();
-        }
         SetActivePersonage(PlayerController);
         OnDeathEvent.AddListener(() => gameObject.SetActive(false));
     }
@@ -63,6 +54,7 @@ public class GameManager : MonoBehaviour
             
             if(gameMode == GameMode.Dialogue)
             {
+                NothingUnderPointer();
                 CameraController.Instance.enabled = false;
             }
             else if(gameMode == GameMode.Battle)
@@ -241,7 +233,7 @@ public class GameManager : MonoBehaviour
     public void CreateNewGameSave()
     {
         SceneSaveLoadManager.Instance.SaveScene();
-        GameData.NewGameSave();
+        DI.DataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
     }
 
     public void ExitToMainMenu()

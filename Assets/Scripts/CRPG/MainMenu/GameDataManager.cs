@@ -21,15 +21,9 @@ public class GameDataManager : MonoBehaviour
         PlayerController.Setup();
     }
 
-    public void LoadLastGameSave()
-    {
-        GameSaveInfo gameSave = CRUD.GetLastGameSave(GameData.CurrentUser);
-        LoadGameSave(gameSave);
-    }
-
     public void LoadGameSave(GameSaveInfo gameSave)
     {
-        GameData.PlayerPersonageInfo = CRUD.GetPersonageInfo(gameSave.MainPersonageId);
+        GameData.PlayerPersonageInfo = gameSave.MainPersonageInfo;
         PlayerController.Personage.Setup(GameData.PlayerPersonageInfo);
         PlayerCustomizer.ApplyAppearance();
         GameData.SceneSaveInfo = gameSave.SceneSaveInfo;

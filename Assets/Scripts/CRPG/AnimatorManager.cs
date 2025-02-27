@@ -6,7 +6,6 @@ public class AnimatorManager : MonoBehaviour
 {
     [System.NonSerialized] public UnityEvent OnAttackContactEvent = new();
     public Animator Animator;
-    public float JumpSpeedMultiplier;
 
     private readonly int _atackAnimId = Animator.StringToHash("Attack");
     private readonly int _hitAnimId = Animator.StringToHash("Hit");
@@ -18,6 +17,8 @@ public class AnimatorManager : MonoBehaviour
     private readonly int _animIsJumpingId = Animator.StringToHash("IsJumping");
     private readonly int _animJumpSpeedMultiplier = Animator.StringToHash("JumpSpeedMultiplier");
     private readonly int _animIsTalkingId = Animator.StringToHash("IsTalking");
+
+    [SerializeField] private float _jumpGroundingTime;
 
     private void Awake()
     {
@@ -58,10 +59,10 @@ public class AnimatorManager : MonoBehaviour
         Animator.SetTrigger(_fallAnimId);
     }
 
-    public void StartJumpAnim(Vector3 target)
+    public void StartJumpAnim(Vector3 target, float animDuration)
     {
-        Animator.SetTrigger(_animIsJumpingId);
-        Animator.SetFloat(_animJumpSpeedMultiplier, Vector3.Distance(target, transform.position) * JumpSpeedMultiplier);
+		Animator.SetFloat(_animJumpSpeedMultiplier, 1/(animDuration/_jumpGroundingTime));
+		Animator.SetTrigger(_animIsJumpingId);
     }
 
     public void StartDialogueAnim()

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
+using System.Collections;
 
 public class PlayerController : PersonageController
 {
@@ -8,7 +9,6 @@ public class PlayerController : PersonageController
     public LineRenderer AccesableLineRenderer;
     public LineRenderer UnaccesableLineRenderer;
     public GameObject Sphere;
-    public float JumpSpeedMultiplier;
 
     [System.NonSerialized] public GameObject Inventory;
 
@@ -18,7 +18,7 @@ public class PlayerController : PersonageController
     {
         base.Setup();
         _normalAgentSpeed = _controller.speed;
-    }
+	}
 
     public void OnGroundPressedInFree(Vector3 hitPoint)
     {
@@ -29,15 +29,22 @@ public class PlayerController : PersonageController
         switch (_activeAction)
         {
             case ActionType.Movement:
-                GoToPosition(hitPoint);
+                GoToPosition(navMeshHit.position);
                 break;
             case ActionType.Jumping:
-                if(Vector3.Distance(hitPoint, transform.position) < GameData.MaxJumpDistance)
-                {
-                    JumpToPosition(hitPoint);
-                }
-                break;
-        }
+                float jumpDistance = Vector3.Distance(navMeshHit.position, transform.position);
+				if (jumpDistance < GameData.MaxJumpDistance)
+				{
+					float calculatedHeight = Mathf.Clamp(
+				        jumpDistance * _distanceToHeightRatio,
+				        _minJumpHeight,
+				        _maxJumpHeight
+			        );
+					float duration = CalculateJumpDuration(calculatedHeight);
+					StartCoroutine(JumpToPosition(navMeshHit.position, calculatedHeight, duration));
+				}
+				break;
+		}
         if(_activeAction != _defaultAction)
         {
             SetDefaultAction();
@@ -166,10 +173,10 @@ public class PlayerController : PersonageController
         }
     }
 
-    public override void JumpToPosition(Vector3 target)
+    public override IEnumerator JumpToPosition(Vector3 target, float jumpHeight, float jumpDuration)
     {
-        base.JumpToPosition(target);
-        AnimatorManager.StartJumpAnim(target);
+        AnimatorManager.StartJumpAnim(target, jumpDuration);
+        return base.JumpToPosition(target, jumpHeight, jumpDuration);
     }
 
     protected override void OnDeath()

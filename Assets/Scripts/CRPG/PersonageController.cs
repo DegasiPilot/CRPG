@@ -31,8 +31,14 @@ public abstract class PersonageController : MonoBehaviour
     protected Interact _interact;
     protected Component _interactComponent;
 
-    protected bool _isGrounded = true;
-    protected float _startJumpTime;
+	[Header("Настройки прыжка")]
+	[SerializeField] protected float _distanceToHeightRatio = 0.4f; // Базовый множитель высоты
+	[SerializeField] protected float _minJumpHeight = 0.1f;
+	[SerializeField] protected float _maxJumpHeight = 1.5f;
+
+	protected bool _isGrounded = true;
+    //protected float _startJumpTime;
+    //protected Vector3? _jumpTarget;
 
     protected ActionType _defaultAction = ActionType.Movement;
     protected ActionType _activeAction;
@@ -43,17 +49,22 @@ public abstract class PersonageController : MonoBehaviour
     public bool IsMoving { get; private set; }
     protected bool _isAnimPlaying;
 
-    public virtual void Setup()
+	public void Awake()
+	{
+        Setup();
+	}
+
+	public virtual void Setup()
     {
         _controller = GetComponent<NavMeshAgent>();
         _controller.updatePosition = false;
         _rigidBody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         _personage = GetComponent<Personage>();
-        AnimatorManager = GetComponentInChildren<AnimatorManager>();
+		_personage.OnDeath.AddListener(OnDeath);
+		AnimatorManager = GetComponentInChildren<AnimatorManager>();
         _navMeshPath = new();
         _activeAction = ActionType.Movement;
-        _personage.OnDeath.AddListener(OnDeath);
     }
 
     protected virtual void Update()
@@ -139,50 +150,90 @@ public abstract class PersonageController : MonoBehaviour
         _interactComponent = interactComponent;
     }
 
-    public virtual void JumpToPosition(Vector3 target)
-    {
-        _interact = null;
-        _interactComponent = null;
+	//public virtual void JumpToPosition(Vector3 target)
+	//{
+	//    _jumpTarget = target;
+	//    _interact = null;
+	//    _interactComponent = null;
 
-        float gravity = Physics.gravity.magnitude;
-        float angle = 45 * Mathf.Deg2Rad;
+	//    float gravity = Physics.gravity.magnitude;
+	//    float angle = 45 * Mathf.Deg2Rad;
 
-        // Positions of this object and the target on the same plane
-        Vector3 planarTarget = new Vector3(target.x, 0, target.z);
-        Vector3 planarPostion = new Vector3(transform.position.x, 0, transform.position.z);
+	//    // Positions of this object and the target on the same plane
+	//    Vector3 planarTarget = new Vector3(target.x, 0, target.z);
+	//    Vector3 planarPostion = new Vector3(transform.position.x, 0, transform.position.z);
 
-        float planarDistance = Vector3.Distance(planarTarget, planarPostion);
-        float yOffset = transform.position.y - target.y;
+	//    float planarDistance = Vector3.Distance(planarTarget, planarPostion);
+	//    float yOffset = transform.position.y - target.y;
 
-        float initialVelocity = (1 / Mathf.Cos(angle)) * Mathf.Sqrt((0.5f * gravity * Mathf.Pow(planarDistance, 2)) / (planarDistance * Mathf.Tan(angle) + yOffset));
+	//    float initialVelocity = (1 / Mathf.Cos(angle)) * Mathf.Sqrt((0.5f * gravity * Mathf.Pow(planarDistance, 2)) / (planarDistance * Mathf.Tan(angle) + yOffset));
 
-        Vector3 velocity = new Vector3(0, initialVelocity * Mathf.Sin(angle), initialVelocity * Mathf.Cos(angle));
+	//    Vector3 velocity = new Vector3(0, initialVelocity * Mathf.Sin(angle), initialVelocity * Mathf.Cos(angle));
 
-        // Rotate our velocity to match the direction between the two objects
-        float angleBetweenObjects = Vector3.Angle(Vector3.forward, planarTarget - planarPostion) * (planarTarget.x > planarPostion.x ? 1 : -1);
-        Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
+	//    // Rotate our velocity to match the direction between the two objects
+	//    float angleBetweenObjects = Vector3.Angle(Vector3.forward, planarTarget - planarPostion) * (planarTarget.x > planarPostion.x ? 1 : -1);
+	//    Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
 
-        _startJumpTime = Time.timeSinceLevelLoad;
-        _isGrounded = false;
-        _controller.enabled = false;
-        _rigidBody.isKinematic = false;
-        _rigidBody.AddForce(finalVelocity, ForceMode.VelocityChange);
-        SetDefaultAction();
-    }
+	//    _startJumpTime = Time.timeSinceLevelLoad;
+	//    _isGrounded = false;
+	//    _controller.enabled = false;
+	//    _rigidBody.isKinematic = false;
+	//    _rigidBody.AddForce(finalVelocity, ForceMode.VelocityChange);
+	//    SetDefaultAction();
+	//}
 
-    protected void OnCollisionEnter(Collision collision)
-    {
-        if (!_isGrounded &&
-            (Time.timeSinceLevelLoad - _startJumpTime) > Time.fixedDeltaTime
-            && collision.GetContact(0).point.y < transform.position.y)
-        {
-            _isGrounded = true;
-            _controller.enabled = true;
-            _rigidBody.isKinematic = true;
-        }
-    }
+	public virtual IEnumerator JumpToPosition(Vector3 targetPosition, float jumpHeigth, float jumpDuration)
+	{
+		_interact = null;
+		_interactComponent = null;
+		_isGrounded = false;
+		_controller.enabled = false; // Выключаем NavMeshAgent
+		SetDefaultAction();
 
-    public void GetAttackInfo(Personage personage, out int bonus, out int difficulty, out Characteristics characteristic)
+		Vector3 startPos = transform.position;
+		float time = 0;
+
+		while (time < jumpDuration)
+		{
+			time += Time.deltaTime;
+			float progress = time / jumpDuration;
+
+			// Параболическая траектория (y = -4x^2 + 4x)
+
+			float verticalOffset = jumpHeigth * (-4 * Mathf.Pow(progress, 2) + 4 * progress);
+			transform.position = Vector3.Lerp(startPos, targetPosition, progress) + Vector3.up * verticalOffset;
+
+			yield return null;
+		}
+
+		// Фиксируем позицию после прыжка
+		transform.position = targetPosition;
+		_isGrounded = true;
+		_controller.enabled = true; // Включаем NavMeshAgent обратно
+	}
+
+	protected float CalculateJumpDuration(float height)
+	{
+		// Время до вершины прыжка: t_up = √(2h/g)
+		// Общее время прыжка (вверх + вниз): t_total = 2*t_up
+		return 2 * Mathf.Sqrt(2 * height / Mathf.Abs(Physics.gravity.y));
+	}
+
+	//protected void OnCollisionEnter(Collision collision)
+	//   {
+	//       if (!_isGrounded && _jumpTarget != null &&
+	//           (Time.timeSinceLevelLoad - _startJumpTime) > Time.fixedDeltaTime
+	//           && collision.GetContact(0).point.y < transform.position.y)
+	//       {
+	//           _isGrounded = true;
+	//		_rigidBody.isKinematic = true;
+	//           transform.position = _jumpTarget.Value;
+	//           _jumpTarget = null;
+	//		_controller.enabled = true;
+	//       }
+	//   }
+
+	public void GetAttackInfo(Personage personage, out int bonus, out int difficulty, out Characteristics characteristic)
     {
         if (WeaponInfo)
         {

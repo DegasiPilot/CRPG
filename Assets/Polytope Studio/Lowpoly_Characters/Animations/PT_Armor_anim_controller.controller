@@ -123,9 +123,9 @@ AnimatorState:
   m_Motion: {fileID: -4131146202891655349, guid: c972fd1e43435c5499c4c94edaec7d4d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
+  m_MirrorParameter: IsMoving
+  m_CycleOffsetParameter: speedv
+  m_TimeParameter: speedv
 --- !u!1101 &-3963733490363679873
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

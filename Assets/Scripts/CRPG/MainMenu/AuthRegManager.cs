@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Diagnostics;
+using CRPG.DataSaveSystem;
+using MongoDB.Bson;
 
 public class AuthRegManager : MonoBehaviour
 {
@@ -14,14 +16,17 @@ public class AuthRegManager : MonoBehaviour
 
     bool _isSearchInProgress;
     StringBuilder errors = new StringBuilder(2);
+    IDataSaveLoader _dataSaveLoader;
 
     private void Awake()
     {
-        User user = LocalCashManager.LoadUserCash();
-        if(user != null)
-        {
-            TryEnter(user.Login, user.Password);
-        }
+        _dataSaveLoader = CRPG.DI.DI.DataSaveLoader;
+        AfterUserInitialized(new User() { Id = ObjectId.GenerateNewId(), Login = "Login", Password = "Password"});
+        //User user = LocalCashManager.LoadUserCash();
+        //if(user != null)
+        //{
+        //    TryEnter(user.Login, user.Password);
+        //}
     }
 
     private bool CheckFields()
@@ -58,7 +63,7 @@ public class AuthRegManager : MonoBehaviour
     private async void TryEnter(string login, string password)
     {
         _isSearchInProgress = true;
-        User user = await CRUD.GetUserWithLoginAsync(login);
+        User user = await _dataSaveLoader.GetUserWithLoginAsync(login);
         if (user != null)
         {
             if (user.Password == password)
@@ -82,7 +87,7 @@ public class AuthRegManager : MonoBehaviour
         if (!_isSearchInProgress && CheckFields())
         {
             _isSearchInProgress = true;
-            User user = await CRUD.GetUserWithLoginAsync(LoginInput.text);
+            User user = await _dataSaveLoader.GetUserWithLoginAsync(LoginInput.text);
             if (user == null)
             {
                 user = new User()
@@ -90,7 +95,7 @@ public class AuthRegManager : MonoBehaviour
                     Login = LoginInput.text,
                     Password = PasswordInput.text,
                 };
-                CRUD.CreateUser(user);
+                _dataSaveLoader.CreateUser(user);
                 AfterUserInitialized(user);
             }
             else

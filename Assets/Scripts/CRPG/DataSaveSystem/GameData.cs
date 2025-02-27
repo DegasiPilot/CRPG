@@ -16,12 +16,12 @@ public static class GameData
     public const float MaxUnarmedAttackDistance = 0.8f;
     public const float MaxJumpDistance = 10;
 
-    public static void NewGameSave()
+    public static GameSaveInfo NewGameSave()
     {
         GameSaveInfo gameSave = new GameSaveInfo()
         {
             DateTime = BsonDateTime.Create(DateTime.Now),
-            MainPersonageId = PlayerPersonageInfo.Id,
+            MainPersonageInfo = PlayerPersonageInfo,
             SceneSaveInfo = SceneSaveInfo,
         };
 
@@ -38,8 +38,7 @@ public static class GameData
             }
         }
         gameSave.UserLogin = CurrentUser.Login;
-
-        CRUD.CreateGameSaveInfo(gameSave);
+        return gameSave;
     }
 
     public static void InitializeNewGame(PersonageInfo personageInfo)

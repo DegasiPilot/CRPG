@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System;
 using UnityEngine.EventSystems;
+using CRPG.DataSaveSystem;
+using CRPG.DI;
 
 public class PersonageCreator : MonoBehaviour
 {
@@ -48,11 +50,13 @@ public class PersonageCreator : MonoBehaviour
 
     private int _maxStatPointForSpent => _personageInfo.Race == Race.Human ? 27 + _humanStatPointsBonus : 27;
     private const int _humanStatPointsBonus = 5;
+    private IDataSaveLoader _dataSaveLoader;
 
 
     private void Awake()
     {
         Instance = this;
+        _dataSaveLoader = CRPG.DI.DI.DataSaveLoader;
 
         _personageInfo = ScriptableObject.CreateInstance<PersonageInfo>();
         _personageInfo.Name = name;
@@ -219,12 +223,12 @@ public class PersonageCreator : MonoBehaviour
             appearance.HairsColor = HairColorImage.color;
             appearance.SkinColor = SkinColorImage.color;
             _personageInfo.Appearance = appearance;
-            _personageInfo.ImageBytes = SavePersonagePortrait();
-            _personageInfo.PersonagePortrait = new Texture2D(256, 256);
-            _personageInfo.PersonagePortrait.LoadImage(_personageInfo.ImageBytes);
-            CRUD.CreatePersonageInfo(_personageInfo);
+            //_personageInfo.ImageBytes = SavePersonagePortrait();
+            //_personageInfo.PersonagePortrait = new Texture2D(256, 256);
+            //_personageInfo.PersonagePortrait.LoadImage(_personageInfo.ImageBytes);
+            _dataSaveLoader.CreatePersonageInfo(_personageInfo);
 
-            GameData.NewGameSave();
+            DI.DataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
             GameData.InitializeNewGame(_personageInfo);
             MaleObject.transform.rotation = Quaternion.identity;
             FemaleObject.transform.rotation = Quaternion.identity;
