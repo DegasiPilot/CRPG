@@ -12,13 +12,7 @@ public class Personage : MonoBehaviour
     public bool IsDead;
     public Transform HitPoint;
 
-	[SerializeField] private EquipmentSlot HealmetSlot;
-	[SerializeField] private EquipmentSlot BodySlot;
-	[SerializeField] private EquipmentSlot LeftHandSlot;
-	[SerializeField] private EquipmentSlot RightHandSlot;
-	[SerializeField] private EquipmentSlot BootsSlot;
-
-	public Item Weapon;
+    public Item Weapon;
     public List<Item> Armor = new List<Item>();
     public BattleTeam BattleTeam;
     public PersonageInfo PersonageInfo;
