@@ -18,8 +18,7 @@ MonoBehaviour:
   ShortDescription: "\u041D\u0435\u043F\u043B\u043E\u0437\u043E \u0437\u0430\u0449\u0430\u0449\u0430\u044E\u0442
     \u043D\u043E\u0433\u0438."
   Icon: {fileID: 21300000, guid: 51237c9ea6ac1f847ba926ec0cfa2e35, type: 3}
-  Prefab: {fileID: 7457221262749890986, guid: 4bf6256caeac31f4393f2a48bdcdac37, type: 3}
   SkinIndex: 1
-  ArmorClass: 4
+  _armorPercent: 6
   WearableBodyPart: 4
-  ArmorWeight: 1
+  ArmorWeight: 0.4

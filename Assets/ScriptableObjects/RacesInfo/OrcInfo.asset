@@ -18,7 +18,9 @@ MonoBehaviour:
     \u043D\u0430\u043D\u043E\u0441\u0438\u0442 \u043D\u0430 1-4 \u0431\u043E\u043B\u044C\u0448\u0435
     \u0443\u0440\u043E\u043D\u0430."
   StandartSpeed: 6
-  BaseHealth: 14
+  BaseHealth: 12
+  BaseStamina: 0
+  Sprite: {fileID: 21300000, guid: 6660d9fb6e6682a4195b861dc05b4b8a, type: 3}
   StrengthBonus: 2
   DexterityBonus: 0
   ConstitutionBonus: 1

@@ -4092,6 +4092,37 @@ Transform:
   - {fileID: 1098325191231113544}
   m_Father: {fileID: 3242256657730991993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2478782292093292681
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 70469526836002124}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &70469526836002124
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2478782292093292681}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 37235431491349573}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2493244143478975183
 GameObject:
   m_ObjectHideFlags: 0
@@ -8775,6 +8806,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6571741449048177303}
+  - component: {fileID: 3212792686176100105}
   m_Layer: 0
   m_Name: PT_Right_Hand_Weapon_slot
   m_TagString: Untagged
@@ -8797,6 +8829,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5524789889028151956}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3212792686176100105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5815592836232429244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a71ff346dccb9e43b44debe9092b2c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5877711425075080130
 GameObject:
   m_ObjectHideFlags: 0
@@ -9068,6 +9112,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1230423254854163068}
+  - component: {fileID: 8570185133594946905}
   m_Layer: 0
   m_Name: PT_Left_Hand_Shield_slot
   m_TagString: Untagged
@@ -9090,6 +9135,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3205176474968915420}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8570185133594946905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6175748391548114283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a71ff346dccb9e43b44debe9092b2c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6210884758584454247
 GameObject:
   m_ObjectHideFlags: 0
@@ -11134,11 +11191,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4f04277cdb925a4fa917062eec5574e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Helmet: {fileID: 0}
-  Body: {fileID: 0}
-  Boots: {fileID: 0}
-  RigthHand: {fileID: 0}
-  LeftHand: {fileID: 0}
+  Helmet: {fileID: 2674689478933750484}
+  Body: {fileID: 7085038109136775390}
+  Boots: {fileID: 1532603173873984137}
+  RigthHand: {fileID: 3212792686176100105}
+  LeftHand: {fileID: 8570185133594946905}
 --- !u!114 &2674689478933750484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11152,6 +11209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 0}
   - {fileID: 1964066390588654395}
   - {fileID: 8094754508882183624}
 --- !u!114 &7085038109136775390
@@ -11167,6 +11225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 1044753152923359901}
   - {fileID: 5375799069760947756}
   - {fileID: 8864207159908025127}
 --- !u!114 &1532603173873984137
@@ -11182,6 +11241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 8554025953620609770}
   - {fileID: 3727833050009950208}
   - {fileID: 2715626058459635120}
 --- !u!114 &6590897201420051788
@@ -11197,7 +11257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Animator: {fileID: 4245745844326149324}
-  JumpSpeedMultiplier: 0.135
+  _jumpGroundingTime: 0
 --- !u!1 &7495671352183431528
 GameObject:
   m_ObjectHideFlags: 0
@@ -12136,6 +12196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 0}
   - {fileID: 7511369225792991045}
   - {fileID: 1020780407241027395}
 --- !u!114 &2390370123779342272
@@ -12151,6 +12212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 6327317881009497104}
   - {fileID: 4374697799717222819}
   - {fileID: 6260905329784918324}
 --- !u!114 &8854914694789966617
@@ -12166,6 +12228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkinVariants:
+  - {fileID: 1976582877952805173}
   - {fileID: 2493244143478975183}
   - {fileID: 2378435074993760664}
 --- !u!114 &4590526505212102678
@@ -12198,7 +12261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Animator: {fileID: 3211176206869484160}
-  JumpSpeedMultiplier: 0.135
+  _jumpGroundingTime: 0.558
 --- !u!1 &8205316003246950478
 GameObject:
   m_ObjectHideFlags: 0
@@ -12214,6 +12277,7 @@ GameObject:
   - component: {fileID: 3426615617536217734}
   - component: {fileID: 3640927670494120500}
   - component: {fileID: 6937764839655362251}
+  - component: {fileID: 8395357984280518413}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -12240,6 +12304,7 @@ Transform:
   - {fileID: 2486717994480981247}
   - {fileID: 7214454204642770650}
   - {fileID: 6312339874375302999}
+  - {fileID: 70469526836002124}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3724107564051192107
@@ -12256,11 +12321,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 5
   AttackAnimTimeBeforeHit: 0.44
+  <AnimatorManager>k__BackingField: {fileID: 1340514593045557249}
+  _controller: {fileID: 4410945770364868785}
+  _rigidBody: {fileID: 3640927670494120500}
+  _collider: {fileID: 6937764839655362251}
+  _personage: {fileID: 5396155787161258385}
+  _distanceToHeightRatio: 0.3
+  _minJumpHeight: 0.1
+  _maxJumpHeight: 1.3
   PathEndHitAccuracy: 0.1
   AccesableLineRenderer: {fileID: 3461615862447512479}
   UnaccesableLineRenderer: {fileID: 5209372541067782930}
   Sphere: {fileID: 4612172182146424987}
-  JumpSpeedMultiplier: 0.135
+  Inventory: {fileID: 2478782292093292681}
 --- !u!114 &5396155787161258385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12278,10 +12351,8 @@ MonoBehaviour:
   Weapon: {fileID: 0}
   Armor: []
   BattleTeam: 0
-  PersonageInfo: {fileID: 0}
-  Controller: {fileID: 0}
-  MyCamera: {fileID: 0}
-  CurrentHealth: 0
+  PersonageInfo: {fileID: 11400000, guid: 72ed5b1eb5a44724088b233e5ee829ad, type: 2}
+  Controller: {fileID: 3724107564051192107}
 --- !u!195 &4410945770364868785
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -12295,7 +12366,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 180
+  m_AngularSpeed: 360
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -12334,7 +12405,6 @@ MonoBehaviour:
   Beards:
   - {fileID: 7495671352183431528}
   - {fileID: 2942536472020519889}
-  EquipmentCustomizer: {fileID: 0}
   _hairColorPropertyID: 0
   _skinColorPropertyID: 0
 --- !u!54 &3640927670494120500
@@ -12387,6 +12457,20 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &8395357984280518413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205316003246950478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4235fce9a3bb74441be5400327ccd247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <PlayerController>k__BackingField: {fileID: 3724107564051192107}
+  <PlayerCustomizer>k__BackingField: {fileID: 3426615617536217734}
 --- !u!1 &8229196525392976122
 GameObject:
   m_ObjectHideFlags: 0

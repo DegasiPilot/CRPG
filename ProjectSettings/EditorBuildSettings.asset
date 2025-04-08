@@ -14,4 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PersonageRedactorScene.unity
     guid: 8a5e84fb94c432847ab85e67e6ca7cce
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 36bc22a9429b5e242ad00e5c46b92535, type: 2}
+  m_UseUCBPForAssetBundles: 0

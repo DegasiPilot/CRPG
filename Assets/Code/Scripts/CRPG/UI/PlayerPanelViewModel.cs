@@ -1,0 +1,82 @@
+﻿using System;
+
+namespace CRPG.UI
+{
+    class PlayerPanelViewModel : IDisposable
+    {
+		internal PlayerPanelViewModel(PlayerPanel view, Func<ActionType, PersonageActionInfo> getActionInfo)
+		{
+			_view = view;
+			_actionsViewModel = new PlayerActionsViewModel(_view.PersonageActionsView);
+			_actionsViewModel.OnTogglePlayerAction += TogglePlayerAction;
+			_getActionInfo = getActionInfo;
+		}
+
+        private PlayerPanel _view;
+		private PlayerController _personageController;
+		private Personage _personage => _personageController?.Personage;
+		private PlayerActionsViewModel _actionsViewModel;
+		private Func<ActionType, PersonageActionInfo> _getActionInfo;
+
+		private void UpdateHealthBar()
+		{
+			_view.UpdateHealthBar(_personage.Health, _personage.MaxHealth);
+		}
+
+		private void UpdateStaminaBar()
+		{
+			_view.UpdateStaminaBar(_personage.Stamina, _personage.MaxStamina);
+		}
+
+		public void SetActivePersonage(PlayerController personageController)
+		{
+			Personage personage = personageController.Personage;
+			if (_personage != null)
+			{
+				_personage.OnHealthChanged.RemoveListener(UpdateHealthBar);
+				_personage.OnStaminaChanged.RemoveListener(UpdateStaminaBar);
+				_personageController.OnSetDefaultAction.RemoveListener(_actionsViewModel.DeactivateAllActions);
+			}
+			_personageController = personageController;
+
+			_view.PlayerName = personage.PersonageInfo.Name;
+			UpdateHealthBar();
+			UpdateStaminaBar();
+			_view.PlayerPortrait = personage.PersonageInfo.PersonagePortrait;
+			_personageController = personageController;
+			personage.OnHealthChanged.AddListener(UpdateHealthBar);
+			personage.OnStaminaChanged.AddListener(UpdateHealthBar);
+			_personageController.OnSetDefaultAction.AddListener(_actionsViewModel.DeactivateAllActions);
+			_actionsViewModel.Setup(personage.Actions, _getActionInfo);
+		}
+
+		public void TogglePlayerAction(ActionType actionType, bool activate)
+		{
+			if (activate)
+			{
+				_personageController.SetActiveAction(actionType);
+			}
+			else
+			{
+				_personageController.SetDefaultAction();
+			}
+		}
+
+		public void OnChangeGameMode(GameMode lastGameMode, GameMode currentGameMode)
+		{
+			if (lastGameMode == GameMode.Dialogue)
+			{
+				_view.gameObject.SetActive(true);
+			}
+			else if (currentGameMode == GameMode.Dialogue)
+			{
+				_view.gameObject.SetActive(false);
+			}
+		}
+
+		public void Dispose()
+		{
+			_actionsViewModel.OnTogglePlayerAction -= TogglePlayerAction;
+		}
+	}
+}
