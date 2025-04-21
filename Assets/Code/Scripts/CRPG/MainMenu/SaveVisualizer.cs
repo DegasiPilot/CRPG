@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using CRPG.DataSaveSystem.SaveData;
 
 public class SaveVisualizer : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class SaveVisualizer : MonoBehaviour
     {
         DateTime dateTime = saveInfo.DateTime.ToLocalTime();
         SaveTimeText.text = $"{dateTime.ToShortDateString()} {dateTime.ToShortTimeString()}";
-        PersonageInfoText.text = saveInfo.MainPersonageInfo.Name;
+        PersonageInfoText.text = saveInfo.MainPlayerInfo.PersonageInfo.Name;
         GetComponentInParent<Button>().onClick.AddListener(() => loadSave?.Invoke(saveInfo));
     }
 }

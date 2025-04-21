@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CRPG.ItemSystem;
+using UnityEngine;
 
 public class EquipmentCustomizer : MonoBehaviour
 {
@@ -8,19 +9,28 @@ public class EquipmentCustomizer : MonoBehaviour
     public ItemSkin RigthHand;
     public ItemSkin LeftHand;
 
-    public void EquipSkin(Item item, BodyPart bodyPart)
+    [SerializeField] private EquipmentManager _equipmentManager;
+
+	private void Awake()
+	{
+        if (_equipmentManager == null) Debug.LogError("there!", this);
+        _equipmentManager.OnItemEquiped += EquipSkin;
+        _equipmentManager.OnItemUnequiped += ResetSkin;
+	}
+
+	private void EquipSkin(Item item, BodyPart bodyPart)
     {
         if(bodyPart == BodyPart.LeftHand || bodyPart == BodyPart.RightHand)
         {
             EquipItemSkin(item.gameObject, bodyPart);
         }
-        else
+        else if(item is Armor armor)
         {
-            EquipArmorSkin((item.ItemInfo as ArmorInfo).SkinIndex, bodyPart);
+            EquipArmorSkin(armor.ArmorInfo.SkinIndex, bodyPart);
         }
     }
 
-    public void EquipArmorSkin(int index, BodyPart bodyPart)
+    private void EquipArmorSkin(int index, BodyPart bodyPart)
     {
         switch (bodyPart)
         {
@@ -36,7 +46,7 @@ public class EquipmentCustomizer : MonoBehaviour
         }
     }
 
-    public void EquipItemSkin(GameObject skin, BodyPart bodyPart)
+    private void EquipItemSkin(GameObject skin, BodyPart bodyPart)
     {
         switch (bodyPart)
         {
@@ -49,7 +59,12 @@ public class EquipmentCustomizer : MonoBehaviour
         }
     }
 
-    public void ResetSkin(BodyPart bodyPart)
+	private void ResetSkin(Item item, BodyPart bodyPart)
+	{
+        ResetSkin(bodyPart);
+	}
+
+	private void ResetSkin(BodyPart bodyPart)
     {
         switch (bodyPart)
         {
@@ -70,4 +85,15 @@ public class EquipmentCustomizer : MonoBehaviour
                 break;
         }
     }
+
+    private void Release()
+    {
+		_equipmentManager.OnItemEquiped -= EquipSkin;
+		_equipmentManager.OnItemUnequiped -= ResetSkin;
+	}
+
+	private void OnDestroy()
+	{
+        Release();
+	}
 }

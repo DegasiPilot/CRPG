@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CRPG.ItemSystem;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemContextMenu : MonoBehaviour
@@ -21,16 +22,16 @@ public class ItemContextMenu : MonoBehaviour
     public void Setup(Item item)
     {
         ItemNameText.text = item.ItemInfo.Name;
-        bool isEquipable = item.ItemInfo.ItemType != ItemType.Other;
-        EquipmentButton.interactable = isEquipable;
-        if (isEquipable)
+        if(item is EquipableItem equipable)
         {
-            EquipmentBtnText.text = item.IsEquiped ? "Снять" : "Экипировать";
-            DropButton.interactable = !item.IsEquiped;
-        }
+			EquipmentButton.interactable = true;
+			EquipmentBtnText.text = equipable.IsEquiped ? "Снять" : "Экипировать";
+			DropButton.interactable = !equipable.IsEquiped;
+		}
         else
         {
-            EquipmentButton.interactable = false;
+			EquipmentButton.interactable = false;
+			EquipmentButton.interactable = false;
             DropButton.interactable = true;
         }
     }

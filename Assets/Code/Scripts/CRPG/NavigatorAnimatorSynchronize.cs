@@ -9,7 +9,7 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
     public bool IsSynchronizeRotation;
     public bool NormalizeSpeed;
 
-    private Transform _rootTransform;
+    private Transform _agentTransform => Agent.transform;
 
     private float normalAgentSpeed;
 
@@ -21,11 +21,10 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
         }
         Agent.updatePosition = false;
         Agent.updateRotation = !IsSynchronizeRotation;
-        _rootTransform = Agent.transform;
         SceneSaveLoadManager.OnSceneLoaded.AddListener(() =>
             {
                 AnimatorManager.enabled = true;
-                _rootTransform.position = Agent.nextPosition;
+                _agentTransform.position = Agent.nextPosition;
             }
         );
     }
@@ -40,11 +39,11 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
         if (Agent.enabled && PersonageController.IsMoving)
         {
             Vector3 target = Agent.nextPosition;
-            Vector3 deltaPos = target - _rootTransform.position;
+            Vector3 deltaPos = target - _agentTransform.position;
             deltaPos.y += Agent.baseOffset;
             if (deltaPos != Vector3.zero)
             {
-                target.y = _rootTransform.position.y;
+                target.y = _agentTransform.position.y;
                 Vector2 velocity = ToLocalSpace(deltaPos);
                 if (NormalizeSpeed)
                 {
@@ -52,24 +51,24 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
                 }
                 if (IsSynchronizeRotation)
                 {
-                    Quaternion lookRotation = Quaternion.LookRotation(target - _rootTransform.position);
-                    float angle = Quaternion.Angle(lookRotation, _rootTransform.rotation);
+                    Quaternion lookRotation = Quaternion.LookRotation(target - _agentTransform.position);
+                    float angle = Quaternion.Angle(lookRotation, _agentTransform.rotation);
                     float t = Mathf.Min(1, Agent.angularSpeed * Time.deltaTime / angle);
-                    _rootTransform.rotation = Quaternion.Slerp(_rootTransform.rotation, lookRotation, t);
+                    _agentTransform.rotation = Quaternion.Slerp(_agentTransform.rotation, lookRotation, t);
                     AnimatorManager.SetVelocity(velocity.y);
                 }
                 else
                 {
                     AnimatorManager.SetVelocity(velocity);
                 }
-                _rootTransform.position = Agent.nextPosition;
+                _agentTransform.position = Agent.nextPosition;
             }
         }
         else
         {
-            if (Agent.nextPosition != _rootTransform.position)
+            if (Agent.nextPosition != _agentTransform.position)
             {
-                _rootTransform.position = Agent.nextPosition;
+                _agentTransform.position = Agent.nextPosition;
             }
             if (IsSynchronizeRotation)
             {
@@ -85,8 +84,8 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
     public Vector2 ToLocalSpace(Vector3 deltaPos)
     {
         //Map 'worldDeltaPosition' to local space
-        float dx = Vector3.Dot(_rootTransform.right, deltaPos);
-        float dy = Vector3.Dot(_rootTransform.forward, deltaPos);
+        float dx = Vector3.Dot(_agentTransform.right, deltaPos);
+        float dy = Vector3.Dot(_agentTransform.forward, deltaPos);
         Vector2 currentVelocity = new Vector2(dx, dy);
 
         // Update velocity if time advances.

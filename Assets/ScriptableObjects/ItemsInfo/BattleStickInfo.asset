@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d97dd9b5401da45ab5f3157b64b440, type: 3}
   m_Name: BattleStickInfo
   m_EditorClassIdentifier: 
-  Id: 0
+  UniqueName: Stick
   Name: "\u0411\u043E\u0435\u0432\u0430\u044F \u043F\u0430\u043B\u043A\u0430"
   ShortDescription: "\u0427\u0442\u043E-\u0442\u043E \u0432 \u044D\u0442\u043E\u0439
     \u043F\u0430\u043B\u043A\u0435 \u0435\u0441\u0442\u044C \u043D\u0435\u043E\u0431\u044B\u0447\u043D\u043E\u0435..."

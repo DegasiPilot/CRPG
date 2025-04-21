@@ -1,49 +1,40 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using CRPG.ItemSystem;
+using System;
 
 public class EquipmentSlot : ItemSlot
 {
-    public Sprite defaultSprite;
+    public readonly BodyPart BodyPart;
 
-    private BodyPart _bodyPart;
-    private Color _darkenedColor = new(0.34f, 0.34f, 0.34f);
-    private EquipmentCustomizer _equipmentCustomizer;
+    public EquipableItem EquipableItem { get; private set; }
+	public override Item Item => EquipableItem;
+	public event Action<EquipableItem, BodyPart> OnEquipItem;
+	public event Action<EquipableItem, BodyPart> OnUnequipItem;
 
-	private void OnValidate()
-	{
-		if(_iconImage == null) _iconImage = transform.GetChild(0).GetComponent<Image>();
-	}
-
-	public void Setup(BodyPart bodyPart, EquipmentCustomizer equipmentCustomizer)
+    public EquipmentSlot(BodyPart bodyPart)
     {
-        _bodyPart = bodyPart;
-        _equipmentCustomizer = equipmentCustomizer;
+        BodyPart = bodyPart;
     }
 
-    public void EquipItem(Item item, out Item lastItem, bool darkened = false)
+	public void EquipItem(EquipableItem item, out EquipableItem lastItem, bool darkened = false)
     {
         item.IsEquiped = true;
-        if(Item != null)
+        if(EquipableItem != null)
         {
-            lastItem = Item;
-            UnequipItem();
+            lastItem = EquipableItem;
+            UnEquipItem();
         }
         else
         {
             lastItem = null;
         }
-        Item = item;
-        _iconImage.sprite = item.ItemInfo.Icon;
-        _iconImage.color = darkened? _darkenedColor : Color.white;
-        _equipmentCustomizer.EquipSkin(item, _bodyPart);
+		EquipableItem = item;
+		OnEquipItem?.Invoke(item, BodyPart);
     }
 
-    public override void UnequipItem()
+    public override void UnEquipItem()
     {
-        Item.IsEquiped = false;
-        Item = null;
-        _iconImage.sprite = defaultSprite;
-        _iconImage.color = _darkenedColor;
-        _equipmentCustomizer.ResetSkin(_bodyPart);
+        OnUnequipItem?.Invoke(EquipableItem, BodyPart);
+        EquipableItem.IsEquiped = false;
+		EquipableItem = null;
     }
 }

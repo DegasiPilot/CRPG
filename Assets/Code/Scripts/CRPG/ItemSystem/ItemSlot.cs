@@ -1,11 +1,7 @@
-using UnityEngine;
-using UnityEngine.UI;
 
-public abstract class ItemSlot : MonoBehaviour
+public abstract class ItemSlot
 {
-    public Item Item { get; protected set; }
+    public abstract Item Item { get; }
 
-    [SerializeField] protected Image _iconImage;
-
-    public abstract void UnequipItem();
+    public abstract void UnEquipItem();
 }

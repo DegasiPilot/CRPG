@@ -1,135 +1,182 @@
-﻿using System.Collections.Generic;
+﻿using CRPG.ItemSystem;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class EquipmentManager : MonoBehaviour
 {
-    public static EquipmentManager Instance { get; private set; }
+    public event Action<Item, BodyPart> OnItemEquiped;
+    public event Action<Item, BodyPart> OnItemUnequiped;
 
-    [SerializeField] private EquipmentSlot HealmetSlot;
-    [SerializeField] private EquipmentSlot BodySlot;
-    [SerializeField] private EquipmentSlot LeftHandSlot;
-    [SerializeField] private EquipmentSlot RightHandSlot;
-    [SerializeField] private EquipmentSlot BootsSlot;
+    public readonly EquipmentSlot HealmetSlot = new(BodyPart.Head);
+	public readonly EquipmentSlot BodySlot = new(BodyPart.Body);
+    public readonly EquipmentSlot LeftHandSlot = new(BodyPart.LeftHand);
+    public readonly EquipmentSlot RightHandSlot = new(BodyPart.RightHand);
+    public readonly EquipmentSlot BootsSlot = new(BodyPart.Legs);
 
-    private Item Weapon { 
-        get => GameData.Player.PlayerController.Personage.Weapon;
-        set => GameData.Player.PlayerController.Personage.Weapon = value;
+    [SerializeField] private Personage _personage;
+
+    private Weapon Weapon { 
+        get => _personage.Weapon;
+        set => _personage.Weapon = value;
     }
-    private List<Item> _armor => GameData.Player.PlayerController.Personage.Armor;
-
-    private void Awake()
+    private List<Armor> _armor => _personage.Armor;
+    public IEnumerable<EquipableItem> EquipableItems
     {
-        Instance = this;
+        get
+        {
+            if(Weapon != null)
+            {
+				yield return Weapon;
+			}
+            foreach(var item in _armor)
+            {
+                yield return item;
+            }
+        }
     }
 
-    public void Setup(EquipmentCustomizer customizer, List<Item> inventory)
+	private void OnValidate()
+	{
+		if(_personage == null)
+        {
+            Debug.LogWarning("Personage = null", this);
+        }
+	}
+
+	private void Awake()
+	{
+		HealmetSlot.OnEquipItem += InvokeEquipItem;
+		BodySlot.OnEquipItem += InvokeEquipItem;
+		LeftHandSlot.OnEquipItem += InvokeEquipItem;
+		RightHandSlot.OnEquipItem += InvokeEquipItem;
+		BootsSlot.OnEquipItem += InvokeEquipItem;
+
+		HealmetSlot.OnUnequipItem += InvokeUnequipItem;
+		BodySlot.OnUnequipItem += InvokeUnequipItem;
+		LeftHandSlot.OnUnequipItem += InvokeUnequipItem;
+		RightHandSlot.OnUnequipItem += InvokeUnequipItem;
+		BootsSlot.OnUnequipItem += InvokeUnequipItem;
+	}
+
+	public void Setup(EquipableItem[] equipedItems)
     {
-		HealmetSlot.Setup(BodyPart.Head, customizer);
-		BodySlot.Setup(BodyPart.Body, customizer);
-		LeftHandSlot.Setup(BodyPart.LeftHand, customizer);
-		RightHandSlot.Setup(BodyPart.RightHand, customizer);
-		BootsSlot.Setup(BodyPart.Legs, customizer);
-		if (inventory != null)
+		if (equipedItems != null)
 		{
-			foreach (var item in GameData.Inventory)
+			foreach (var item in equipedItems)
 			{
-				if (item.IsEquiped)
-				{
-					EquipItem(item, out _);
-				}
+				EquipItem(item);
 			}
 		}
 	}
 
-    public void EquipItem(Item item, out List<Item> undressedItems)
-    {
-        ItemType itemType = item.ItemInfo.ItemType;
-        undressedItems = new List<Item>(2);
-
-        if (itemType == ItemType.Weapon)
-        {
-            EquipWeapon(item, undressedItems);
-            Weapon = item;
-        }
-        else if (itemType == ItemType.Armor)
-        {
-            EquipArmor(item, undressedItems);
-            _armor.Add(item);
-        }
-        _armor.Except(undressedItems); //_armor.RemoveAll(x => _armor.Contains(x));
+	private void InvokeEquipItem(Item item, BodyPart bodyPart)
+	{
+		OnItemEquiped.Invoke(item, bodyPart);
 	}
 
-    public void EquipWeapon(Item item, List<Item> undressedItems)
+	private void InvokeUnequipItem(Item item, BodyPart bodyPart)
+    {
+        OnItemUnequiped.Invoke(item, bodyPart);
+    }
+
+    public void EquipItem(Item item)
+    {
+        if (item is Weapon weapon)
+        {
+            EquipWeapon(weapon);
+            Weapon = weapon;
+        }
+        else if (item is Armor armor)
+        {
+            EquipArmor(armor);
+            _armor.Add(armor);
+        }
+	}
+
+    internal void EquipWeapon(Weapon item)
     {
         Weapon = item;
-        WeaponInfo newWeaponInfo = item.ItemInfo as WeaponInfo;
+        WeaponInfo newWeaponInfo = item.WeaponInfo;
         if (RightHandSlot.Item != null && (RightHandSlot.Item.ItemInfo as WeaponInfo).IsTwoHandled)
         {
-            LeftHandSlot.UnequipItem();
+            LeftHandSlot.UnEquipItem();
         }
         if (newWeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.EquipItem(item, out Item undressedItem, true);
-            if (undressedItem != null)
-            {
-                undressedItems.Add(undressedItem);
-            }
+            LeftHandSlot.EquipItem(item, out EquipableItem undressedItem, true);
         }
 
-        RightHandSlot.EquipItem(item, out Item undressedWeapon);
-        if (undressedWeapon != null)
-        {
-            undressedItems.Add(undressedWeapon);
-        }
+        RightHandSlot.EquipItem(item, out EquipableItem undressedWeapon);
     }
 
-    public void EquipArmor(Item item, List<Item> undressedItems)
+    internal void EquipArmor(Armor item)
     {
         _armor.Add(item);
-        Item undressedArmor = null;
-        switch ((item.ItemInfo as ArmorInfo).WearableBodyPart)
+        EquipableItem undressedItem = null;
+        switch (item.ArmorInfo.WearableBodyPart)
         {
             case BodyPart.Head:
-                HealmetSlot.EquipItem(item, out undressedArmor);
+                HealmetSlot.EquipItem(item, out undressedItem);
                 break;
             case BodyPart.Body:
-                BodySlot.EquipItem(item, out undressedArmor);
+                BodySlot.EquipItem(item, out undressedItem);
                 break;
             case BodyPart.LeftHand:
-                LeftHandSlot.EquipItem(item, out undressedArmor);
+                LeftHandSlot.EquipItem(item, out undressedItem);
                 break;
             case BodyPart.Legs:
-                BootsSlot.EquipItem(item, out undressedArmor);
+                BootsSlot.EquipItem(item, out undressedItem);
                 break;
         }
-        if (undressedArmor != null)
+        if (undressedItem != null && undressedItem is Armor undressedArmor)
         {
-            undressedItems.Add(undressedArmor);
+            _armor.Remove(undressedArmor);
         }
     }
 
-    public void UneqipItemFromSlot(EquipmentSlot slot, out Item uneqipedItem)
+    public void UnequipItemFromSlot(EquipmentSlot slot)
     {
-        if (slot.Item.ItemInfo.ItemType == ItemType.Weapon &&
-           (slot.Item.ItemInfo as WeaponInfo).IsTwoHandled)
+        Item uneqipedItem;
+		if (slot.Item is Weapon weapon &&
+            weapon.WeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.UnequipItem();
+            LeftHandSlot.UnEquipItem();
             uneqipedItem = RightHandSlot.Item;
-            RightHandSlot.UnequipItem();
+            RightHandSlot.UnEquipItem();
         }
         else
         {
             uneqipedItem = slot.Item;
-            slot.UnequipItem();
+            slot.UnEquipItem();
         }
-        if(uneqipedItem.ItemInfo.ItemType == ItemType.Weapon)
+        if(uneqipedItem is Weapon)
         {
             Weapon = null;
         }
-        else
+        else if(uneqipedItem is Armor armor)
         {
-            _armor.Remove(uneqipedItem);
+            _armor.Remove(armor);
         }
     }
+
+    private void Release()
+    {
+		HealmetSlot.OnEquipItem -= InvokeEquipItem;
+		BodySlot.OnEquipItem -= InvokeEquipItem;
+		LeftHandSlot.OnEquipItem -= InvokeEquipItem;
+		RightHandSlot.OnEquipItem -= InvokeEquipItem;
+		BootsSlot.OnEquipItem -= InvokeEquipItem;
+
+		HealmetSlot.OnUnequipItem -= InvokeUnequipItem;
+		BodySlot.OnUnequipItem -= InvokeUnequipItem;
+		LeftHandSlot.OnUnequipItem -= InvokeUnequipItem;
+		RightHandSlot.OnUnequipItem -= InvokeUnequipItem;
+		BootsSlot.OnUnequipItem -= InvokeUnequipItem;
+	}
+
+	private void OnDestroy()
+	{
+        Release();
+	}
 }

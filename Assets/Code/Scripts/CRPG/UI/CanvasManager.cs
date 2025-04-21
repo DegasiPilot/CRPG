@@ -1,4 +1,6 @@
+using CRPG;
 using CRPG.UI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,6 +10,7 @@ using UnityEngine.UI;
 public class CanvasManager : MonoBehaviour
 {
     [SerializeField] private InventoryPanel _inventoryPanel;
+    [SerializeField] private EquipmentPanel _equipmentPanel;
     public GameObject PauseMenuPanel;
     public Button SaveButton;
     [SerializeField] private PlayerPanel _playerPanel;
@@ -34,10 +37,10 @@ public class CanvasManager : MonoBehaviour
         if(_canvas == null) _canvas = gameObject.GetComponent<Canvas>();
 	}
 
-	private void Start()
+    internal void Setup(UnityEvent DeathEvent, Func<ActionType,PersonageActionInfo> GetActionInfo)
     {
-        GameManager.Instance.OnDeathEvent.AddListener(OnDeath);
-		_playerPanelViewModel = new PlayerPanelViewModel(_playerPanel, GameData.GetActionInfo);
+        DeathEvent.AddListener(OnDeath);
+		_playerPanelViewModel = new PlayerPanelViewModel(_playerPanel, GetActionInfo);
 	}
 
 	private void Update()
@@ -56,9 +59,10 @@ public class CanvasManager : MonoBehaviour
 		}
     }
 
-    public void ToggleInventory(List<Item> inventory)
+    public void ToggleInventory(List<Item> inventory, EquipmentManager equipmentManager)
     {
         _inventoryPanel.ToggleInventory(inventory);
+        _equipmentPanel.Setup(equipmentManager);
     }
 
     public void TogglePauseMenu()
@@ -68,9 +72,10 @@ public class CanvasManager : MonoBehaviour
         SaveButton.interactable = GameManager.Instance.GameMode == GameMode.Free;
     }
 
-    public void SetActivePersonage(PlayerController personageController)
+    public void SetActivePersonage(PlayerController personageController, EquipmentManager equipmentManager)
     {
         _playerPanelViewModel.SetActivePersonage(personageController);
+        _inventoryPanel.SetActivePlayer(equipmentManager);
     }
 
     public void OnChangeGameMode(GameMode lastGameMode, GameMode currentGameMode)
@@ -91,7 +96,10 @@ public class CanvasManager : MonoBehaviour
     
     public void HideInfoUnderPointer()
     {
-        PointerInfoPanel.gameObject.SetActive(false);
+        if(PointerInfoPanel != null)
+        {
+			PointerInfoPanel.gameObject.SetActive(false);
+		}
     }
 
     public void OnDeath()

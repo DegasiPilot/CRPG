@@ -3,34 +3,28 @@ using UnityEngine;
 using UnityEngine.UI;
 using DialogueSystem.DataContainers;
 using System.Collections.Generic;
+using CRPG.DataSaveSystem;
 
 namespace DialogueSystem.Runtime
 {
     public class DialogueParser : MonoBehaviour
     {
-        public static DialogueParser Instance;
-
         [SerializeField] private Text _dialogueText;
         [SerializeField] private Button _choicePrefab;
         [SerializeField] private Transform _buttonContainer;
         [SerializeField] private CharacteristicCheckPanel _characteristicCheckPanel;
         [SerializeField] private Button _endDialogueButton;
 
-        public PersonageInfo PlayerPersonageInfo => GameData.Player.PlayerController.Personage.PersonageInfo;
+        
         [HideInInspector] public DialogueActor SecondDialogueActor;
 
         private readonly HashSet<SaveableNodeData> allNodes= new();
         private GameObject _dialogueDisplay;
         private DialogueContainer _dialogue;
 
-        private void Awake()
-        {
-            Instance = this;
-        }
-
         public void Setup()
         {
-            _characteristicCheckPanel.Setup();
+            _characteristicCheckPanel.Setup(this);
             _dialogueDisplay = _dialogueText.transform.parent.gameObject;
         }
 
@@ -88,7 +82,7 @@ namespace DialogueSystem.Runtime
                 var checkNode = nodeData as CharacteristicNodeData;
 
                 _characteristicCheckPanel.gameObject.SetActive(true);
-                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, PlayerPersonageInfo);
+                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, GameData.ActivePlayer.PlayerController.Personage.PersonageInfo);
             }
 
             if(choices.Length == 0)
@@ -103,7 +97,7 @@ namespace DialogueSystem.Runtime
             {
                 if(exposedProperty.PropertyName == "PlayerName")
                 {
-                    exposedProperty.PropertyValue = PlayerPersonageInfo.Name;
+                    exposedProperty.PropertyValue = GameData.ActivePlayer.PlayerController.Personage.PersonageInfo.Name;
                 }
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }

@@ -1,26 +1,35 @@
 using System.Collections;
+using System.Linq;
 using System.Text;
 using CRPG;
+using CRPG.DataSaveSystem;
 using CRPG.DI;
 using DialogueSystem.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using VContainer;
+using VContainer.Unity;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private LifetimeScope LifetimeScope;
+
     public static GameManager Instance;
     public CanvasManager _canvasManager;
+    [SerializeField] private CameraController _cameraController;
+    [SerializeField] private DialogueParser _dialogueParser;
+    [SerializeField] private SceneSaveLoadManager _sceneSaveLoadManager;
 
     [System.NonSerialized] public UnityEvent OnDeathEvent = new();
 
     [Tooltip("Выбери родительский объект персонажей и очисти список персонажей, они автоматически перезаполнятся")]
     public GameObject PersonagesRoot;
-    [Tooltip("Для отчистки: нажми на любого персонажа Ctrl+A и кнопка минус")]
+    [Tooltip("Для отчистки: нажми на любого персонажа, Ctrl+A и кнопка минус")]
     [SerializeField] private Personage[] _personages;
 
-    private Player _player => GameData.Player;
-    private PlayerController PlayerController => _player.PlayerController;
+    private Player _activePlayer => GameData.ActivePlayer;
+    private PlayerController PlayerController => _activePlayer.PlayerController;
     private Personage PlayerPersonage => PlayerController.Personage;
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
@@ -40,23 +49,42 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         BattleManager.OnBattleStartEvent.AddListener(() => ChangeGameMode(GameMode.Battle));
         BattleManager.OnBattleEndEvent.AddListener(() => ChangeGameMode(GameMode.Free));
-        foreach(var personage in _personages)
-        {
-            if (personage == _player.PlayerController.Personage) continue;
-            personage.PersonageInfo.Setup(GameData.GetRaceInfo);
-            personage.Setup(personage.PersonageInfo);
-        }
-    }
+		using (var container = LifetimeScope.Container)
+		{
+			GlobalDataManager globalDataManager = container.Resolve<GlobalDataManager>();
+			foreach (var personage in _personages)
+			{
+				if (GameData.Companions.Any(
+					companion => companion.PlayerController.Personage.PersonageInfo.Name ==
+					personage.PersonageInfo.Name))
+				{
+					Destroy(personage.gameObject);
+					continue;
+				}
+				personage.PersonageInfo.Setup(globalDataManager.GetRaceInfo);
+				personage.Setup(personage.PersonageInfo);
+				_sceneSaveLoadManager.LoadSceneFromSave(GameData.SceneSaveInfo, globalDataManager);
+			}
+		}
+	}
 
     void Start()
     {
-        SceneSaveLoadManager.Instance.LoadSceneFromSave(GameData.SceneSaveInfo);
-        DialogueParser.Instance.Setup();
-        EquipmentManager.Instance.Setup(GameData.Player.PlayerCustomizer.EquipmentCustomizer, GameData.Inventory);
-        SetActivePlayer(_player);
+        _dialogueParser.Setup();
+        _cameraController.Setup(this);
+        using (var container = LifetimeScope.Container)
+        {
+			_canvasManager.Setup(OnDeathEvent, container.Resolve<GlobalDataManager>().GetActionInfo);
+		}
+        SetActivePlayer(GameData.MainPlayer);
         OnDeathEvent.AddListener(() => gameObject.SetActive(false));
-        _canvasManager.OnDropItem.AddListener(GameData.Player.PlayerController.DropItem);
+        _canvasManager.OnDropItem.AddListener(DropItem);
     }
+
+    private void DropItem(Item item)
+    {
+        GameData.ActivePlayer.PlayerController.DropItem(item);
+	}
 
     public void ChangeGameMode(GameMode gameMode)
     {
@@ -65,14 +93,14 @@ public class GameManager : MonoBehaviour
             _canvasManager.OnChangeGameMode(_gameMode, gameMode);
             if (_gameMode == GameMode.Dialogue)
             {
-                CameraController.Instance.enabled = true;
-                CameraController.Instance.StandartView();
+                _cameraController.enabled = true;
+                _cameraController.StandartView();
             }
             
             if(gameMode == GameMode.Dialogue)
             {
                 NothingUnderPointer();
-                CameraController.Instance.enabled = false;
+                _cameraController.enabled = false;
             }
             else if(gameMode == GameMode.Battle)
             {
@@ -194,9 +222,9 @@ public class GameManager : MonoBehaviour
 
     public void StartDialogue(Component dialogueActor)
     {
-        DialogueParser.Instance.SetSecondDialogueActor(dialogueActor as DialogueActor);
-        CameraController.Instance.FocusOn(dialogueActor as DialogueActor);
-        DialogueParser.Instance.TryStartDialogue();
+        _dialogueParser.SetSecondDialogueActor(dialogueActor as DialogueActor);
+        _cameraController.FocusOn(dialogueActor as DialogueActor);
+        _dialogueParser.TryStartDialogue();
         ChangeGameMode(GameMode.Dialogue);
     }
 
@@ -219,7 +247,14 @@ public class GameManager : MonoBehaviour
 		if (_gameMode != GameMode.Battle)
 		{
 			personageController.Personage.BattleTeam = BattleTeam.Enemies;
-			BattleManager.StartBattle(new PersonageController[2] { PlayerController, personageController });
+            PersonageController[] participants = new PersonageController[2 + GameData.Companions.Count];
+            participants[0] = PlayerController;
+            participants[1] = personageController;
+            for(int i = 0; i < GameData.Companions.Count; i++)
+            {
+                participants[i + 2] = GameData.Companions[i].PlayerController;
+			}
+			BattleManager.StartBattle(participants);
 		}
 		else if (!BattleManager.ParticipantPersonages.Contains(personageController))
 		{
@@ -239,15 +274,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CreateNewGameSave()
+	internal void OnPlayerPressed(Player player)
+	{
+		if(GameData.ActivePlayer != player)
+        {
+            if(GameData.MainPlayer != player && !GameData.Companions.Contains(player))
+            {
+                GameData.Companions.Add(player);
+                player.transform.SetParent(null);
+                DontDestroyOnLoad(player);
+            }
+			SetActivePlayer(player);
+        }
+	}
+
+	public void CreateNewGameSave()
     {
-        SceneSaveLoadManager.Instance.SaveScene();
-        DI.DataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave(PlayerController.Personage.PersonageInfo));
+        using (var container = LifetimeScope.Container)
+        {
+			GlobalDataManager globalDataManager = container.Resolve<GlobalDataManager>();
+			GameData.SceneSaveInfo = _sceneSaveLoadManager.GetSceneSave(globalDataManager);
+			container.Resolve<IDataSaveLoader>().CreateGameSaveInfo(GameData.NewGameSave());
+		}
     }
 
     public void ExitToMainMenu()
     {
-        GameData.ClearData();
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -272,14 +324,14 @@ public class GameManager : MonoBehaviour
     
     public void ToggleInvenoty()
     {
-        _canvasManager.ToggleInventory(GameData.Inventory);
+        _canvasManager.ToggleInventory(GameData.Inventory, GameData.ActivePlayer.EquipmentManager);
         if (_canvasManager.IsInventoryOpen)
         {
-            CameraController.Instance.enabled = false;
+            _cameraController.enabled = false;
         }
         else
         {
-            CameraController.Instance.enabled = true;
+            _cameraController.enabled = true;
         }
     }
 
@@ -288,19 +340,20 @@ public class GameManager : MonoBehaviour
         _canvasManager.TogglePauseMenu();
         if (_canvasManager.IsPauseMenuOpen)
         {
-            CameraController.Instance.enabled = false;
+            _cameraController.enabled = false;
             Time.timeScale = 0;
         }
         else
         {
-            CameraController.Instance.enabled = true;
+            _cameraController.enabled = true;
             Time.timeScale = 1;
         }
     }
 
     internal void SetActivePlayer(Player player)
     {
-		GameData.Player = player;
-		_canvasManager.SetActivePersonage(player.PlayerController);
+		GameData.ActivePlayer = player;
+        _cameraController.OnSetActivePlayer(player.transform);
+		_canvasManager.SetActivePersonage(player.PlayerController, player.EquipmentManager);
 	}
 }

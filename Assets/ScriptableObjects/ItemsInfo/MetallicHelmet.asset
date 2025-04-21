@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a2e23eaee65b547976090be2e5a60a, type: 3}
   m_Name: MetallicHelmet
   m_EditorClassIdentifier: 
-  Id: 7
+  UniqueName: MetallicHelmet
   Name: "\u041C\u0435\u0442\u0430\u043B\u0438\u0447\u0435\u0441\u043A\u0438\u0439
     \u0448\u043B\u0435\u043C"
   ShortDescription: "\u0427\u0443\u0441\u0442\u0432\u0443\u0435\u0442\u0441\u044F

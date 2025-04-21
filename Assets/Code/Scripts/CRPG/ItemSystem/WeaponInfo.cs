@@ -11,9 +11,7 @@ public class WeaponInfo : ItemInfo
     [Min(0)] public float Weight;
     public DamageType DamageType;
 
-    public override ItemType ItemType => ItemType.Weapon;
-
-    public override string GetFullDescrition()
+	public override string GetFullDescrition()
     {
         StringBuilder stringBuilder = new();
         stringBuilder.AppendLine(base.GetFullDescrition());

@@ -1,43 +1,103 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using CRPG;
+using CRPG.DataSaveSystem;
+using CRPG.DataSaveSystem.SaveData;
+using CRPG.ItemSystem;
+using System.Collections.Generic;
 
 public class GameDataManager
 {
-    private IEnumerable<Item> _allItems;
-    private PlayerController _playerController;
-    private PlayerCustomizer _playerCustomizer;
+    private MainPlayer _playerPrefab;
+	private GlobalDataManager _globalDataManager;
 
-    public GameDataManager(PlayerController playerController, PlayerCustomizer playerCustomizer, IEnumerable<Item> AllItems)
+    internal GameDataManager(MainPlayer playerPrefab, GlobalDataManager globalDataManager)
     {
-		_playerController = playerController;
-        _playerCustomizer = playerCustomizer;
-        _allItems = AllItems;
+		_playerPrefab = playerPrefab;
+		_globalDataManager = globalDataManager;
+		if(GameData.MainPlayer != null)
+		{
+			UnityEngine.Object.Destroy(GameData.MainPlayer.gameObject);
+		}
+		if (GameData.Companions != null)
+		{
+			foreach(var companion in GameData.Companions)
+			{
+				UnityEngine.Object.Destroy(companion.gameObject);
+			}
+		}
+	}
+
+	public void InitNewGame()
+	{
+		var player = UnityEngine.Object.Instantiate(_playerPrefab);
+		InitPlayer(player);
 	}
 
     public void LoadGameSave(GameSaveInfo gameSave)
     {
-        gameSave.MainPersonageInfo.Setup(GameData.GetRaceInfo);
-        _playerController.Personage.Setup(gameSave.MainPersonageInfo);
-        _playerCustomizer.ApplyAppearance(gameSave.MainPersonageInfo.Appearance);
-        GameData.SceneSaveInfo = gameSave.SceneSaveInfo;
+		var player = UnityEngine.Object.Instantiate(_playerPrefab,
+			gameSave.MainPlayerInfo.Position,
+			gameSave.MainPlayerInfo.Rotation);
+		InitPlayer(player);
+		gameSave.MainPlayerInfo.PersonageInfo.Setup(_globalDataManager.GetRaceInfo);
+		player.PlayerController.Personage.Setup(gameSave.MainPlayerInfo.PersonageInfo);
+		player.PlayerCustomizer.ApplyAppearance(gameSave.MainPersonageAppearance);
+		LoadEquipedItems(gameSave.MainPlayerInfo.EquipedItems, player.EquipmentManager);
+		GameData.SceneSaveInfo = gameSave.SceneSaveInfo;
+
         if (gameSave.InventoryItems != null)
         {
-            GameData.Inventory = new List<Item>(gameSave.InventoryItems.Length);
-            for (int i = 0; i < gameSave.InventoryItems.Length; i++)
-            {
-                Item item = _allItems.First(item => item.ItemInfo.Name == gameSave.InventoryItems[i].ItemName);
-                item = Object.Instantiate(item, _playerController.Inventory.transform);
-                item.IsInInventory = true;
-                item.IsEquiped = gameSave.InventoryItems[i].IsEquiped;
-                item.gameObject.SetActive(false);
-                item.OnTaked();
-                GameData.Inventory.Add(item);
-            }
+            LoadInventory(gameSave.InventoryItems, player.PlayerController.Inventory.transform);
         }
-        else
-        {
-            GameData.Inventory = new List<Item>();
-        }
-    }
+
+		if (gameSave.CompanionsInfo != null)
+		{
+			LoadCompanions(gameSave.CompanionsInfo);
+		}
+	}
+
+	private void InitPlayer(MainPlayer player)
+	{
+		UnityEngine.Object.DontDestroyOnLoad(player);
+		GameData.MainPlayer = player;
+	}
+
+    private void LoadInventory(string[] inventoryItems, UnityEngine.Transform inventory)
+    {
+		GameData.Inventory = new List<Item>(inventoryItems.Length);
+		for (int i = 0; i < inventoryItems.Length; i++)
+		{
+			Item item = _globalDataManager.GetClone(inventoryItems[i]).GetComponent<Item>();
+			item.transform.SetParent(inventory);
+			item.gameObject.SetActive(false);
+			item.OnTaked();
+			GameData.Inventory.Add(item);
+		}
+	}
+
+	private void LoadCompanions(PlayerSaveInfo[] playerInfos)
+	{
+		GameData.Companions = new List<Player>(playerInfos.Length);
+		for (int i = 0; i < playerInfos.Length; i++)
+		{
+			Player companion = _globalDataManager.GetClone(playerInfos[i].UniqueName).GetComponent<Player>();
+			UnityEngine.Object.DontDestroyOnLoad(companion);
+			companion.transform.SetPositionAndRotation(playerInfos[i].Position, playerInfos[i].Rotation);
+			GameData.Companions.Add(companion);
+			LoadEquipedItems(playerInfos[i].EquipedItems, companion.EquipmentManager);
+		}
+	}
+
+	private void LoadEquipedItems(string[] itemsNames, EquipmentManager equipmentManager)
+	{
+		if (itemsNames != null && itemsNames.Length > 0)
+		{
+			EquipableItem[] items = new EquipableItem[itemsNames.Length];
+			for (int i = 0; i < items.Length; i++)
+			{
+				items[i] = _globalDataManager.GetClone(itemsNames[i]).GetComponent<EquipableItem>();
+				items[i].OnTaked();
+			}
+			equipmentManager.Setup(items);
+		}
+	}
 }

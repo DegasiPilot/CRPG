@@ -1,10 +1,9 @@
 ﻿using CRPG.DataSaveSystem;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using UnityEngine.Analytics;
+using CRPG.Customization;
 
 namespace CRPG.PersonageRedactor
 {
@@ -28,8 +27,8 @@ namespace CRPG.PersonageRedactor
 			_personageInfo.Race == Race.Human ? 9 + _humanStatPointsBonus : 9;
 		private const int _humanStatPointsBonus = 2;
 		private IDataSaveLoader _dataSaveLoader;
-		private PlayerCustomizer _playerCustomizer;
-		private IEnumerable<RaceInfo> _raceInfos;
+		private GlobalDataManager _globalDataManager;
+		private PlayerCustomizer _playerCustomizer => GameData.MainPlayer.PlayerCustomizer;
 
 		private Color _hairColor;
 		public Color HairColor
@@ -78,16 +77,14 @@ namespace CRPG.PersonageRedactor
 		}
 
 		private CharacteristicRedactorViewModel[] _characteristicRedactors;
-
 		private PersonageCreator _personageCreator;
 
-		internal PersonageCreatorViewModel(PersonageCreator personageCreator, IDataSaveLoader dataSaveLoader, PlayerCustomizer playerCustomizer, Player player, RaceInfo[] races)
+		internal PersonageCreatorViewModel(PersonageCreator personageCreator, IDataSaveLoader dataSaveLoader, GlobalDataManager globalDataManager)
 		{
 			_dataSaveLoader = dataSaveLoader;
-			_playerCustomizer = playerCustomizer;
-			_raceInfos = races;
+			_globalDataManager = globalDataManager;
 			_personageCreator = personageCreator;
-			_personageInfo = player.PlayerController.Personage.PersonageInfo;
+			_personageInfo = GameData.MainPlayer.PlayerController.Personage.PersonageInfo;
 			_personageInfo.ResetPersonageInfo();
 			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent;
 
@@ -120,7 +117,7 @@ namespace CRPG.PersonageRedactor
 				redactor.Setup(this);
 			}
 
-			SetRace(GameData.GetRaceInfo(Race.Human));
+			SetRace(_globalDataManager.GetRaceInfo(Race.Human));
 			_personageCreator.SetRace += SetRace;
 			Gender = Gender.Male;
 			_personageCreator.OnTrySavePersonage += TrySavePersonage;
@@ -170,7 +167,7 @@ namespace CRPG.PersonageRedactor
 
 		public (int, int) GetStatValue(Characteristics characteristic)
 		{
-			return (_personageInfo[characteristic], GameData.GetRaceInfo(_personageInfo.Race)[characteristic]);
+			return (_personageInfo[characteristic], _globalDataManager.GetRaceInfo(_personageInfo.Race)[characteristic]);
 		}
 
 		public bool CanAddMore(Characteristics characteristic)
@@ -243,7 +240,7 @@ namespace CRPG.PersonageRedactor
 			if (_personageInfo.UnSpendedStatPoints == 0 && !string.IsNullOrEmpty(_personageInfo.Name))
 			{
 				ApplyBonuses();
-				PersonageInfo.AppearanceStruct appearance = new PersonageInfo.AppearanceStruct();
+				AppearanceStruct appearance = new AppearanceStruct();
 				foreach (var redactor in _personageCreator.ApperanceRedactors)
 				{
 					switch (redactor.MyAppearancePart)
@@ -261,12 +258,13 @@ namespace CRPG.PersonageRedactor
 				}
 				appearance.HairsColor = HairColor;
 				appearance.SkinColor = SkinColor;
-				GameData.Player.PlayerCustomizer.ApplyAppearance(appearance);
+				GameData.MainPersonageAppearance = appearance;
+				_playerCustomizer.ApplyAppearance(appearance);
 				_personageInfo.ImageBytes = _personageCreator.SavePersonagePortrait();
 				_personageInfo.PersonagePortrait = new Texture2D(256, 256);
 				_personageInfo.PersonagePortrait.LoadImage(_personageInfo.ImageBytes);
 
-				_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave(_personageInfo));
+				_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
 				GameData.InitializeNewGame(_personageInfo);
 				MaleObject.transform.rotation = Quaternion.identity;
 				FemaleObject.transform.rotation = Quaternion.identity;
@@ -282,7 +280,7 @@ namespace CRPG.PersonageRedactor
 		{
 			for (int i = 0; i < Enum.GetValues(typeof(Characteristics)).Length; i++)
 			{
-				_personageInfo[(Characteristics)i] += _raceInfos.First(x => x.Race == _personageInfo.Race)[(Characteristics)i];
+				_personageInfo[(Characteristics)i] += _globalDataManager.GetRaceInfo(_personageInfo.Race)[(Characteristics)i];
 			}
 		}
 

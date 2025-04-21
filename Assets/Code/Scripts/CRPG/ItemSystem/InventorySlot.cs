@@ -1,20 +1,22 @@
-﻿using UnityEngine.UI;
+﻿using System;
 
-public class InventorySlot : ItemSlot
+internal class InventorySlot : ItemSlot
 {
-    private void Awake()
-    {
-        _iconImage = transform.GetChild(0).GetComponent<Image>();
-    }
+	public override Item Item => _item;
+	public event Action<Item> OnEquipItem;
+	public event Action<Item> OnUnequipItem;
 
-    public void Setup(Item item)
+	private Item _item;
+
+	public void EquipItem(Item item)
     {
-        Item = item;
-        _iconImage.sprite = Item.ItemInfo.Icon;
-    }
-    public override void UnequipItem()
+		_item = item;
+		OnEquipItem.Invoke(item);
+	}
+
+    public override void UnEquipItem()
     {
-        Item = null;
-        gameObject.SetActive(false);
+		OnUnequipItem?.Invoke(_item);
+        _item = null;
     }
 }

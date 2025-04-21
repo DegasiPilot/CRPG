@@ -1,4 +1,5 @@
 ﻿using CRPG.Battle;
+using CRPG.DataSaveSystem;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,6 @@ public abstract class PersonageController : MonoBehaviour
 	public delegate void Interact(Component interactComponent);
 
 	public float Speed;
-	public float AttackAnimTimeBeforeHit;
 
 	public ActionType ActiveAction => _activeAction;
 	public Personage Personage => _personage;
@@ -231,7 +231,7 @@ public abstract class PersonageController : MonoBehaviour
 			yield return null;
 		} while (t < 1);
 		AnimatorManager.StartAttackAnim(WeaponInfo != null);
-		yield return new WaitForSeconds(AttackAnimTimeBeforeHit);
+		yield return new WaitForSeconds(AnimatorManager.AttackAnimTimeBeforeHit);
 	}
 
 	public virtual void SetDefaultAction()

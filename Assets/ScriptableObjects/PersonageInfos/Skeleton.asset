@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
   m_Name: Skeleton
   m_EditorClassIdentifier: 
+  UniqueName: Skeleton
   Name: "\u0421\u043A\u0435\u043B\u0435\u0442"
   Strength: 8
   Dexterity: 8

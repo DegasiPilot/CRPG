@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 03313bc2a0d88a644babd9d549155be1
+  m_SerializeEntries:
+  - m_GUID: 0a8df2dac6e1f124792ffe4f6c9829d6
+    m_Address: Item/Male_Armor_body
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26ba48c108a7195489456fb112f236f3
+    m_Address: Item/Shield
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42fa027989640204c9e1a19292439148
+    m_Address: Item/MetallicHelmet
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43b096bd5bea7a74bbbd6a62dda329b9
+    m_Address: RacesInfo/HumanInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - RaceInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bf6256caeac31f4393f2a48bdcdac37
+    m_Address: Item/MetallicBoots
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 536e84108b1b48b45ba0bd25f0e0b0b2
+    m_Address: Personages/Alex
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e46acf9ec4ffc84b95ee5239872ba3e
+    m_Address: PersonageActionsInfo/AttackInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PersonageActionInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64727fd780f02494da2b52c072aed41e
+    m_Address: PersonageActionsInfo/JumpInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PersonageActionInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f4b60508a702f34bba8ac3a5b7e6b30
+    m_Address: Item/Sword
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9226908b80790bc4ba4640b99ecc7176
+    m_Address: RacesInfo/DwarfInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - RaceInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95d91dd7305d1ff4ba2544f11cad47c0
+    m_Address: RacesInfo/ElfInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - RaceInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99237256add159244842c147414c51f1
+    m_Address: Personages/Skeleton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae3c0075623491d429ea82d9af786c48
+    m_Address: RacesInfo/OrcInfo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - RaceInfo
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b859ee7fcf24f8a4c94f064b4dc7ba54
+    m_Address: Item/Stick
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd694eaa0619b75449cccd810ee50868
+    m_Address: Personages/Villager
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 62c1c30dcabb53143ba6b1ef1696d982, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 38ff874baeef8f545b1ca17ca23191f5, type: 2}
+    - {fileID: 11400000, guid: 9e09ea4f4cd56234fb8b8d058a75d09c, type: 2}

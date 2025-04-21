@@ -4,6 +4,9 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Animator))]
 public class AnimatorManager : MonoBehaviour
 {
+    [SerializeField] private float _attackAnimTimeBeforeHit;
+    public float AttackAnimTimeBeforeHit => _attackAnimTimeBeforeHit;
+
     [System.NonSerialized] public UnityEvent OnAttackContactEvent = new();
     public Animator Animator;
 

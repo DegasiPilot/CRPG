@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
   m_Name: Villager
   m_EditorClassIdentifier: 
+  UniqueName: Villager
   Name: "\u041A\u0440\u0435\u0441\u0442\u044C\u044F\u043D\u0438\u043D"
   Strength: 8
   Dexterity: 1

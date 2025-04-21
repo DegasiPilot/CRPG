@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections;
 using UnityEngine.Events;
 using CRPG.Battle;
-using CRPG;
+using CRPG.DataSaveSystem;
 
 [RequireComponent(typeof(PlayerChooseAttackForceModule))]
 public class PlayerController : PersonageController
@@ -162,23 +162,6 @@ public class PlayerController : PersonageController
         item.transform.SetParent(Inventory.transform);
         item.OnTaked();
         item.gameObject.SetActive(false);
-        item.IsInInventory = true;
-    }
-
-	public void ResetPlayer()
-	{
-        ClearInventory();
-        Personage.PersonageInfo.ResetPersonageInfo();
-	}
-
-	private void ClearInventory()
-    {
-        foreach(var item in GameData.Inventory)
-        {
-            Destroy(item.gameObject);
-        }
-        GameData.Inventory.Clear();
-        GameData.Inventory = null;
     }
 
     public override void DropItem(Item item)
@@ -187,7 +170,6 @@ public class PlayerController : PersonageController
         GameData.Inventory.Remove(item);
         item.transform.position = gameObject.transform.position + gameObject.transform.forward + Vector3.up;
         item.gameObject.SetActive(true);
-        item.IsInInventory = false;
     }
 
     protected override void GoToPosition(Vector3 position, float maxTargetOffset = 0.1F)

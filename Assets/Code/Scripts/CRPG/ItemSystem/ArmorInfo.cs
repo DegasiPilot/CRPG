@@ -8,6 +8,4 @@ internal class ArmorInfo : ItemInfo
     public float ArmorPercent => _armorPercent / 100f;
     public BodyPart WearableBodyPart;
     [Min(0)] public float ArmorWeight;
-
-    public override ItemType ItemType => ItemType.Armor;
 }

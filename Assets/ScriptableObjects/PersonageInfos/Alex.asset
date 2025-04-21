@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
+  m_Name: Alex
+  m_EditorClassIdentifier: 
+  UniqueName: Alex
+  Name: Alex
+  Strength: 0
+  Dexterity: 0
+  Constitution: 0
+  Intelligence: 0
+  Wisdom: 0
+  Charisma: 0
+  Race: 1
+  UnSpendedStatPoints: 0
+  PersonagePortrait: {fileID: 2800000, guid: 89463d082a4bcfa409427a7f7d62af21, type: 3}
+  PersonagePortraitColor: {r: 1, g: 1, b: 1, a: 1}
+  Gender: 1

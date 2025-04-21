@@ -1,10 +1,10 @@
+using CRPG;
+using CRPG.DataSaveSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
-    public static CameraController Instance;
-
     public int MouseSensitivity;
     public int MoveSpeed;
     public float MaxDistanceFromPlayer;
@@ -16,17 +16,16 @@ public class CameraController : MonoBehaviour
     private float _standartAngleX;
     private RaycastHit _cursorRaycastHit;
 
-    private Vector3 _playerPosition => GameData.Player.PlayerController.gameObject.transform.position;
+    private Vector3 _playerPosition => GameData.ActivePlayer.PlayerController.gameObject.transform.position;
 
     public void Awake()
     {
-        Instance = this;
         _standartAngleX = transform.eulerAngles.x;
     }
 
-    private void Start()
+    public void Setup(GameManager gameManager)
     {
-        GameManager.Instance.OnDeathEvent.AddListener(() => enabled = false);
+        gameManager.OnDeathEvent.AddListener(() => enabled = false);
     }
 
     void Update()
@@ -37,7 +36,9 @@ public class CameraController : MonoBehaviour
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out _cursorRaycastHit, 100f))
             {
-                if (_cursorRaycastHit.collider.transform.TryGetComponent(out TerrainCollider _))
+                GameObject objectUnderPointer = _cursorRaycastHit.collider.gameObject;
+
+				if (objectUnderPointer.TryGetComponent(out TerrainCollider _))
                 {
                     GameManager.Instance.NothingUnderPointer();
                     if (IsClick)
@@ -45,7 +46,14 @@ public class CameraController : MonoBehaviour
                         GameManager.Instance.OnGroundPressed(_cursorRaycastHit.point);
                     }
                 }
-                else if (_cursorRaycastHit.collider.transform.TryGetComponent(out PersonageController personageController))
+                else if (objectUnderPointer.TryGetComponent(out Player player))
+                {
+                    if (IsClick)
+                    {
+                        GameManager.Instance.OnPlayerPressed(player);
+                    }
+                }
+                else if (objectUnderPointer.TryGetComponent(out PersonageController personageController))
                 {
                     if (IsClick)
                     {
@@ -56,7 +64,7 @@ public class CameraController : MonoBehaviour
                         GameManager.Instance.OnPersonageUnderPointer(personageController.Personage);
                     }
                 }
-                else if(_cursorRaycastHit.collider.transform.TryGetComponent(out Item item))
+                else if(objectUnderPointer.TryGetComponent(out Item item))
                 {
                     if (IsClick)
                     {
@@ -168,4 +176,14 @@ public class CameraController : MonoBehaviour
         transform.localEulerAngles = new Vector3(_standartAngleX, 0, 0);
         transform.localPosition = -transform.forward * MinZoomDistance;
     }
+
+    public void OnSetActivePlayer(Transform playerTransform)
+    {
+		transform.parent.position = new Vector3(playerTransform.position.x, transform.parent.position.y, playerTransform.position.z);
+	}
+
+	private void OnDisable()
+	{
+        GameManager.Instance?.NothingUnderPointer();
+	}
 }

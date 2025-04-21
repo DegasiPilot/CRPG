@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 using System.Collections;
 using CRPG.Battle;
-using CRPG;
+using CRPG.DataSaveSystem;
 
 [RequireComponent(typeof(NPCChooseAttackForceModule))]
 public class NPCController : PersonageController
@@ -43,7 +43,7 @@ public class NPCController : PersonageController
         PersonageController target;
         if (Personage.BattleTeam == BattleTeam.Enemies)
         {
-            target = GameData.Player.PlayerController; //TODO: replace to nearest player;
+            target = NearestPlayer();
         }
         else
         {
@@ -99,6 +99,22 @@ public class NPCController : PersonageController
                 StartCoroutine(SheduleAction(target, null, null));
             }
         }
+    }
+
+    private PlayerController NearestPlayer()
+    {
+        PlayerController nearestPlayer = GameData.MainPlayer.PlayerController;
+        float nearestDistance = Vector3.Distance(nearestPlayer.transform.position, transform.position);
+        foreach(var companion in GameData.Companions)
+        {
+            float distance = Vector3.Distance(companion.transform.position, transform.position);
+            if(distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestPlayer = companion.PlayerController;
+            }
+		}
+        return nearestPlayer;
     }
 
     private IEnumerator SheduleAction(PersonageController personageController, System.Action<PersonageController> action, System.Func<bool> actionEndCheck)

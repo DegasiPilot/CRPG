@@ -7,8 +7,6 @@ public class ItemInfo : ScriptableObject
     [TextArea] public string ShortDescription;
     public Sprite Icon;
 
-    public virtual ItemType ItemType => ItemType.Other;
-
     public virtual string GetFullDescrition()
     {
         return ShortDescription;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CRPG.DataSaveSystem.SaveData;
+using System.Collections.Generic;
 
 namespace CRPG.DataSaveSystem
 {

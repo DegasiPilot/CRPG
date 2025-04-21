@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a2e23eaee65b547976090be2e5a60a, type: 3}
   m_Name: SkeletonShieldInfo
   m_EditorClassIdentifier: 
-  Id: 2
+  UniqueName: Shield
   Name: "\u0421\u0442\u0430\u0440\u044B\u0439 \u0449\u0438\u0442"
   ShortDescription: 
   Icon: {fileID: 21300000, guid: 10169c86dc9e9124189ef6d0836a5e2c, type: 3}

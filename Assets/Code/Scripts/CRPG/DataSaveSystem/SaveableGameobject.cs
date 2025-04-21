@@ -1,27 +1,68 @@
-﻿using System;
+﻿using CRPG.DataSaveSystem;
+using CRPG.DataSaveSystem.SaveData;
 using UnityEngine;
+using System.Collections.Generic;
+using CRPG;
 
-[Serializable]
+[System.Serializable]
 public class SaveableGameobject : MonoBehaviour
 {
-    private Item itemComponent;
-    private Personage personageComponent;
+    [Tooltip("Уникальное имя для объекта этого типа")]
+    public string UniqueName;
+    [SerializeField] private MonoBehaviour[] _saveableComponents;
+    private ISaveableComponent[] _saveables;
+	internal ISaveableComponent[] Saveables
+	{
+		get
+		{
+			if (_saveables == null)
+			{
+                InitCollections();
+			}
+			return _saveables;
+		}
+	}
+	private ISaveBlocker[] _saveBlockers;
+	internal ISaveBlocker[] SaveBlockers
+	{
+		get
+		{
+			if (_saveBlockers == null)
+			{
+				InitCollections();
+			}
+			return _saveBlockers;
+		}
+	}
 
-    private void Awake()
+	private void InitCollections()
     {
-        TryGetComponent(out itemComponent);
+        List<ISaveableComponent> saveables = new List<ISaveableComponent>(_saveableComponents.Length);
+        List<ISaveBlocker> saveBlockers = new List<ISaveBlocker>(_saveableComponents.Length);
+
+		for (int i = 0; i < _saveableComponents.Length; i++)
+        {
+            if (_saveableComponents[i] is ISaveableComponent saveableComponent)
+            {
+                saveables.Add(saveableComponent);
+            }
+            if(_saveableComponents[i] is ISaveBlocker saveBlocker)
+            {
+                saveBlockers.Add(saveBlocker);
+            }
+        }
+
+        _saveables = saveables.ToArray();
+        _saveBlockers = saveBlockers.ToArray();
     }
 
-    public SaveObjectInfo GetSaveInfo()
+	public SaveObjectInfo GetSaveInfo(GlobalDataManager globalDataManager)
     {
-        TryGetComponent(out itemComponent);
-        if (itemComponent != null)
+        foreach(var saveBlocker in SaveBlockers)
         {
-            if (itemComponent.IsInInventory)
+            if (saveBlocker.IsBlockSave)
             {
-                SaveObjectInfo destroyedInfo = new SaveObjectInfo();
-                destroyedInfo.IsDestroyed = itemComponent.IsInInventory;
-                return destroyedInfo;
+                return null;
             }
         }
         SaveObjectInfo info = new SaveObjectInfo()
@@ -30,28 +71,31 @@ public class SaveableGameobject : MonoBehaviour
             Rot = transform.eulerAngles,
             IsActive = isActiveAndEnabled,
         };
-        if (itemComponent != null)
+
+        if (Saveables != null && Saveables.Length > 0)
         {
-            info.IsDestroyed = false;
+            info.ComponentsInfo = new object[Saveables.Length];
+            for(int i = 0; i < info.ComponentsInfo.Length; i++)
+            {
+                info.ComponentsInfo[i] = Saveables[i].Save();
+            }
         }
-        if(personageComponent != null)
-        {
-            info.IsDestroyed = personageComponent.IsDead;
-        }
+
+        info.Name = UniqueName;
+
         return info;
     }
 
     public void LoadSaveInfo(SaveObjectInfo info)
     {
-        if (itemComponent != null || personageComponent != null)
-        {
-            if (info.IsDestroyed)
-            {
-                Destroy(gameObject);
-                return;
-            }
-        }
-        transform.SetPositionAndRotation(info.Pos, Quaternion.Euler(info.Rot));
+		if (info.ComponentsInfo != null && info.ComponentsInfo.Length > 0)
+		{
+			for (int i = 0; i < Saveables.Length; i++)
+			{
+				Saveables[i].Load(info.ComponentsInfo);
+			}
+		}
+		transform.SetPositionAndRotation(info.Pos, Quaternion.Euler(info.Rot));
         gameObject.SetActive(info.IsActive);
     }
 }

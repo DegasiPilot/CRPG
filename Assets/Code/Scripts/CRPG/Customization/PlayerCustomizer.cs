@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using CRPG.Customization;
+using CRPG.DataSaveSystem;
 using UnityEngine;
 
 public class PlayerCustomizer : MonoBehaviour
@@ -21,6 +23,8 @@ public class PlayerCustomizer : MonoBehaviour
     private Gender _gender => _player.PersonageInfo.Gender;
 
     private Personage _player;
+    private AppearanceStruct _appearanceStruct;
+    internal AppearanceStruct AppearanceStruct => _appearanceStruct;
 
     public void Setup(Personage player)
     {
@@ -39,8 +43,9 @@ public class PlayerCustomizer : MonoBehaviour
         return PlayerMaterial.GetColor(_skinColorPropertyID);
     }
 
-    public void ApplyAppearance(PersonageInfo.AppearanceStruct appearance)
+    internal void ApplyAppearance(AppearanceStruct appearance)
     {
+        _appearanceStruct = appearance;
         ChangeHairColor(appearance.HairsColor);
         ChangeSkinColor(appearance.SkinColor);
         ChangeGender(_gender);
@@ -74,6 +79,7 @@ public class PlayerCustomizer : MonoBehaviour
     {
         if (gender == Gender.Male)
         {
+            var a = GameData.MainPlayer;
             MaleObject.SetActive(true);
             FemaleObject.SetActive(false);
             Hairs = MaleHairs;

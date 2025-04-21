@@ -15,15 +15,19 @@ namespace DialogueSystem.Runtime
 
         private CharacteristicNodeData _checkNode;
         private NodeLinkData[] _nodeLinkData;
-        private Text _confirmBtnText;
+        [SerializeField] private Text _confirmBtnText;
         private string _nextNodeGIUD;
-
         private int _bonus;
+        private DialogueParser _dialogueParser;
 
-        public void Setup()
+		private void OnValidate()
+		{
+			if(_confirmBtnText == null) _confirmBtnText = ConfirmButton.GetComponentInChildren<Text>();
+		}
+
+        internal void Setup(DialogueParser dialogueParser)
         {
-            _confirmBtnText = ConfirmButton.GetComponentInChildren<Text>();
-            _nodeLinkData = new NodeLinkData[2];
+            _dialogueParser = dialogueParser;
         }
 
         public void CharacteristicCheck(CharacteristicNodeData nodeData, NodeLinkData[] nodeLinks, PersonageInfo personage)
@@ -41,7 +45,7 @@ namespace DialogueSystem.Runtime
 
         public void ButtonPressed()
         {
-            if (ResultText.text == "")
+            if (string.IsNullOrEmpty(ResultText.text))
             {
                 CheckResult checkResult = CharacteristicChecker.Check(_bonus, _checkNode.CheckDifficulty, out int diceResult, out int finalResult);
                 ResultNumberText.text = diceResult.ToString();
@@ -53,10 +57,10 @@ namespace DialogueSystem.Runtime
             }
             else
             {
-                ResultNumberText.text = "";
-                ResultText.text = "";
+                ResultNumberText.text = string.Empty;
+                ResultText.text = string.Empty;
                 gameObject.SetActive(false);
-                DialogueParser.Instance.ProceedToNarrative(_nextNodeGIUD);
+                _dialogueParser.ProceedToNarrative(_nextNodeGIUD);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CRPG.DataSaveSystem.SaveData;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,9 +11,9 @@ namespace CRPG.DataSaveSystem
 
 		public void CreateGameSaveInfo(GameSaveInfo gameSave)
 		{
-			if (gameSave.MainPersonageInfo.PersonagePortrait != null)
+			if (gameSave.MainPlayerInfo.PersonageInfo.PersonagePortrait != null)
 			{
-				gameSave.MainPersonageInfo.ImageBytes = gameSave.MainPersonageInfo.PersonagePortrait.EncodeToPNG();
+				gameSave.MainPlayerInfo.PersonageInfo.ImageBytes = gameSave.MainPlayerInfo.PersonageInfo.PersonagePortrait.EncodeToPNG();
 			}
 			_gameSaves.Add(gameSave);
 		}

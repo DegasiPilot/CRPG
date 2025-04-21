@@ -1,4 +1,5 @@
 ﻿using CRPG.DataSaveSystem;
+using CRPG.DataSaveSystem.SaveData;
 using System.Collections.Generic;
 
 namespace CRPG.MainMenu
@@ -23,6 +24,7 @@ namespace CRPG.MainMenu
 
 		public void StartNewGame()
 		{
+			_gameDataManager.InitNewGame();
 			_mainMenuScript.LoadScene("PersonageRedactorScene");
 		}
 

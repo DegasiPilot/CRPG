@@ -48,19 +48,5 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  PlayerPrefab: {fileID: 8395357984280518413, guid: 2a498023343478c46870025ecddb2495, type: 3}
-  RaceInfos:
-  - {fileID: 11400000, guid: 43b096bd5bea7a74bbbd6a62dda329b9, type: 2}
-  - {fileID: 11400000, guid: 95d91dd7305d1ff4ba2544f11cad47c0, type: 2}
-  - {fileID: 11400000, guid: 9226908b80790bc4ba4640b99ecc7176, type: 2}
-  - {fileID: 11400000, guid: ae3c0075623491d429ea82d9af786c48, type: 2}
-  PersonageActionInfos:
-  - {fileID: 11400000, guid: 5e46acf9ec4ffc84b95ee5239872ba3e, type: 2}
-  - {fileID: 11400000, guid: 64727fd780f02494da2b52c072aed41e, type: 2}
-  AllItems:
-  - {fileID: 8633813493340508643, guid: 0a8df2dac6e1f124792ffe4f6c9829d6, type: 3}
-  - {fileID: 2495305599463065760, guid: 4bf6256caeac31f4393f2a48bdcdac37, type: 3}
-  - {fileID: -6957878482993930687, guid: 42fa027989640204c9e1a19292439148, type: 3}
-  - {fileID: 6119616877225360582, guid: 26ba48c108a7195489456fb112f236f3, type: 3}
-  - {fileID: 881536081083929883, guid: b859ee7fcf24f8a4c94f064b4dc7ba54, type: 3}
-  - {fileID: -5151967833624534722, guid: 7f4b60508a702f34bba8ac3a5b7e6b30, type: 3}
+  PlayerPrefab: {fileID: 8972300037286212075, guid: 2a498023343478c46870025ecddb2495, type: 3}
+  GlobalDataManagerPrefab: {fileID: -865469081716698347, guid: 0a4e5fe1f23678c4f809fb5ff8d14124, type: 3}

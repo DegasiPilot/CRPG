@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CRPG.ItemSystem;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -10,30 +11,38 @@ namespace CRPG.UI
 	{
 		public ItemContextMenu ItemContextMenu;
 		public ItemInfoPanel ItemInfoPanel;
-		[SerializeField] private InventorySlot[] _inventorySlots;
+		[SerializeField] private InventorySlotUI[] _inventorySlotsUI;
 		private ItemSlot _activeItemSlot;
+		private EquipmentManager _equipmentManager;
 
 		public bool IsOpen => gameObject.activeInHierarchy;
 
 		private void OnValidate()
 		{
-			if (_inventorySlots == null)
+			if (_inventorySlotsUI != null && _inventorySlotsUI.Length == 0)
 			{
-				_inventorySlots = GetComponentsInChildren<InventorySlot>(true);
+				_inventorySlotsUI = GetComponentsInChildren<InventorySlotUI>(true);
 			}
+		}
+
+		public void SetActivePlayer(EquipmentManager equipmentManager)
+		{
+			Release();
+			_equipmentManager = equipmentManager;
+			_equipmentManager.OnItemUnequiped += AddToInventoryUI;
 		}
 
 		public void ProcessRaycast(List<RaycastResult> raycastResults)
 		{
 			if (raycastResults.Count > 0)
 			{
-				if (raycastResults[0].gameObject.TryGetComponent(out ItemSlot itemSlot))
+				if (raycastResults[0].gameObject.TryGetComponent(out ItemSlotUI itemSlot))
 				{
-					if (itemSlot.Item != null)
+					if(itemSlot.ItemSlot.Item != null)
 					{
 						ActivateContextMenu(itemSlot);
-						return;
 					}
+					return;
 				}
 				else if (raycastResults[0].gameObject.TryGetComponent(out Button button))
 				{
@@ -43,6 +52,10 @@ namespace CRPG.UI
 						{
 							OnEquipButtonClick();
 						}
+						else
+						{
+							return;
+						}
 					}
 					else if (button == ItemContextMenu.InfoButton)
 					{
@@ -50,12 +63,20 @@ namespace CRPG.UI
 						{
 							OnInfoButtonClick();
 						}
+						else
+						{
+							return;
+						}
 					}
 					else if (button == ItemContextMenu.DropButton)
 					{
 						if (button.interactable)
 						{
 							OnDropButtonClick();
+						}
+						else
+						{
+							return;
 						}
 					}
 					else if (button == ItemInfoPanel.CloseButton)
@@ -75,16 +96,18 @@ namespace CRPG.UI
 				int inventoryCount = inventory.Count;
 				for (int i = 0; i < inventoryCount; i++)
 				{
-					if (inventory[i].IsEquiped)
+					if (inventory[i] is EquipableItem equipable && equipable.IsEquiped)
 					{
-						continue;
+						_inventorySlotsUI[i].InventorySlot.UnEquipItem();
 					}
-					_inventorySlots[i].gameObject.SetActive(true);
-					_inventorySlots[i].Setup(inventory[i]);
+					else
+					{
+						_inventorySlotsUI[i].InventorySlot.EquipItem(inventory[i]);
+					}
 				}
-				for (int i = inventoryCount; i < _inventorySlots.Length; i++)
+				for (int i = inventoryCount; i < _inventorySlotsUI.Length; i++)
 				{
-					_inventorySlots[i].gameObject.SetActive(false);
+					_inventorySlotsUI[i].InventorySlot.UnEquipItem();
 				}
 			}
 			else
@@ -93,28 +116,28 @@ namespace CRPG.UI
 			}
 		}
 
-		public void ActivateContextMenu(ItemSlot itemSlot)
+		public void ActivateContextMenu(ItemSlotUI itemSlot)
 		{
 			ItemContextMenu.transform.position = itemSlot.transform.position;
 			ItemContextMenu.gameObject.SetActive(true);
-			ItemContextMenu.Setup(itemSlot.Item);
-			_activeItemSlot = itemSlot;
+			ItemContextMenu.Setup(itemSlot.ItemSlot.Item);
+			_activeItemSlot = itemSlot.ItemSlot;
 		}
 
 		public void OnEquipButtonClick()
 		{
-			if (!_activeItemSlot.Item.IsEquiped)
-			{
-				EquipmentManager.Instance.EquipItem(_activeItemSlot.Item, out List<Item> undressedItems);
-				undressedItems.ForEach(AddToInventoryUI);
-				_activeItemSlot.UnequipItem();
+			if (_activeItemSlot.Item is EquipableItem) {
+				if (_activeItemSlot is EquipmentSlot equipmentSlot)
+				{
+					_equipmentManager.UnequipItemFromSlot(equipmentSlot);
+				}
+				else
+				{
+					_equipmentManager.EquipItem(_activeItemSlot.Item);
+					_activeItemSlot.UnEquipItem();
+				}
+				_activeItemSlot = null;
 			}
-			else
-			{
-				EquipmentManager.Instance.UneqipItemFromSlot((EquipmentSlot)_activeItemSlot, out Item undressedItem);
-				AddToInventoryUI(undressedItem);
-			}
-			_activeItemSlot = null;
 		}
 
 		public void OnInfoButtonClick()
@@ -127,23 +150,36 @@ namespace CRPG.UI
 		public void OnDropButtonClick()
 		{
 			OnDropItem.Invoke(_activeItemSlot.Item);
-			_activeItemSlot.gameObject.SetActive(false);
+			_activeItemSlot.UnEquipItem();
 			ItemInfoPanel.Close();
 			_activeItemSlot = null;
 		}
 		public UnityEvent<Item> OnDropItem = new();
 
-		private void AddToInventoryUI(Item item)
+		public void AddToInventoryUI(Item item, BodyPart bodyPart)
 		{
-			foreach (var slot in _inventorySlots)
+			foreach (var slot in _inventorySlotsUI)
 			{
-				if (slot.Item == null)
+				//Find first empty slot
+				if (slot.InventorySlot.Item == null)
 				{
-					slot.gameObject.SetActive(true);
-					slot.Setup(item);
+					slot.InventorySlot.EquipItem(item);
 					break;
 				}
 			}
+		}
+
+		private void Release()
+		{
+			if (_equipmentManager != null)
+			{
+				_equipmentManager.OnItemUnequiped -= AddToInventoryUI;
+			}
+		}
+
+		private void OnDestroy()
+		{
+			Release();
 		}
 	}
 }

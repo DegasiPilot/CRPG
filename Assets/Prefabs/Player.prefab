@@ -11196,6 +11196,7 @@ MonoBehaviour:
   Boots: {fileID: 1532603173873984137}
   RigthHand: {fileID: 3212792686176100105}
   LeftHand: {fileID: 8570185133594946905}
+  _equipmentManager: {fileID: 7666125765324505917}
 --- !u!114 &2674689478933750484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11256,6 +11257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f831c1a58ab6e64aadff3f40b7d1efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackAnimTimeBeforeHit: 0.44
   Animator: {fileID: 4245745844326149324}
   _jumpGroundingTime: 0
 --- !u!1 &7495671352183431528
@@ -12183,6 +12185,7 @@ MonoBehaviour:
   Boots: {fileID: 8854914694789966617}
   RigthHand: {fileID: 3497266623735230484}
   LeftHand: {fileID: 1715692763205820436}
+  _equipmentManager: {fileID: 7666125765324505917}
 --- !u!114 &3072013097894888337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12260,6 +12263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f831c1a58ab6e64aadff3f40b7d1efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackAnimTimeBeforeHit: 0.44
   Animator: {fileID: 3211176206869484160}
   _jumpGroundingTime: 0.558
 --- !u!1 &8205316003246950478
@@ -12277,7 +12281,9 @@ GameObject:
   - component: {fileID: 3426615617536217734}
   - component: {fileID: 3640927670494120500}
   - component: {fileID: 6937764839655362251}
-  - component: {fileID: 8395357984280518413}
+  - component: {fileID: 201543980960707284}
+  - component: {fileID: 7666125765324505917}
+  - component: {fileID: 8972300037286212075}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -12320,12 +12326,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 5
-  AttackAnimTimeBeforeHit: 0.44
   <AnimatorManager>k__BackingField: {fileID: 1340514593045557249}
   _controller: {fileID: 4410945770364868785}
   _rigidBody: {fileID: 3640927670494120500}
   _collider: {fileID: 6937764839655362251}
   _personage: {fileID: 5396155787161258385}
+  _chooseAttackForceModule: {fileID: 201543980960707284}
   _distanceToHeightRatio: 0.3
   _minJumpHeight: 0.1
   _maxJumpHeight: 1.3
@@ -12334,6 +12340,9 @@ MonoBehaviour:
   UnaccesableLineRenderer: {fileID: 5209372541067782930}
   Sphere: {fileID: 4612172182146424987}
   Inventory: {fileID: 2478782292093292681}
+  OnSetDefaultAction:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5396155787161258385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12352,7 +12361,6 @@ MonoBehaviour:
   Armor: []
   BattleTeam: 0
   PersonageInfo: {fileID: 11400000, guid: 72ed5b1eb5a44724088b233e5ee829ad, type: 2}
-  Controller: {fileID: 3724107564051192107}
 --- !u!195 &4410945770364868785
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -12457,7 +12465,7 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &8395357984280518413
+--- !u!114 &201543980960707284
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12466,10 +12474,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 8205316003246950478}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4235fce9a3bb74441be5400327ccd247, type: 3}
+  m_Script: {fileID: 11500000, guid: 95ba336009c154f4999bc20698560505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onChooseAttackForce:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7666125765324505917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205316003246950478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96cbdb5209fa014448d306da7b7f5c8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _personage: {fileID: 5396155787161258385}
+--- !u!114 &8972300037286212075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205316003246950478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a0c7caede6d65647a8ab2b5aca7d941, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <PlayerController>k__BackingField: {fileID: 3724107564051192107}
+  <EquipmentManager>k__BackingField: {fileID: 7666125765324505917}
   <PlayerCustomizer>k__BackingField: {fileID: 3426615617536217734}
 --- !u!1 &8229196525392976122
 GameObject:

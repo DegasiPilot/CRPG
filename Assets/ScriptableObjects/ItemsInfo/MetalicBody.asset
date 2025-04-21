@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a2e23eaee65b547976090be2e5a60a, type: 3}
   m_Name: MetalicBody
   m_EditorClassIdentifier: 
-  Id: 5
+  UniqueName: Male_Armor_body
   Name: "\u041C\u0435\u0442\u0430\u043B\u0438\u0447\u0435\u0441\u043A\u0430\u044F
     \u043A\u0438\u0440\u0430\u0441\u0430"
   ShortDescription: "\u0421 \u0443\u0434\u043E\u0431\u043D\u043E\u0439 \u0442\u043A\u0430\u043D\u0435\u0432\u043E\u0439
