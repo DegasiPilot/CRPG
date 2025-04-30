@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewWeaponInfo", menuName = "ScriptableObjects/WeaponInfo")]
+[CreateAssetMenu(fileName = "NewWeaponInfo", menuName = "ScriptableObjects/ОружиеInfo")]
 public class WeaponInfo : ItemInfo
 {
     public float MaxAttackDistance;

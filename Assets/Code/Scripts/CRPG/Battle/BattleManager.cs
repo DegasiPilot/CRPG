@@ -94,12 +94,12 @@ public static class BattleManager
         }
     }
 
-    internal static void AfterAttack(PersonageController personageController)
+    internal static void AfterAttack(AttackModule attackModule)
     {
         RemainActions--;
         if (RemainActions <= 0)
         {
-            personageController.EndAttack();
+            attackModule.EndAttack();
         }
 	}
 

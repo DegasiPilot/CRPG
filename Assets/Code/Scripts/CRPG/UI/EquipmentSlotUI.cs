@@ -47,12 +47,15 @@ namespace CRPG.UI
 
 		private void EquipItem(EquipableItem item, BodyPart bodyPart)
 		{
-			EquipItem(item.ItemInfo);
+			EquipItem(item.ItemInfo,
+				item is Weapon weapon &&
+				weapon.WeaponInfo.IsTwoHandled &&
+				bodyPart == BodyPart.LeftHand);
 		}
 
 		private void EquipItem(ItemInfo itemInfo, bool darkened = false)
 		{
-			_iconImage.sprite = itemInfo.Icon;
+			EquipItem(itemInfo);
 			_iconImage.color = darkened ? _darkenedColor : Color.white;
 		}
 

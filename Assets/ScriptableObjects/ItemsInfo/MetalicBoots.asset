@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a2e23eaee65b547976090be2e5a60a, type: 3}
   m_Name: MetalicBoots
   m_EditorClassIdentifier: 
-  UniqueName: MetallicBoots
   Name: "\u041C\u0435\u0442\u0430\u043B\u0438\u0447\u0435\u0441\u043A\u0438\u0435
     \u0441\u0430\u043F\u043E\u0433\u0438"
   ShortDescription: "\u041D\u0435\u043F\u043B\u043E\u0437\u043E \u0437\u0430\u0449\u0430\u0449\u0430\u044E\u0442
     \u043D\u043E\u0433\u0438."
-  Icon: {fileID: 21300000, guid: 51237c9ea6ac1f847ba926ec0cfa2e35, type: 3}
+  Icon: {fileID: 21300000, guid: 7c46aa8834d045442ad224933398d2ba, type: 3}
   SkinIndex: 1
   _armorPercent: 6
   WearableBodyPart: 4

@@ -2,7 +2,7 @@
 
 public class ArmorSkinPart : MonoBehaviour
 {
-    public GameObject[] SkinVariants;
+    [SerializeField] private GameObject[] SkinVariants;
     public int ActiveIndex { get; private set; }
 
     public void SetSkin(int index)

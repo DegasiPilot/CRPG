@@ -45,7 +45,7 @@ namespace CRPG.UI
 			_view.PlayerPortrait = personage.PersonageInfo.PersonagePortrait;
 			_personageController = personageController;
 			personage.OnHealthChanged.AddListener(UpdateHealthBar);
-			personage.OnStaminaChanged.AddListener(UpdateHealthBar);
+			personage.OnStaminaChanged.AddListener(UpdateStaminaBar);
 			_personageController.OnSetDefaultAction.AddListener(_actionsViewModel.DeactivateAllActions);
 			_actionsViewModel.Setup(personage.Actions, _getActionInfo);
 		}

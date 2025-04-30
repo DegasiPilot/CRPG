@@ -1,7 +1,10 @@
+using System;
 
 public abstract class ItemSlot
 {
-    public abstract Item Item { get; }
-
-    public abstract void UnEquipItem();
+    public abstract void ClearSlot();
+    public abstract bool TrySetupItemContextMenu(ItemContextMenu itemContextMenu);
+    public abstract void SetupItemItemInfoPanel(ItemInfoPanel itemInfoPanel);
+    public abstract bool OnEquipButtonClick(EquipmentManager equipmentManager);
+	public abstract void OnDropButtonClick(Action<Item> dropItemCallback);
 }

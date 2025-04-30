@@ -4,35 +4,26 @@ using UnityEngine.UI;
 
 public class ItemContextMenu : MonoBehaviour
 {
-    public Text ItemNameText;
+	public Text ItemNameText;
 
-    public Button EquipmentButton;
-    [SerializeField] private Text EquipmentBtnText;
-    public Button InfoButton;
-    public Button DropButton;
+	public Button EquipmentButton;
+	[SerializeField] private Text EquipmentBtnText;
+	public Button InfoButton;
+	public Button DropButton;
 
 	private void OnValidate()
 	{
-		if(EquipmentBtnText == null && EquipmentButton != null)
-        {
+		if (EquipmentBtnText == null && EquipmentButton != null)
+		{
 			EquipmentBtnText = EquipmentButton.GetComponentInChildren<Text>();
 		}
 	}
 
-    public void Setup(Item item)
-    {
-        ItemNameText.text = item.ItemInfo.Name;
-        if(item is EquipableItem equipable)
-        {
-			EquipmentButton.interactable = true;
-			EquipmentBtnText.text = equipable.IsEquiped ? "Снять" : "Экипировать";
-			DropButton.interactable = !equipable.IsEquiped;
-		}
-        else
-        {
-			EquipmentButton.interactable = false;
-			EquipmentButton.interactable = false;
-            DropButton.interactable = true;
-        }
-    }
+	public void Setup(ItemInfo itemInfo, bool isEquipable, bool isEquiped)
+	{
+		ItemNameText.text = itemInfo.Name;
+		EquipmentButton.interactable = isEquipable;
+		EquipmentBtnText.text = isEquiped ? "Снять" : "Экипировать";
+		DropButton.interactable = !isEquiped;
+	}
 }

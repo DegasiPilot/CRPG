@@ -1,4 +1,4 @@
-﻿
+﻿using UnityEngine;
 
 namespace CRPG.ItemSystem
 {
@@ -6,5 +6,6 @@ namespace CRPG.ItemSystem
 	{
 		public bool IsEquiped { get; set; }
 		public override bool IsBlockSave => base.IsBlockSave || IsEquiped;
+		public Vector3 RotationInHand;
 	}
 }

@@ -2,6 +2,7 @@ using CRPG.DataSaveSystem.SaveData;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -21,7 +22,11 @@ namespace CRPG
 		public Button StartNewGameButton;
 		public Button ExitGameButton;
 
-		public Scene Scene;
+		private void Awake()
+		{
+			OnAwake.Invoke();
+		}
+		public UnityEvent OnAwake;
 
 		public void ShowLoadScreen()
 		{

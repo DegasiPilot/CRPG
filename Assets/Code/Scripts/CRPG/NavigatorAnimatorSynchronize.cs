@@ -7,7 +7,8 @@ public class NavigatorAnimatorSynchronize : MonoBehaviour
     public AnimatorManager AnimatorManager;
     public PersonageController PersonageController;
     public bool IsSynchronizeRotation;
-    public bool NormalizeSpeed;
+    [Tooltip("Делить скорость анимации движения на NavMeshAgent.speed")]
+	public bool NormalizeSpeed;
 
     private Transform _agentTransform => Agent.transform;
 

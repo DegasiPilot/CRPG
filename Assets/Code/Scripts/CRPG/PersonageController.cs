@@ -1,4 +1,5 @@
-﻿using CRPG.Battle;
+﻿using CRPG;
+using CRPG.Battle;
 using CRPG.DataSaveSystem;
 using System.Collections;
 using UnityEngine;
@@ -14,14 +15,13 @@ public abstract class PersonageController : MonoBehaviour
 	public ActionType ActiveAction => _activeAction;
 	public Personage Personage => _personage;
 	public float MaxAttackDistance => _personage.WeaponInfo != null ? _personage.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
-	public bool IsFree => _isGrounded && !IsAttacking && (GameManager.Instance.GameMode != GameMode.Battle || (!_controller.pathPending && !IsMoving));
+	public bool IsFree => _isGrounded && !IsAttacking &&
+		(GameManager.Instance.GameMode != GameMode.Battle ||
+		(!_controller.pathPending && !IsMoving));
 
-	private bool _isAttackAnim;
-	public bool IsAttacking => _attackModule.IsAttacking || _isAttackAnim;
+	public bool IsAttacking => _attackModule.IsAttacking;
 	public float Radius => _controller.radius;
 	[field: SerializeField] public AnimatorManager AnimatorManager { get; protected set; }
-
-	private WeaponInfo WeaponInfo => _personage.WeaponInfo;
 
 	[SerializeField] protected NavMeshAgent _controller;
 	[SerializeField] protected Rigidbody _rigidBody;
@@ -75,7 +75,7 @@ public abstract class PersonageController : MonoBehaviour
 	{
 		if (_controller.enabled)
 		{
-			if (_controller.hasPath && _controller.remainingDistance > _controller.stoppingDistance)
+			if (_controller.hasPath && Vector3.Distance(_controller.destination, transform.position) >= _controller.stoppingDistance)
 			{
 				IsMoving = true;
 			}
@@ -170,10 +170,7 @@ public abstract class PersonageController : MonoBehaviour
 			time += Time.deltaTime;
 			float progress = time / jumpDuration;
 
-			// Параболическая траектория (y = -4x^2 + 4x)
-
-			float verticalOffset = jumpHeigth * (-4 * Mathf.Pow(progress, 2) + 4 * progress);
-			transform.position = Vector3.Lerp(startPos, targetPosition, progress) + Vector3.up * verticalOffset;
+			transform.position = PhysicHelper.JumpToPosition(startPos, targetPosition, jumpHeigth, progress);
 
 			yield return null;
 		}
@@ -184,13 +181,6 @@ public abstract class PersonageController : MonoBehaviour
 		_controller.enabled = true;
 	}
 
-	protected float CalculateJumpDuration(float height)
-	{
-		// Время до вершины прыжка: t_up = √(2h/g)
-		// Общее время прыжка (вверх + вниз): t_total = 2*t_up
-		return 2 * Mathf.Sqrt(2 * height / Mathf.Abs(Physics.gravity.y));
-	}
-
 	public void StartAttack(PersonageController personageController)
 	{
 		_attackModule.Attack(personageController);
@@ -198,30 +188,17 @@ public abstract class PersonageController : MonoBehaviour
 
 	public virtual void EndAttack()
 	{
-		_attackModule.EndAttack();
+		
 	}
 
-	public void MakeDamage(float energy, PersonageController enemy)
-	{
-		StartCoroutine(MakeDamageCoroutine(energy, enemy));
-	}
-
-	private IEnumerator MakeDamageCoroutine(float energy, PersonageController enemy)
-	{
-		if (_isAttackAnim)
-		{
-			yield return new WaitWhile(() => _isAttackAnim);
-		}
-		_isAttackAnim = true;
-		yield return AttackAnim(enemy.transform);
-		enemy.GetDamage(energy, WeaponInfo?.DamageType ?? GameData.UnarmedDamageType);
-		_isAttackAnim = false;
-	}
-
-	public IEnumerator AttackAnim(Transform target)
+	public IEnumerator RotateTo(Transform target)
 	{
 		Quaternion startRot = transform.rotation;
-		Quaternion finalRot = Quaternion.LookRotation(target.position - transform.position);
+		Quaternion finalRot = Quaternion.LookRotation(target.position - Personage.HitPoint.position);
+		if (_personage.Weapon != null && _personage.Weapon.TargetingOffset != Vector3.zero)
+		{
+			finalRot *= Quaternion.Euler(_personage.Weapon.TargetingOffset);
+		}
 		float angle = Quaternion.Angle(startRot, finalRot);
 		float t = 0;
 		do
@@ -230,8 +207,6 @@ public abstract class PersonageController : MonoBehaviour
 			transform.rotation = Quaternion.Slerp(startRot, finalRot, t);
 			yield return null;
 		} while (t < 1);
-		AnimatorManager.StartAttackAnim(WeaponInfo != null);
-		yield return new WaitForSeconds(AnimatorManager.AttackAnimTimeBeforeHit);
 	}
 
 	public virtual void SetDefaultAction()
@@ -286,5 +261,10 @@ public abstract class PersonageController : MonoBehaviour
 	{
 		item.transform.SetParent(null);
 		item.OnDropped();
+	}
+
+	private void OnDestroy()
+	{
+		_attackModule.Dispose();
 	}
 }

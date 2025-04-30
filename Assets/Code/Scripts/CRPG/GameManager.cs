@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using CRPG;
 using CRPG.DataSaveSystem;
-using CRPG.DI;
 using DialogueSystem.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
@@ -46,7 +45,6 @@ public class GameManager : MonoBehaviour
 	private void Awake()
     {
         Instance = this;
-        Time.timeScale = 1;
         BattleManager.OnBattleStartEvent.AddListener(() => ChangeGameMode(GameMode.Battle));
         BattleManager.OnBattleEndEvent.AddListener(() => ChangeGameMode(GameMode.Free));
 		using (var container = LifetimeScope.Container)
@@ -355,5 +353,11 @@ public class GameManager : MonoBehaviour
 		GameData.ActivePlayer = player;
         _cameraController.OnSetActivePlayer(player.transform);
 		_canvasManager.SetActivePersonage(player.PlayerController, player.EquipmentManager);
+	}
+
+	private void OnDestroy()
+	{
+        Time.timeScale = 1;
+        GameData.SceneSaveInfo = null;
 	}
 }

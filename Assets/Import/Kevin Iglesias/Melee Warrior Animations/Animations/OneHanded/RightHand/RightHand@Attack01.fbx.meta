@@ -406,8 +406,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -448,7 +446,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.3364674
-        functionName: AttackContactEvent
+        functionName: OnWeaponContact
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

@@ -24,9 +24,3 @@ MonoBehaviour:
   PersonagePortrait: {fileID: 0}
   PersonagePortraitColor: {r: 1, g: 1, b: 1, a: 1}
   Gender: 1
-  Appearance:
-    HairIndex: 0
-    BeardIndex: 0
-    HairsColor: {r: 1, g: 1, b: 1, a: 1}
-    FaceIndex: 0
-    SkinColor: {r: 1, g: 0, b: 0, a: 1}

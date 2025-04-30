@@ -17,6 +17,7 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 
     internal Weapon Weapon;
     internal List<Armor> Armor = new List<Armor>();
+    internal List<ProjectileItem> Projectiles = new List<ProjectileItem>();
     public BattleTeam BattleTeam;
     public PersonageInfo PersonageInfo;
     public ActionType[] Actions => new ActionType[] { ActionType.Jumping, ActionType.Attack };
@@ -24,6 +25,8 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
     public WeaponInfo WeaponInfo => Weapon?.ItemInfo as WeaponInfo;
     public int MinAttackEnergy => WeaponInfo == null ? GameData.MinUnarmedAttackEnergy : WeaponInfo.MinEnergy;
     public int MaxAttackEnergy => WeaponInfo == null ? GameData.MaxUnarmedAttackEnergy : WeaponInfo.MaxEnergy;
+    public bool CanAttack => Weapon == null || Weapon.RequiredProjectile == null ||
+        Projectiles.Count > 0 && Projectiles[0].ProjectileItemInfo == Weapon.RequiredProjectile;
 
     private IEnumerable<ArmorInfo> _armorInfos
     {

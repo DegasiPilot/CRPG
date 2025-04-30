@@ -5,14 +5,17 @@ using UnityEngine;
 
 public class EquipmentManager : MonoBehaviour
 {
-    public event Action<Item, BodyPart> OnItemEquiped;
-    public event Action<Item, BodyPart> OnItemUnequiped;
+    public event Action<EquipableItem, BodyPart> OnItemEquiped;
+    public event Action<EquipableItem, BodyPart> OnItemUnequiped;
+    internal event Action OnProjectileEquiped;
+    internal event Action<List<ProjectileItem>> OnProjectileUnequiped;
 
     public readonly EquipmentSlot HealmetSlot = new(BodyPart.Head);
 	public readonly EquipmentSlot BodySlot = new(BodyPart.Body);
     public readonly EquipmentSlot LeftHandSlot = new(BodyPart.LeftHand);
     public readonly EquipmentSlot RightHandSlot = new(BodyPart.RightHand);
     public readonly EquipmentSlot BootsSlot = new(BodyPart.Legs);
+    internal readonly ProjectileSlot ProjectileSlot = new();
 
     [SerializeField] private Personage _personage;
 
@@ -33,6 +36,10 @@ public class EquipmentManager : MonoBehaviour
             {
                 yield return item;
             }
+            foreach (var projectile in _personage.Projectiles)
+            {
+                yield return projectile;
+            }
         }
     }
 
@@ -51,12 +58,14 @@ public class EquipmentManager : MonoBehaviour
 		LeftHandSlot.OnEquipItem += InvokeEquipItem;
 		RightHandSlot.OnEquipItem += InvokeEquipItem;
 		BootsSlot.OnEquipItem += InvokeEquipItem;
+        ProjectileSlot.OnEquipItems += InvokeEquipProjectile;
 
 		HealmetSlot.OnUnequipItem += InvokeUnequipItem;
 		BodySlot.OnUnequipItem += InvokeUnequipItem;
 		LeftHandSlot.OnUnequipItem += InvokeUnequipItem;
 		RightHandSlot.OnUnequipItem += InvokeUnequipItem;
 		BootsSlot.OnUnequipItem += InvokeUnequipItem;
+		ProjectileSlot.OnUnequipItems += InvokeUnequipProjectile;
 	}
 
 	public void Setup(EquipableItem[] equipedItems)
@@ -70,27 +79,40 @@ public class EquipmentManager : MonoBehaviour
 		}
 	}
 
-	private void InvokeEquipItem(Item item, BodyPart bodyPart)
+	private void InvokeEquipItem(EquipableItem item, BodyPart bodyPart)
 	{
 		OnItemEquiped.Invoke(item, bodyPart);
 	}
 
-	private void InvokeUnequipItem(Item item, BodyPart bodyPart)
+	private void InvokeUnequipItem(EquipableItem item, BodyPart bodyPart)
     {
         OnItemUnequiped.Invoke(item, bodyPart);
     }
 
-    public void EquipItem(Item item)
+    private void InvokeEquipProjectile(ProjectileItemInfo projectileItemInfo)
+    {
+        OnProjectileEquiped.Invoke();
+    }
+
+    private void InvokeUnequipProjectile(List<ProjectileItem> projectileItems)
+    {
+        OnProjectileUnequiped.Invoke(projectileItems);
+    }
+
+
+	public void EquipItem(EquipableItem item)
     {
         if (item is Weapon weapon)
         {
             EquipWeapon(weapon);
-            Weapon = weapon;
         }
         else if (item is Armor armor)
         {
             EquipArmor(armor);
-            _armor.Add(armor);
+        }
+        else if (item is ProjectileItem projectileItem)
+        {
+            EquipProjectile(projectileItem);
         }
 	}
 
@@ -98,13 +120,13 @@ public class EquipmentManager : MonoBehaviour
     {
         Weapon = item;
         WeaponInfo newWeaponInfo = item.WeaponInfo;
-        if (RightHandSlot.Item != null && (RightHandSlot.Item.ItemInfo as WeaponInfo).IsTwoHandled)
+        if (RightHandSlot.EquipableItem != null && RightHandSlot.EquipableItem is Weapon equipedWeapon && equipedWeapon.WeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.UnEquipItem();
+            LeftHandSlot.ClearSlot();
         }
         if (newWeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.EquipItem(item, out EquipableItem undressedItem, true);
+            LeftHandSlot.EquipItem(item, out EquipableItem undressedItem);
         }
 
         RightHandSlot.EquipItem(item, out EquipableItem undressedWeapon);
@@ -135,20 +157,26 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
+    internal void EquipProjectile(ProjectileItem projectileItem)
+    {
+        ProjectileSlot.EquipProjectile(projectileItem);
+        _personage.Projectiles = ProjectileSlot.ProjectileItems;
+    }
+
     public void UnequipItemFromSlot(EquipmentSlot slot)
     {
-        Item uneqipedItem;
-		if (slot.Item is Weapon weapon &&
+        EquipableItem uneqipedItem;
+		if (slot.EquipableItem is Weapon weapon &&
             weapon.WeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.UnEquipItem();
-            uneqipedItem = RightHandSlot.Item;
-            RightHandSlot.UnEquipItem();
+            LeftHandSlot.ClearSlot();
+            uneqipedItem = RightHandSlot.EquipableItem;
+            RightHandSlot.ClearSlot();
         }
         else
         {
-            uneqipedItem = slot.Item;
-            slot.UnEquipItem();
+            uneqipedItem = slot.EquipableItem;
+            slot.ClearSlot();
         }
         if(uneqipedItem is Weapon)
         {
@@ -158,6 +186,12 @@ public class EquipmentManager : MonoBehaviour
         {
             _armor.Remove(armor);
         }
+    }
+
+    internal void UnequipProjectile(ProjectileSlot projectileSlot)
+    {
+        projectileSlot.ClearSlot();
+        _personage.Projectiles = null;
     }
 
     private void Release()
@@ -173,6 +207,9 @@ public class EquipmentManager : MonoBehaviour
 		LeftHandSlot.OnUnequipItem -= InvokeUnequipItem;
 		RightHandSlot.OnUnequipItem -= InvokeUnequipItem;
 		BootsSlot.OnUnequipItem -= InvokeUnequipItem;
+
+		ProjectileSlot.OnEquipItems -= InvokeEquipProjectile;
+		ProjectileSlot.OnEquipItems -= InvokeEquipProjectile;
 	}
 
 	private void OnDestroy()

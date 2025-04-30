@@ -554,7 +554,6 @@ Transform:
   - {fileID: 504017919731811874}
   - {fileID: 2588122275548211467}
   - {fileID: 1191469783726286692}
-  - {fileID: 4000030675694655757}
   - {fileID: 7218751846022643575}
   - {fileID: 5662322843236918634}
   m_Father: {fileID: 0}
@@ -1371,6 +1370,7 @@ Transform:
   - {fileID: 4968731868343906152}
   - {fileID: 9022875305968429032}
   - {fileID: 4948518213097979671}
+  - {fileID: 4000030675694655757}
   m_Father: {fileID: 1621084223089207032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2533353356656892083
@@ -2249,7 +2249,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackAnimTimeBeforeHit: 0.44
-  Animator: {fileID: 5565588050480480420}
+  _onContactEnemy:
+    m_PersistentCalls:
+      m_Calls: []
+  _animator: {fileID: 5565588050480480420}
+  _rightHand: {fileID: 0}
   _jumpGroundingTime: 0.558
 --- !u!1 &3697488912815965967
 GameObject:
@@ -2306,12 +2310,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3707967784867540672}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.417, z: 0}
+  m_LocalRotation: {x: -0.03927913, y: 0.09777811, z: 0.37068847, w: 0.92276037}
+  m_LocalPosition: {x: -0.023310076, y: 0.023653418, z: 0.09323109}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2019210508995029300}
+  m_Father: {fileID: 2120793758322833628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3839876042027856739
 GameObject:

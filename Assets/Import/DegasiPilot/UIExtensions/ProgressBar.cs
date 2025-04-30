@@ -6,20 +6,46 @@ namespace DegasiPilot.UIExtensions
 	internal class ProgressBar : MonoBehaviour
 	{
 		[SerializeField] private Image _fillImage;
-		[SerializeField] private float _animSpeed;
+		private const float _animSpeed = 0.5f;
+		[SerializeField] private Direction _direction;
 
 		private float _targerSize;
-		private float Value 
+		private float Value
 		{
-			get 
+			get
 			{
-				return _fillImage.rectTransform.anchorMax.x;
+				if (_fillImage.type != Image.Type.Filled)
+				{
+					return _fillImage.rectTransform.anchorMax.x;
+				}
+				else
+				{
+					return _fillImage.fillAmount;
+				}
 			}
 			set
 			{
-				Vector2 newAnchor = _fillImage.rectTransform.anchorMax;
-				newAnchor.x = value;
-				_fillImage.rectTransform.anchorMax = newAnchor;
+				if (_fillImage.type != Image.Type.Filled)
+				{
+					Vector2 newAnchor = _fillImage.rectTransform.anchorMax;
+					if (_direction == Direction.Horizontal)
+					{
+						newAnchor.x = value;
+					}
+					else if (_direction == Direction.Vertical)
+					{
+						newAnchor.y = value;
+					}
+					else
+					{
+						Debug.LogError("Unhandled direction", this);
+					}
+					_fillImage.rectTransform.anchorMax = newAnchor;
+				}
+				else
+				{
+					_fillImage.fillAmount = value;
+				}
 			}
 		}
 
@@ -31,10 +57,18 @@ namespace DegasiPilot.UIExtensions
 
 		private void Update()
 		{
-			if (Mathf.Abs(Value - _targerSize) > 0.01f)
+			if(Value != _targerSize)
 			{
-				Value = Mathf.Lerp(Value, _targerSize, _animSpeed * Time.deltaTime);
-				Debug.Log("ProgressBarView Update");
+				float difference = _targerSize - Value;
+				if(Mathf.Abs(difference) <= _animSpeed * Time.deltaTime)
+				{
+					Value = _targerSize;
+				}
+				else
+				{
+					Value += _animSpeed * Time.deltaTime * Mathf.Sign(difference);
+					Debug.Log("Update");
+				}
 			}
 		}
 
@@ -51,25 +85,8 @@ namespace DegasiPilot.UIExtensions
 
 		public enum Direction
 		{
-			/// <summary>
-			/// Starting position is the Left.
-			/// </summary>
-			LeftToRight,
-
-			/// <summary>
-			/// Starting position is the Right
-			/// </summary>
-			RightToLeft,
-
-			/// <summary>
-			/// Starting position is the Bottom.
-			/// </summary>
-			BottomToTop,
-
-			/// <summary>
-			/// Starting position is the Top.
-			/// </summary>
-			TopToBottom,
+			Horizontal,
+			Vertical,
 		}
 	}
 }

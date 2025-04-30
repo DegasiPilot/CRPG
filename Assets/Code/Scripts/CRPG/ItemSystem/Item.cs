@@ -10,13 +10,13 @@ public abstract class Item : MonoBehaviour, ISaveBlocker
 
 	public bool IsInInventory { get; private set; }
 
-    private Rigidbody rb;
-    private new Collider collider;
+    [SerializeReference] private Rigidbody rb;
+	[SerializeReference] private new Collider collider;
 
-    protected virtual void Awake()
+    protected virtual void OnValidate()
     {
-        rb = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
+        if(rb == null) TryGetComponent(out rb);
+        if(collider == null) TryGetComponent(out collider);
     }
 
     public void OnTaked()
@@ -30,6 +30,6 @@ public abstract class Item : MonoBehaviour, ISaveBlocker
     {
         rb.isKinematic = false;
         collider.enabled = true;
-        IsInInventory = false;
-    }
+		IsInInventory = false;
+	}
 }

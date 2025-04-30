@@ -323,6 +323,7 @@ namespace CRPG.PersonageRedactor
 		public void Dispose()
 		{
 			_personageCreator.SetRace -= SetRace;
+			_personageCreator.OnRotate -= OnRotate;
 		}
 	}
 }

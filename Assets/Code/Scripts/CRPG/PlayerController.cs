@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.Events;
 using CRPG.Battle;
 using CRPG.DataSaveSystem;
+using CRPG;
 
 [RequireComponent(typeof(PlayerChooseAttackForceModule))]
 public class PlayerController : PersonageController
@@ -53,7 +54,7 @@ public class PlayerController : PersonageController
 				        _minJumpHeight,
 				        _maxJumpHeight
 			        );
-					float duration = CalculateJumpDuration(calculatedHeight);
+					float duration = PhysicHelper.CalculateJumpDuration(calculatedHeight);
 					StartCoroutine(JumpToPosition(navMeshHit.position, calculatedHeight, duration));
 				}
 				break;
@@ -137,7 +138,8 @@ public class PlayerController : PersonageController
         base.SetActiveAction(actionType);
         if(actionType == ActionType.Jumping)
         {
-            DisplaySphere(GameData.MaxJumpDistance*2);
+            float diametr = GameData.MaxJumpDistance * 2;
+			DisplaySphere(diametr, diametr);
         }
         else
         {
@@ -145,10 +147,10 @@ public class PlayerController : PersonageController
         }
     }
 
-    private void DisplaySphere(float sphereDiametr)
+    private void DisplaySphere(float sphereDiametr, float shpereY)
     {
         Sphere.SetActive(true);
-        Sphere.transform.localScale = new Vector3(sphereDiametr, sphereDiametr, sphereDiametr);
+        Sphere.transform.localScale = new Vector3(sphereDiametr, shpereY, sphereDiametr);
     }
 
     private void HideSphere()

@@ -62,6 +62,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PersonageActionInfo
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7076aac120d89da4996ba4b35f82f8f4
+    m_Address: Item/Bow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f4b60508a702f34bba8ac3a5b7e6b30
     m_Address: Item/Sword
     m_ReadOnly: 0

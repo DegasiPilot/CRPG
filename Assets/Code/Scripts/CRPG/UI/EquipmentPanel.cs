@@ -9,6 +9,7 @@ namespace CRPG.UI
 		[SerializeField] private EquipmentSlotUI LeftHandSlot;
 		[SerializeField] private EquipmentSlotUI RightHandSlot;
 		[SerializeField] private EquipmentSlotUI BootsSlot;
+		[SerializeField] private ProjectileSlotUI ProjectileSlot;
 
 		public void Setup(EquipmentManager equipmentManager)
 		{
@@ -17,6 +18,7 @@ namespace CRPG.UI
 			LeftHandSlot.Setup(equipmentManager.LeftHandSlot);
 			RightHandSlot.Setup(equipmentManager.RightHandSlot);
 			BootsSlot.Setup(equipmentManager.BootsSlot);
+			ProjectileSlot.Setup(equipmentManager.ProjectileSlot);
 		}
 
 		private void OnDisable()
@@ -26,6 +28,7 @@ namespace CRPG.UI
 			LeftHandSlot.ReleaseSlot();
 			RightHandSlot.ReleaseSlot();
 			BootsSlot.ReleaseSlot();
+			ProjectileSlot.ReleaseSlot();
 		}
 	}
 }

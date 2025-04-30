@@ -2451,6 +2451,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba1a6669c044bf40a86aa3577a41d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 2563366678980687744}
+  collider: {fileID: 225041467838417081}
+  RotationInHand: {x: 0, y: 0, z: 0}
   ArmorInfo: {fileID: 11400000, guid: 2a3d26eef2141b646b58ce406ae16210, type: 2}
 --- !u!1 &8045880309653854400
 GameObject:

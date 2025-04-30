@@ -69,7 +69,6 @@ namespace BattleSystem.Views
 
 		protected TextMeshProUGUI GetText()
 		{
-			Debug.Log("GetText");
 			return _textSource.Get();
 		}
 

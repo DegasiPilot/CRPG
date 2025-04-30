@@ -8,5 +8,10 @@ namespace CRPG.UI
 		[SerializeField] protected Image _iconImage;
 
 		public abstract ItemSlot ItemSlot { get; }
+
+		protected virtual void EquipItem(ItemInfo itemInfo)
+		{
+			_iconImage.sprite = itemInfo.Icon;
+		}
 	}
 }

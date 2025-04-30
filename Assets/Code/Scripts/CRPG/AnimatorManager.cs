@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CRPG.ItemSystem;
+using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Animator))]
@@ -7,8 +8,11 @@ public class AnimatorManager : MonoBehaviour
     [SerializeField] private float _attackAnimTimeBeforeHit;
     public float AttackAnimTimeBeforeHit => _attackAnimTimeBeforeHit;
 
-    [System.NonSerialized] public UnityEvent OnAttackContactEvent = new();
-    public Animator Animator;
+    [SerializeField] private UnityEvent _onContactEnemy;
+    public UnityEvent OnContactEnemy => _onContactEnemy;
+
+    [SerializeField] private Animator _animator;
+    [SerializeField] private ItemSkin _rightHand;
 
     private readonly int _atackAnimId = Animator.StringToHash("Attack");
     private readonly int _hitAnimId = Animator.StringToHash("Hit");
@@ -16,6 +20,7 @@ public class AnimatorManager : MonoBehaviour
     private readonly int _animSpeedVId = Animator.StringToHash("speedv");
     private readonly int _animSpeedHId = Animator.StringToHash("speedh");
     private readonly int _animIsArmedId = Animator.StringToHash("IsArmed");
+    private readonly int _animIsMeleeId = Animator.StringToHash("IsMelee");
     private readonly int _animIsMovingId = Animator.StringToHash("IsMoving");
     private readonly int _animIsJumpingId = Animator.StringToHash("IsJumping");
     private readonly int _animJumpSpeedMultiplier = Animator.StringToHash("JumpSpeedMultiplier");
@@ -23,58 +28,104 @@ public class AnimatorManager : MonoBehaviour
 
     [SerializeField] private float _jumpGroundingTime;
 
-    private void Awake()
-    {
-        Animator.applyRootMotion = false;
-        Animator.enabled = true;
-    }
+    private WeaponAnimationManager _weaponAnimationManager;
 
-    public void AttackContactEvent()
+	private void OnValidate()
+	{
+        if (_animator == null) TryGetComponent(out _animator);
+	}
+
+	private void Awake()
     {
-        OnAttackContactEvent.Invoke();
+        _animator.applyRootMotion = false;
+        _animator.enabled = true;
     }
 
     public void SetVelocity(float velocityV)
     {
-        Animator.SetFloat(_animSpeedVId, velocityV);
+        _animator.SetFloat(_animSpeedVId, velocityV);
     }
 
     public void SetVelocity(Vector2 velocity)
     {
-        Animator.SetFloat(_animSpeedVId, velocity.y);
-        Animator.SetFloat(_animSpeedHId, velocity.x);
-        Animator.SetBool(_animIsMovingId, Mathf.Abs(velocity.x + velocity.y) > 0);
+        _animator.SetFloat(_animSpeedVId, velocity.y);
+        _animator.SetFloat(_animSpeedHId, velocity.x);
+        _animator.SetBool(_animIsMovingId, Mathf.Abs(velocity.x) + Mathf.Abs(velocity.y) > 0);
     }
 
-    public void StartAttackAnim(bool IsWeaponed)
+    internal void StartAttackAnim(Transform target, bool IsWeaponed, bool IsMelee, WeaponAnimationManager weaponAnimationManager)
     {
-        Animator.SetBool(_animIsArmedId, IsWeaponed);
-        Animator.SetTrigger(_atackAnimId);
-    }
+        _animator.SetBool(_animIsArmedId, IsWeaponed);
+        _animator.SetBool(_animIsMeleeId, IsMelee);
+        _animator.SetTrigger(_atackAnimId);
+        if (weaponAnimationManager != null)
+        {
+            _weaponAnimationManager = weaponAnimationManager;
+            _weaponAnimationManager.Target = target;
+            _weaponAnimationManager.RightHand = _rightHand;
+        }
+	}
 
     public void StartGetDamageAnim()
     {
-        Animator.SetTrigger(_hitAnimId);
+        _animator.SetTrigger(_hitAnimId);
     }
 
     public void StartDeathAnim()
     {
-        Animator.SetTrigger(_fallAnimId);
+        _animator.SetTrigger(_fallAnimId);
     }
 
     public void StartJumpAnim(Vector3 target, float animDuration)
     {
-		Animator.SetFloat(_animJumpSpeedMultiplier, 1/(animDuration/_jumpGroundingTime));
-		Animator.SetTrigger(_animIsJumpingId);
+		_animator.SetFloat(_animJumpSpeedMultiplier, 1/(animDuration/_jumpGroundingTime));
+		_animator.SetTrigger(_animIsJumpingId);
     }
 
     public void StartDialogueAnim()
     {
-        Animator.SetBool(_animIsTalkingId, true);
+        _animator.SetBool(_animIsTalkingId, true);
     }
 
     public void EndDialogueAnim()
     {
-        Animator.SetBool(_animIsTalkingId, false);
+        _animator.SetBool(_animIsTalkingId, false);
     }
+
+
+    /// <summary>
+    /// Invoke by animator
+    /// </summary>
+    public void OnArrowSpawn()
+    {
+		if (_weaponAnimationManager != null)
+		{
+            _weaponAnimationManager.SpawnArrow();
+		}
+	}
+
+	public void OnGetArrow()
+    {
+        if(_weaponAnimationManager != null)
+        {
+            _weaponAnimationManager.AttackAnim();
+        }
+    }
+
+    public void OnThrowArrow()
+    {
+		if (_weaponAnimationManager != null)
+		{
+			_weaponAnimationManager.EndAttackAnim(OnWeaponContact);
+			_weaponAnimationManager = null;
+		}
+	}
+
+	/// <summary>
+	/// Invoke by animation events
+	/// </summary>
+	public void OnWeaponContact()
+    {
+		OnContactEnemy.Invoke();
+	}
 }
