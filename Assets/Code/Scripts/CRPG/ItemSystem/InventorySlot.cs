@@ -9,6 +9,17 @@ internal class InventorySlot : ItemSlot
 
 	public List<Item> Items { get; private set; }
 
+	private IEnumerable<T> ItemsAs<T>() where T : Item
+	{
+		foreach(var item in Items)
+		{
+			if(item is T requiredItem)
+			{
+				yield return requiredItem;
+			}
+		}
+	}
+
 	public void EquipItem(Item item)
     {
 		if(Items == null)
@@ -58,7 +69,14 @@ internal class InventorySlot : ItemSlot
 	{
 		if (Items[0] is EquipableItem equipableItem)
 		{
-			equipmentManager.EquipItem(equipableItem);
+			if(Items.Count > 1)
+			{
+				equipmentManager.EquipProjectiles(ItemsAs<ProjectileItem>());
+			}
+			else
+			{
+				equipmentManager.EquipItem(equipableItem);
+			}
 			ClearSlot();
 			return true;
 		}

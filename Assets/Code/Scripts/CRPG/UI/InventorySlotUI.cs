@@ -42,10 +42,17 @@ namespace CRPG.UI
 		{
 			base.EquipItem(item);
 			gameObject.SetActive(true);
-			_text.text = _inventorySlot.Items.Count.ToString();
+			if (item.IsStackable)
+			{
+				_text.text = _inventorySlot.Items.Count.ToString();
+			}
+			else
+			{
+				_text.text = string.Empty;
+			}
 		}
 
-		private void UnequipItem()
+		protected override void UnequipItem()
 		{
 			gameObject.SetActive(false);
 		}

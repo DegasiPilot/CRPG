@@ -1,13 +1,13 @@
-﻿using CRPG.ItemSystem;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemContextMenu : MonoBehaviour
 {
-	public Text ItemNameText;
+	public TextMeshProUGUI ItemNameText;
 
 	public Button EquipmentButton;
-	[SerializeField] private Text EquipmentBtnText;
+	[SerializeField] private TextMeshProUGUI EquipmentBtnText;
 	public Button InfoButton;
 	public Button DropButton;
 
@@ -15,7 +15,7 @@ public class ItemContextMenu : MonoBehaviour
 	{
 		if (EquipmentBtnText == null && EquipmentButton != null)
 		{
-			EquipmentBtnText = EquipmentButton.GetComponentInChildren<Text>();
+			EquipmentBtnText = EquipmentButton.GetComponentInChildren<TextMeshProUGUI>();
 		}
 	}
 

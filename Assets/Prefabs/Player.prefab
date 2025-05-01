@@ -12399,6 +12399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a6bfb698a9c594585386783bd8da14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _equipmentManager: {fileID: 7666125765324505917}
   IsDead: 0
   HitPoint: {fileID: 7214454204642770650}
   BattleTeam: 0
@@ -12534,7 +12535,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96cbdb5209fa014448d306da7b7f5c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _personage: {fileID: 5396155787161258385}
 --- !u!114 &8972300037286212075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12548,7 +12548,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <PlayerController>k__BackingField: {fileID: 3724107564051192107}
-  <EquipmentManager>k__BackingField: {fileID: 7666125765324505917}
   <PlayerCustomizer>k__BackingField: {fileID: 3426615617536217734}
 --- !u!1 &8229196525392976122
 GameObject:

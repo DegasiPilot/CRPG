@@ -111,7 +111,7 @@ public class NPCController : PersonageController
             if(distance < nearestDistance)
             {
                 nearestDistance = distance;
-                nearestPlayer = companion.PlayerController;
+                nearestPlayer = companion;
             }
 		}
         return nearestPlayer;

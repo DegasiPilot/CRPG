@@ -9,7 +9,7 @@ namespace CRPG.UI
     class ProjectileSlotUI : ItemSlotUI
 	{
 		[SerializeField] private Sprite defaultSprite;
-		[SerializeField] private TextMeshPro _text;
+		[SerializeField] private TextMeshProUGUI _text;
 		public override ItemSlot ItemSlot => _projectileSlot;
 
 		private ProjectileSlot _projectileSlot;
@@ -27,15 +27,15 @@ namespace CRPG.UI
 			{
 				EquipItem(_projectileSlot.ProjectileItemInfo);
 			}
-			_projectileSlot.OnEquipItems += EquipItem;
+			_projectileSlot.OnEquipProjectile += EquipProjectile;
 			_projectileSlot.OnUnequipItems += UnequipItem;
 		}
 
-		public void ReleaseSlot()
+		internal void ReleaseSlot()
 		{
 			if (_projectileSlot != null)
 			{
-				_projectileSlot.OnEquipItems -= EquipItem;
+				_projectileSlot.OnEquipProjectile -= EquipProjectile;
 				_projectileSlot.OnUnequipItems -= UnequipItem;
 				UnequipItem();
 			}
@@ -46,9 +46,9 @@ namespace CRPG.UI
 			ReleaseSlot();
 		}
 
-		private void EquipItem(ProjectileItemInfo itemInfo)
+		private void EquipProjectile()
 		{
-			base.EquipItem(itemInfo);
+			base.EquipItem(_projectileSlot.ProjectileItems[0].ProjectileItemInfo);
 			_text.text = _projectileSlot.ProjectileItems.Count.ToString();
 		}
 
@@ -57,9 +57,11 @@ namespace CRPG.UI
 			UnequipItem();
 		}
 
-		private void UnequipItem()
+		protected override void UnequipItem()
 		{
+			base.UnequipItem();
 			_iconImage.sprite = defaultSprite;
+			_text.text = string.Empty;
 		}
 	}
 }

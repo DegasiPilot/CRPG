@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -26,14 +27,14 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private GraphicRaycaster _graphicRaycaster;
     private readonly List<RaycastResult> _raycastResultsList = new List<RaycastResult>();
-    [SerializeField] private Text _pointerInfoText;
+    [SerializeField] private TextMeshProUGUI _pointerInfoText;
 
     public UnityEvent<Item> OnDropItem => _inventoryPanel.OnDropItem;
 
 	private void OnValidate()
 	{
 		if(_graphicRaycaster == null) _graphicRaycaster = GetComponent<GraphicRaycaster>();
-        if(_pointerInfoText == null) _pointerInfoText = PointerInfoPanel.GetComponentInChildren<Text>();
+        if(_pointerInfoText == null) _pointerInfoText = PointerInfoPanel.GetComponentInChildren<TextMeshProUGUI>();
         if(_canvas == null) _canvas = gameObject.GetComponent<Canvas>();
 	}
 

@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.Events;
 using CRPG.DataSaveSystem;
 using CRPG.DataSaveSystem.SaveData;
-using CRPG.ItemSystem;
 
 public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 {
@@ -12,41 +10,24 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
     [System.NonSerialized] public UnityEvent OnHealthChanged = new();
     [System.NonSerialized] public UnityEvent OnStaminaChanged = new();
 
-    public bool IsDead;
+	[SerializeField] private EquipmentManager _equipmentManager;
+    public EquipmentManager EquipmentManager => _equipmentManager;
+	public bool IsDead;
     public Transform HitPoint;
 
-    internal Weapon Weapon;
-    internal List<Armor> Armor = new List<Armor>();
-    internal List<ProjectileItem> Projectiles = new List<ProjectileItem>();
-    public BattleTeam BattleTeam;
+    [SerializeField] public BattleTeam BattleTeam;
     public PersonageInfo PersonageInfo;
     public ActionType[] Actions => new ActionType[] { ActionType.Jumping, ActionType.Attack };
 
-    public WeaponInfo WeaponInfo => Weapon?.ItemInfo as WeaponInfo;
-    public int MinAttackEnergy => WeaponInfo == null ? GameData.MinUnarmedAttackEnergy : WeaponInfo.MinEnergy;
-    public int MaxAttackEnergy => WeaponInfo == null ? GameData.MaxUnarmedAttackEnergy : WeaponInfo.MaxEnergy;
-    public bool CanAttack => Weapon == null || Weapon.RequiredProjectile == null ||
-        Projectiles.Count > 0 && Projectiles[0].ProjectileItemInfo == Weapon.RequiredProjectile;
+    public int MinAttackEnergy => _equipmentManager.MinAttackEnergy;
+    public int MaxAttackEnergy => _equipmentManager.MaxAttackEnergy;
 
-    private IEnumerable<ArmorInfo> _armorInfos
-    {
-        get
-        {
-            if (Armor == null || Armor.Count <= 0)
-            {
-                return null;
-            }
-            else
-            {
-				return from armor in Armor select (armor.ArmorInfo);
-			}
-		}
-    }
+    public float ArmorPercent => _equipmentManager.ArmorPercent;
+    public DamageType DamageType => _equipmentManager.DamageType;
+    public bool IsAttackRanged => _equipmentManager.Weapon != null && _equipmentManager.Weapon.IsRanged;
 
-	public float ArmorPercent => _armorInfos == null ? 0 : _armorInfos.Sum(a => a.ArmorPercent); 
-
-    [HideInInspector] public float Health { get; private set; }
-	[HideInInspector] public float Stamina { get; private set; }
+    public float Health { get; private set; }
+	public float Stamina { get; private set; }
 
     public int MaxHealth => PersonageInfo.MaxHealth;
 	public int MaxStamina => PersonageInfo.MaxStamina;
@@ -90,7 +71,7 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 
     private void Death()
     {
-        OnDeath?.Invoke();
+		OnDeath?.Invoke();
     }
 
 	public object Save()

@@ -15,8 +15,8 @@ namespace CRPG.DataSaveSystem
         public static SceneSaveInfo SceneSaveInfo;
         public static List<Item> Inventory = new List<Item>();
         internal static MainPlayer MainPlayer;
-        internal static List<Player> Companions = new List<Player>();
-        internal static Player ActivePlayer;
+        internal static List<PlayerController> Companions = new List<PlayerController>();
+        internal static PlayerController ActivePlayer;
         internal static AppearanceStruct MainPersonageAppearance { get; set; }
 
         public const float MaxUnarmedAttackDistance = 0.8f;
@@ -50,7 +50,7 @@ namespace CRPG.DataSaveSystem
 					PersonageInfo = Clone(MainPlayer.PlayerController.Personage.PersonageInfo),
 					Position = MainPlayer.transform.position,
 				    Rotation = MainPlayer.transform.rotation,
-                    EquipedItems = ItemNames(MainPlayer.EquipmentManager.EquipableItems),
+                    EquipedItems = ItemNames(MainPlayer.PlayerController.Personage.EquipmentManager.EquipableItems),
                     PersonageSaveInfo = mainPersonageSaveInfo,
 				},
                 MainPersonageAppearance = MainPersonageAppearance,
@@ -72,7 +72,7 @@ namespace CRPG.DataSaveSystem
 			for (int i = 0; i < CompanionsInfo.Length; i++)
 			{
                 PersonageSaveInfo personageSaveInfo;
-				if (Companions[i].PlayerController.Personage.Save() is PersonageSaveInfo saveInfo)
+				if (Companions[i].Personage.Save() is PersonageSaveInfo saveInfo)
 				{
 					personageSaveInfo = saveInfo;
 				}
@@ -83,10 +83,10 @@ namespace CRPG.DataSaveSystem
 				CompanionsInfo[i] = new PlayerSaveInfo()
 				{
 					UniqueName = Companions[i].GetComponent<SaveableGameobject>().UniqueName,
-					PersonageInfo = Clone(Companions[i].PlayerController.Personage.PersonageInfo),
+					PersonageInfo = Clone(Companions[i].Personage.PersonageInfo),
 					Position = Companions[i].transform.position,
 					Rotation = Companions[i].transform.rotation,
-					EquipedItems = ItemNames(Companions[i].EquipmentManager.EquipableItems),
+					EquipedItems = ItemNames(Companions[i].Personage.EquipmentManager.EquipableItems),
                     PersonageSaveInfo = personageSaveInfo,
 				};
 			}

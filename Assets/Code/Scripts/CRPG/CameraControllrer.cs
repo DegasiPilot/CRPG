@@ -17,7 +17,7 @@ namespace CRPG
         private float _standartAngleX;
         private RaycastHit _cursorRaycastHit;
 
-        private Vector3 _playerPosition => GameData.ActivePlayer.PlayerController.gameObject.transform.position;
+        private Vector3 _playerPosition => GameData.ActivePlayer.gameObject.transform.position;
 
         public void Awake()
         {
@@ -51,7 +51,7 @@ namespace CRPG
                             GameManager.Instance.OnGroundPressed(_cursorRaycastHit.point);
                         }
                     }
-                    else if (objectUnderPointer.TryGetComponent(out Player player))
+                    else if (objectUnderPointer.TryGetComponent(out PlayerController player))
                     {
                         if (IsClick)
                         {

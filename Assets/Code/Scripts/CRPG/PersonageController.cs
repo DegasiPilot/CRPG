@@ -14,7 +14,7 @@ public abstract class PersonageController : MonoBehaviour
 
 	public ActionType ActiveAction => _activeAction;
 	public Personage Personage => _personage;
-	public float MaxAttackDistance => _personage.WeaponInfo != null ? _personage.WeaponInfo.MaxAttackDistance : GameData.MaxUnarmedAttackDistance;
+	public float MaxAttackDistance => _personage.EquipmentManager.MaxAttackDistance;
 	public bool IsFree => _isGrounded && !IsAttacking &&
 		(GameManager.Instance.GameMode != GameMode.Battle ||
 		(!_controller.pathPending && !IsMoving));
@@ -195,9 +195,9 @@ public abstract class PersonageController : MonoBehaviour
 	{
 		Quaternion startRot = transform.rotation;
 		Quaternion finalRot = Quaternion.LookRotation(target.position - Personage.HitPoint.position);
-		if (_personage.Weapon != null && _personage.Weapon.TargetingOffset != Vector3.zero)
+		if (_personage.EquipmentManager.Weapon != null && _personage.EquipmentManager.Weapon.TargetingOffset != Vector3.zero)
 		{
-			finalRot *= Quaternion.Euler(_personage.Weapon.TargetingOffset);
+			finalRot *= Quaternion.Euler(_personage.EquipmentManager.Weapon.TargetingOffset);
 		}
 		float angle = Quaternion.Angle(startRot, finalRot);
 		float t = 0;
@@ -243,16 +243,10 @@ public abstract class PersonageController : MonoBehaviour
 
 	protected virtual void OnDeath()
 	{
-		if (Personage.Weapon != null)
+		foreach (var item in _personage.EquipmentManager.EquipableItems)
 		{
-			DropItem(Personage.Weapon);
-		}
-		if (Personage.Armor != null)
-		{
-			foreach (Item item in Personage.Armor)
-			{
-				DropItem(item);
-			}
+			item.IsEquiped = false;
+			DropItem(item);
 		}
 		AnimatorManager.StartDeathAnim();
 	}

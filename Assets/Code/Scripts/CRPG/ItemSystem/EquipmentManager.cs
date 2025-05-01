@@ -1,4 +1,5 @@
-﻿using CRPG.ItemSystem;
+﻿using CRPG.DataSaveSystem;
+using CRPG.ItemSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,14 +18,62 @@ public class EquipmentManager : MonoBehaviour
     public readonly EquipmentSlot BootsSlot = new(BodyPart.Legs);
     internal readonly ProjectileSlot ProjectileSlot = new();
 
-    [SerializeField] private Personage _personage;
-
-    private Weapon Weapon { 
-        get => _personage.Weapon;
-        set => _personage.Weapon = value;
+    internal Weapon Weapon
+    {
+        get
+        {
+			if (RightHandSlot.EquipableItem is Weapon Rweapon)
+			{
+				return Rweapon;
+			}
+			else if (LeftHandSlot.EquipableItem is Weapon Lweapon)
+            {
+                return Lweapon;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
-    private List<Armor> _armor => _personage.Armor;
-    public IEnumerable<EquipableItem> EquipableItems
+
+    internal DamageType DamageType => Weapon != null ? Weapon.WeaponInfo.DamageType : GameData.UnarmedDamageType;
+
+    internal IEnumerable<Armor> Armor
+    {
+        get
+        {
+            if(HealmetSlot.EquipableItem is Armor healmetArmor)
+            {
+                yield return healmetArmor;
+            }
+			if (BodySlot.EquipableItem is Armor bodyArmor)
+			{
+				yield return bodyArmor;
+			}
+			if (BootsSlot.EquipableItem is Armor boorsArmor)
+			{
+				yield return boorsArmor;
+			}
+		}
+    }
+
+    internal List<ProjectileItem> Projectiles => ProjectileSlot.ProjectileItems;
+	
+    public float ArmorPercent
+    {
+        get
+        {
+            float result = 0;
+            foreach(var armor in Armor)
+            {
+                result += armor.ArmorInfo.ArmorPercent;
+            }
+            return result;
+        }
+    }
+
+	public IEnumerable<EquipableItem> EquipableItems
     {
         get
         {
@@ -32,24 +81,23 @@ public class EquipmentManager : MonoBehaviour
             {
 				yield return Weapon;
 			}
-            foreach(var item in _armor)
+            foreach(var item in Armor)
             {
                 yield return item;
             }
-            foreach (var projectile in _personage.Projectiles)
+            if(Projectiles != null)
             {
-                yield return projectile;
-            }
+				foreach (var projectile in Projectiles)
+				{
+					yield return projectile;
+				}
+			}
         }
     }
 
-	private void OnValidate()
-	{
-		if(_personage == null)
-        {
-            Debug.LogWarning("Personage = null", this);
-        }
-	}
+	public int MinAttackEnergy => Weapon == null ? GameData.MinUnarmedAttackEnergy : Weapon.WeaponInfo.MinEnergy;
+	public int MaxAttackEnergy => Weapon == null ? GameData.MinUnarmedAttackEnergy : Weapon.WeaponInfo.MaxEnergy;
+	public float MaxAttackDistance => Weapon == null ? GameData.MaxUnarmedAttackDistance : Weapon.WeaponInfo.MaxAttackDistance;
 
 	private void Awake()
 	{
@@ -58,7 +106,7 @@ public class EquipmentManager : MonoBehaviour
 		LeftHandSlot.OnEquipItem += InvokeEquipItem;
 		RightHandSlot.OnEquipItem += InvokeEquipItem;
 		BootsSlot.OnEquipItem += InvokeEquipItem;
-        ProjectileSlot.OnEquipItems += InvokeEquipProjectile;
+        ProjectileSlot.OnEquipProjectile += InvokeEquipProjectile;
 
 		HealmetSlot.OnUnequipItem += InvokeUnequipItem;
 		BodySlot.OnUnequipItem += InvokeUnequipItem;
@@ -86,10 +134,14 @@ public class EquipmentManager : MonoBehaviour
 
 	private void InvokeUnequipItem(EquipableItem item, BodyPart bodyPart)
     {
+        if(bodyPart == BodyPart.RightHand && item is Weapon weapon && weapon.WeaponInfo.IsTwoHandled)
+        {
+            return;
+        }
         OnItemUnequiped.Invoke(item, bodyPart);
     }
 
-    private void InvokeEquipProjectile(ProjectileItemInfo projectileItemInfo)
+    private void InvokeEquipProjectile()
     {
         OnProjectileEquiped.Invoke();
     }
@@ -118,52 +170,50 @@ public class EquipmentManager : MonoBehaviour
 
     internal void EquipWeapon(Weapon item)
     {
-        Weapon = item;
         WeaponInfo newWeaponInfo = item.WeaponInfo;
-        if (RightHandSlot.EquipableItem != null && RightHandSlot.EquipableItem is Weapon equipedWeapon && equipedWeapon.WeaponInfo.IsTwoHandled)
+        if (RightHandSlot.EquipableItem != null && RightHandSlot.EquipableItem is Weapon equipedWeapon
+            && equipedWeapon.WeaponInfo.IsTwoHandled)
         {
             LeftHandSlot.ClearSlot();
         }
         if (newWeaponInfo.IsTwoHandled)
         {
-            LeftHandSlot.EquipItem(item, out EquipableItem undressedItem);
+            LeftHandSlot.EquipItem(item);
         }
 
-        RightHandSlot.EquipItem(item, out EquipableItem undressedWeapon);
+        RightHandSlot.EquipItem(item);
     }
 
     internal void EquipArmor(Armor item)
     {
-        _armor.Add(item);
-        EquipableItem undressedItem = null;
         switch (item.ArmorInfo.WearableBodyPart)
         {
             case BodyPart.Head:
-                HealmetSlot.EquipItem(item, out undressedItem);
+                HealmetSlot.EquipItem(item);
                 break;
             case BodyPart.Body:
-                BodySlot.EquipItem(item, out undressedItem);
+                BodySlot.EquipItem(item);
                 break;
             case BodyPart.LeftHand:
-                LeftHandSlot.EquipItem(item, out undressedItem);
+                LeftHandSlot.EquipItem(item);
                 break;
             case BodyPart.Legs:
-                BootsSlot.EquipItem(item, out undressedItem);
+                BootsSlot.EquipItem(item);
                 break;
-        }
-        if (undressedItem != null && undressedItem is Armor undressedArmor)
-        {
-            _armor.Remove(undressedArmor);
         }
     }
 
     internal void EquipProjectile(ProjectileItem projectileItem)
     {
         ProjectileSlot.EquipProjectile(projectileItem);
-        _personage.Projectiles = ProjectileSlot.ProjectileItems;
     }
 
-    public void UnequipItemFromSlot(EquipmentSlot slot)
+	internal void EquipProjectiles(IEnumerable<ProjectileItem> projectileItems)
+	{
+		ProjectileSlot.EquipProjectiles(projectileItems);
+	}
+
+	public void UnequipItemFromSlot(EquipmentSlot slot)
     {
         EquipableItem uneqipedItem;
 		if (slot.EquipableItem is Weapon weapon &&
@@ -178,21 +228,36 @@ public class EquipmentManager : MonoBehaviour
             uneqipedItem = slot.EquipableItem;
             slot.ClearSlot();
         }
-        if(uneqipedItem is Weapon)
-        {
-            Weapon = null;
-        }
-        else if(uneqipedItem is Armor armor)
-        {
-            _armor.Remove(armor);
-        }
     }
 
     internal void UnequipProjectile(ProjectileSlot projectileSlot)
     {
         projectileSlot.ClearSlot();
-        _personage.Projectiles = null;
     }
+
+    internal bool IsWeaponNeedProjectiles => Weapon != null && Weapon.WeaponInfo.RequiredProjectile != null;
+
+    internal bool CanReloadWeapon => Projectiles != null && Projectiles[0].ItemInfo == Weapon.WeaponInfo.RequiredProjectile;
+
+
+	internal bool TryReloadWeapon()
+    {
+		if(CanReloadWeapon)
+        {
+            var projectileItem = ProjectileSlot.GetOne();
+            Debug.Log("Wepon Reloaded");
+            projectileItem.IsEquiped = false;
+            projectileItem.OnDropped();
+            projectileItem.Rigidbody.isKinematic = true;
+            Weapon.WeaponAnimationManager.ActiveProjectile = projectileItem;
+            return true;
+        }
+        else
+        {
+            Debug.Log("No projectiles to reload!");
+            return false;
+        }
+	}
 
     private void Release()
     {
@@ -208,8 +273,8 @@ public class EquipmentManager : MonoBehaviour
 		RightHandSlot.OnUnequipItem -= InvokeUnequipItem;
 		BootsSlot.OnUnequipItem -= InvokeUnequipItem;
 
-		ProjectileSlot.OnEquipItems -= InvokeEquipProjectile;
-		ProjectileSlot.OnEquipItems -= InvokeEquipProjectile;
+		ProjectileSlot.OnEquipProjectile -= InvokeEquipProjectile;
+		ProjectileSlot.OnUnequipItems -= InvokeUnequipProjectile;
 	}
 
 	private void OnDestroy()

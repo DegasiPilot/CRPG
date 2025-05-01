@@ -2168,8 +2168,9 @@ MonoBehaviour:
   LoadGameButton: {fileID: 254362319}
   StartNewGameButton: {fileID: 1768655938}
   ExitGameButton: {fileID: 2125172163}
-  Scene:
-    m_Handle: 0
+  OnAwake:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &703597808
 Transform:
   m_ObjectHideFlags: 0
@@ -3915,9 +3916,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 10
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ReferenceResolution: {x: 1280, y: 720}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3

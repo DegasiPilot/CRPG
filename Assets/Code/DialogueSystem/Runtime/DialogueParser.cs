@@ -82,7 +82,7 @@ namespace DialogueSystem.Runtime
                 var checkNode = nodeData as CharacteristicNodeData;
 
                 _characteristicCheckPanel.gameObject.SetActive(true);
-                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, GameData.ActivePlayer.PlayerController.Personage.PersonageInfo);
+                _characteristicCheckPanel.CharacteristicCheck(checkNode, choices, GameData.ActivePlayer.Personage.PersonageInfo);
             }
 
             if(choices.Length == 0)
@@ -97,7 +97,7 @@ namespace DialogueSystem.Runtime
             {
                 if(exposedProperty.PropertyName == "PlayerName")
                 {
-                    exposedProperty.PropertyValue = GameData.ActivePlayer.PlayerController.Personage.PersonageInfo.Name;
+                    exposedProperty.PropertyValue = GameData.ActivePlayer.Personage.PersonageInfo.Name;
                 }
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }

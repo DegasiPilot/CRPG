@@ -6,8 +6,6 @@ namespace CRPG.UI
 {
 	class EquipmentSlotUI : ItemSlotUI
 	{
-		private static readonly Color _darkenedColor = new(0.34f, 0.34f, 0.34f);
-
 		public Sprite defaultSprite;
 		public override ItemSlot ItemSlot => _equipmentSlot;
 
@@ -30,7 +28,7 @@ namespace CRPG.UI
 			_equipmentSlot.OnUnequipItem += UnequipItemAdapter;
 		}
 
-		public void ReleaseSlot()
+		internal void ReleaseSlot()
 		{
 			if (_equipmentSlot != null)
 			{
@@ -55,7 +53,7 @@ namespace CRPG.UI
 
 		private void EquipItem(ItemInfo itemInfo, bool darkened = false)
 		{
-			EquipItem(itemInfo);
+			base.EquipItem(itemInfo);
 			_iconImage.color = darkened ? _darkenedColor : Color.white;
 		}
 
@@ -64,10 +62,10 @@ namespace CRPG.UI
 			UnequipItem();
 		}
 
-		private void UnequipItem()
+		protected override void UnequipItem()
 		{
+			base.UnequipItem();
 			_iconImage.sprite = defaultSprite;
-			_iconImage.color = _darkenedColor;
 		}
 	}
 }

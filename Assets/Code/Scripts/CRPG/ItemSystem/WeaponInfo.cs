@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using CRPG.ItemSystem;
+using System.Text;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewWeaponInfo", menuName = "ScriptableObjects/ОружиеInfo")]
@@ -10,6 +11,7 @@ public class WeaponInfo : ItemInfo
     public bool IsTwoHandled;
     [Min(0)] public float Weight;
     public DamageType DamageType;
+	[SerializeReference] internal ProjectileItemInfo RequiredProjectile;
 
 	public override string GetFullDescrition()
     {

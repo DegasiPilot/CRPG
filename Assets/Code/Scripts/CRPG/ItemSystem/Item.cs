@@ -10,8 +10,8 @@ public abstract class Item : MonoBehaviour, ISaveBlocker
 
 	public bool IsInInventory { get; private set; }
 
-    [SerializeReference] private Rigidbody rb;
-	[SerializeReference] private new Collider collider;
+    [SerializeField] protected Rigidbody rb;
+	[SerializeField] private new Collider collider;
 
     protected virtual void OnValidate()
     {

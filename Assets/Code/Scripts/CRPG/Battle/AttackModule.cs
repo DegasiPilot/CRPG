@@ -1,5 +1,4 @@
 ﻿using CRPG.DataSaveSystem;
-using CRPG.ItemSystem;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -26,14 +25,12 @@ namespace CRPG.Battle
 
 		public void Attack(PersonageController enemy)
 		{
-			var personage = _personageController.Personage;
-			if (personage.Weapon != null && personage.Weapon.RequiredProjectile != null)
+			var equipmentManager = _personageController.Personage.EquipmentManager;
+			if (equipmentManager.IsWeaponNeedProjectiles)
 			{
-				if(personage.Projectiles != null &&
-					personage.Projectiles[0].ItemInfo == personage.Weapon.RequiredProjectile)
+				if(equipmentManager.TryReloadWeapon())
 				{
-					ProjectileItem projectile = personage.Projectiles[personage.Projectiles.Count - 1];
-					_personageController.DropItem(projectile);
+
 				}
 				else
 				{
@@ -52,7 +49,7 @@ namespace CRPG.Battle
 
 		public void MakeDamage()
 		{
-			_enemy.GetDamage(_energy, _personageController.Personage.Weapon?.WeaponInfo.DamageType ?? GameData.UnarmedDamageType);
+			_enemy.GetDamage(_energy, _personageController.Personage.DamageType);
 			_isAttackAnim = false;
 			_personageController.Personage.RemoveStamina(_energy);
 			BattleManager.AfterAttack(this);
@@ -75,17 +72,20 @@ namespace CRPG.Battle
 
 			yield return _personageController.RotateTo(_enemy.Personage.HitPoint);
 
-			bool isArmed = _personageController.Personage.Weapon != null;
+			var equipmentManager = _personageController.Personage.EquipmentManager;
+			bool isArmed = equipmentManager.Weapon != null;
+			var weaponAnimManager = equipmentManager.Weapon != null ? equipmentManager.Weapon.WeaponAnimationManager : null;
 			_personageController.AnimatorManager.StartAttackAnim(
 					_enemy.Personage.HitPoint,
 					isArmed,
-					isArmed && _personageController.Personage.Weapon.WeaponInfo.MaxAttackDistance < 3f,
-					_personageController.Personage.Weapon?.WeaponAnimationManager);
+					!_personageController.Personage.IsAttackRanged,
+					weaponAnimManager);
 		}
 
 		public void EndAttack()
 		{
 			_isAttacking = false;
+			AfterAttack();
 			Debug.Log("End attack");
 		}
 
@@ -98,6 +98,31 @@ namespace CRPG.Battle
 			if(_personageController != null && _personageController.AnimatorManager != null)
 			{
 				_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
+			}
+		}
+
+		private void AfterAttack()
+		{
+			if (GameManager.Instance.GameMode != GameMode.Battle)
+			{
+				if(_enemy.Personage.BattleTeam == BattleTeam.Neutrals)
+				{
+					BattleTeam battleTeam = BattleManager.GetOppostiteTeam(_personageController.Personage.BattleTeam);
+					Debug.Log(_enemy.Personage.PersonageInfo.Name + " теперь в команде " + battleTeam);
+					_enemy.Personage.BattleTeam = battleTeam;
+				}
+				PersonageController[] participants = new PersonageController[2 + GameData.Companions.Count];
+				participants[0] = GameData.MainPlayer.PlayerController;
+				participants[1] = _enemy;
+				for (int i = 0; i < GameData.Companions.Count; i++)
+				{
+					participants[i + 2] = GameData.Companions[i];
+				}
+				BattleManager.StartBattle(participants);
+			}
+			else if (!BattleManager.ParticipantPersonages.Contains(_enemy))
+			{
+				BattleManager.JoinToBattle(_enemy);
 			}
 		}
 	}

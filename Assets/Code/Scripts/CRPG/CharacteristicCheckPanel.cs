@@ -1,28 +1,29 @@
 ﻿using DialogueSystem.DataContainers;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace DialogueSystem.Runtime
 {
     internal class CharacteristicCheckPanel : MonoBehaviour
     {
-        [SerializeField] private Text CharacteristicCheckText;
-        [SerializeField] private Text DifficultyNumberText;
-        [SerializeField] private Text ResultNumberText;
-        [SerializeField] private Text ResultText;
-        [SerializeField] private Text BonusText;
+        [SerializeField] private TextMeshProUGUI CharacteristicNameText;
+        [SerializeField] private TextMeshProUGUI DifficultyNumberText;
+        [SerializeField] private TextMeshProUGUI ResultNumberText;
+        [SerializeField] private TextMeshProUGUI ResultText;
+        [SerializeField] private TextMeshProUGUI BonusText;
         [SerializeField] private Button ConfirmButton;
 
         private CharacteristicNodeData _checkNode;
         private NodeLinkData[] _nodeLinkData;
-        [SerializeField] private Text _confirmBtnText;
+        [SerializeField] private TextMeshProUGUI _confirmBtnText;
         private string _nextNodeGIUD;
         private int _bonus;
         private DialogueParser _dialogueParser;
 
 		private void OnValidate()
 		{
-			if(_confirmBtnText == null) _confirmBtnText = ConfirmButton.GetComponentInChildren<Text>();
+			if(_confirmBtnText == null) _confirmBtnText = ConfirmButton.GetComponentInChildren<TextMeshProUGUI>();
 		}
 
         internal void Setup(DialogueParser dialogueParser)
@@ -36,7 +37,7 @@ namespace DialogueSystem.Runtime
             _nodeLinkData = nodeLinks;
 
             string characteristicName = Translator.Translate(_checkNode.Characteristic);
-            CharacteristicCheckText.text = characteristicName;
+            CharacteristicNameText.text = characteristicName;
             DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
             _bonus = personage.GetCharacteristicBonus(nodeData.Characteristic);
             BonusText.text = _bonus >= 0 ? $"Бонус от {characteristicName}: +{_bonus}" : $"Штраф от {characteristicName} {_bonus}";

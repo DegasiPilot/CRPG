@@ -14,18 +14,13 @@ public class EquipmentSlot : ItemSlot
         BodyPart = bodyPart;
     }
 
-	public void EquipItem(EquipableItem item, out EquipableItem lastItem)
+	public void EquipItem(EquipableItem item)
     {
         item.IsEquiped = true;
         if(EquipableItem != null)
         {
-            lastItem = EquipableItem;
-            ClearSlot();
-        }
-        else
-        {
-            lastItem = null;
-        }
+			ClearSlot();
+		}
 		EquipableItem = item;
 		OnEquipItem?.Invoke(item, BodyPart);
     }

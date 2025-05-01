@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
   m_Name: Skeleton
   m_EditorClassIdentifier: 
-  UniqueName: Skeleton
   Name: "\u0421\u043A\u0435\u043B\u0435\u0442"
   Strength: 8
   Dexterity: 8
@@ -22,6 +21,6 @@ MonoBehaviour:
   Charisma: 6
   Race: 1
   UnSpendedStatPoints: 0
-  PersonagePortrait: {fileID: 2800000, guid: 32380ccd393e6b845adcadfabbc1544b, type: 3}
+  PersonagePortrait: {fileID: 2800000, guid: 0a7c97429123a8a409fe5c6898d42deb, type: 3}
   PersonagePortraitColor: {r: 1, g: 1, b: 1, a: 1}
   Gender: 1

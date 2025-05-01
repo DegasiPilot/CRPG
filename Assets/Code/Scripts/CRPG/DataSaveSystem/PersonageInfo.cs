@@ -1,5 +1,6 @@
 //using MongoDB.Bson;
 using System;
+using UnityEditor;
 using UnityEngine;
 //using MongoDB.Bson.Serialization.Attributes;
 
@@ -105,4 +106,21 @@ public class PersonageInfo : ScriptableObject
         Wisdom = 0;
         Charisma = 0;
     }
+}
+
+[CustomEditor(typeof(PersonageInfo))]
+public class PersonageInfoEditor : Editor
+{
+	public override Texture2D RenderStaticPreview(string assetPath, UnityEngine.Object[] subAssets, int width, int height)
+	{
+		PersonageInfo info = target as PersonageInfo;
+        if(info != null && info.PersonagePortrait != null)
+        {
+            return Instantiate(info.PersonagePortrait);
+		}
+        else
+        {
+            return base.RenderStaticPreview(assetPath, subAssets, width, height);
+		}
+	}
 }

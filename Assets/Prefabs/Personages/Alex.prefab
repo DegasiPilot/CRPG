@@ -527,7 +527,6 @@ GameObject:
   - component: {fileID: 5092642234499284465}
   - component: {fileID: 98877999102037373}
   - component: {fileID: 1081574697811097297}
-  - component: {fileID: 8572823023441923417}
   - component: {fileID: 6999118645690064280}
   - component: {fileID: 8767344754669008627}
   - component: {fileID: -8857050991315145656}
@@ -600,6 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a6bfb698a9c594585386783bd8da14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _equipmentManager: {fileID: 8767344754669008627}
   IsDead: 0
   HitPoint: {fileID: 4000030675694655757}
   BattleTeam: 0
@@ -676,20 +676,6 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &8572823023441923417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1452893885328300512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4235fce9a3bb74441be5400327ccd247, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <PlayerController>k__BackingField: {fileID: 2497266841113335001}
-  <EquipmentManager>k__BackingField: {fileID: 8767344754669008627}
 --- !u!114 &6999118645690064280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,7 +703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96cbdb5209fa014448d306da7b7f5c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _personage: {fileID: 5526718955247444720}
 --- !u!114 &-8857050991315145656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2168,6 +2153,7 @@ MonoBehaviour:
   Helmet: {fileID: 3914306755359802959}
   Body: {fileID: 5127414553614749538}
   Boots: {fileID: 7628376275304975556}
+  ArrowsPart: {fileID: 0}
   RigthHand: {fileID: 1056792876348688178}
   LeftHand: {fileID: 115904341701286457}
   _equipmentManager: {fileID: 8767344754669008627}

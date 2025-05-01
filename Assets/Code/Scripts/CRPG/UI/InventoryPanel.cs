@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace CRPG.UI
 {
@@ -78,20 +79,17 @@ namespace CRPG.UI
 			{
 				gameObject.SetActive(true);
 				int inventoryCount = inventory.Count;
+				ClearInvenotyUI();
 				for (int i = 0; i < inventoryCount; i++)
 				{
 					if (inventory[i] is EquipableItem equipable && equipable.IsEquiped)
 					{
-						_inventorySlotsUI[i].InventorySlot.ClearSlot();
+						continue;
 					}
 					else
 					{
-						_inventorySlotsUI[i].InventorySlot.EquipItem(inventory[i]);
+						AddToInventoryUI(inventory[i]);
 					}
-				}
-				for (int i = inventoryCount; i < _inventorySlotsUI.Length; i++)
-				{
-					_inventorySlotsUI[i].InventorySlot.ClearSlot();
 				}
 			}
 			else
@@ -102,9 +100,11 @@ namespace CRPG.UI
 
 		public void ActivateContextMenu(ItemSlotUI itemSlot)
 		{
+			_activeItemSlot = itemSlot.ItemSlot;
 			if (_activeItemSlot.TrySetupItemContextMenu(ItemContextMenu))
 			{
-				ItemContextMenu.transform.position = itemSlot.transform.position;
+				RectTransform rectTransform = itemSlot.transform as RectTransform;
+				ItemContextMenu.transform.position = rectTransform.TransformPoint(rectTransform.rect.center);
 				ItemContextMenu.gameObject.SetActive(true);
 				_activeItemSlot = itemSlot.ItemSlot;
 			}
@@ -137,6 +137,14 @@ namespace CRPG.UI
 		private void AddToInventoryUI(Item item, BodyPart bodyPart)
 		{
 			AddToInventoryUI(item);
+		}
+
+		public void ClearInvenotyUI()
+		{
+			foreach (var slot in _inventorySlotsUI)
+			{
+				slot.ItemSlot.ClearSlot();
+			}
 		}
 
 		public void AddToInventoryUI(Item item)

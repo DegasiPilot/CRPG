@@ -9,6 +9,8 @@ namespace CRPG.ItemSystem
 		[SerializeField] private Projectile _projectile;
 		public Projectile Projectile => _projectile;
 
+		internal Rigidbody Rigidbody => rb;
+
 		protected override void OnValidate()
 		{
 			base.OnValidate();

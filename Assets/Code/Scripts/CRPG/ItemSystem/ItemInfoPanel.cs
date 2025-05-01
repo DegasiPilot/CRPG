@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemInfoPanel : MonoBehaviour
 {
-    public Text ItemName;
-    public Text ItemDescription;
+    public TextMeshProUGUI ItemName;
+    public TextMeshProUGUI ItemDescription;
     public Button CloseButton;
 
     public void Setup(ItemInfo itemInfo)

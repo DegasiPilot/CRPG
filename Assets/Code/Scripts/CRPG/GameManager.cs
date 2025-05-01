@@ -27,9 +27,8 @@ public class GameManager : MonoBehaviour
     [Tooltip("Для отчистки: нажми на любого персонажа, Ctrl+A и кнопка минус")]
     [SerializeField] private Personage[] _personages;
 
-    private Player _activePlayer => GameData.ActivePlayer;
-    private PlayerController PlayerController => _activePlayer.PlayerController;
-    private Personage PlayerPersonage => PlayerController.Personage;
+    private PlayerController _activePlayer => GameData.ActivePlayer;
+    private Personage PlayerPersonage => _activePlayer.Personage;
     private GameMode _gameMode = GameMode.Free;
     public GameMode GameMode => _gameMode;
     private Component _currentComponentUnderPointer;
@@ -53,7 +52,7 @@ public class GameManager : MonoBehaviour
 			foreach (var personage in _personages)
 			{
 				if (GameData.Companions.Any(
-					companion => companion.PlayerController.Personage.PersonageInfo.Name ==
+					companion => companion.Personage.PersonageInfo.Name ==
 					personage.PersonageInfo.Name))
 				{
 					Destroy(personage.gameObject);
@@ -74,14 +73,14 @@ public class GameManager : MonoBehaviour
         {
 			_canvasManager.Setup(OnDeathEvent, container.Resolve<GlobalDataManager>().GetActionInfo);
 		}
-        SetActivePlayer(GameData.MainPlayer);
+        SetActivePlayer(GameData.MainPlayer.PlayerController);
         OnDeathEvent.AddListener(() => gameObject.SetActive(false));
         _canvasManager.OnDropItem.AddListener(DropItem);
     }
 
     private void DropItem(Item item)
     {
-        GameData.ActivePlayer.PlayerController.DropItem(item);
+        GameData.ActivePlayer.DropItem(item);
 	}
 
     public void ChangeGameMode(GameMode gameMode)
@@ -102,7 +101,7 @@ public class GameManager : MonoBehaviour
             }
             else if(gameMode == GameMode.Battle)
             {
-                PlayerController.ForceStop();
+                _activePlayer.ForceStop();
             }
             _gameMode = gameMode;
         }
@@ -114,7 +113,7 @@ public class GameManager : MonoBehaviour
         {
             if (_gameMode == GameMode.Free)
             {
-                if (PlayerController.ActiveAction == ActionType.Attack)
+                if (_activePlayer.ActiveAction == ActionType.Attack)
                 {
                     ShowAttackInfo(personage);
                 }
@@ -142,7 +141,7 @@ public class GameManager : MonoBehaviour
     {
         StringBuilder attackInfoBuider = new();
 		attackInfoBuider.AppendLine(personage.PersonageInfo.Name);
-		float distance = Vector3.Distance(PlayerController.Personage.HitPoint.position, personage.HitPoint.position);
+		float distance = Vector3.Distance(_activePlayer.Personage.HitPoint.position, personage.HitPoint.position);
         attackInfoBuider.AppendLine($"Расстояние {distance.ToString("0.#")}");
         if (personage.IsDead)
         {
@@ -150,11 +149,16 @@ public class GameManager : MonoBehaviour
 		}
         else
         {
-			if (distance <= PlayerController.MaxAttackDistance && !BattleManager.AttackRaycast(PlayerPersonage.HitPoint.position, personage.HitPoint.position, PlayerController.MaxAttackDistance, personage))
+			if (distance <= _activePlayer.MaxAttackDistance && !BattleManager.AttackRaycast(PlayerPersonage.HitPoint.position, personage.HitPoint.position, _activePlayer.MaxAttackDistance, personage))
 			{
 				attackInfoBuider.AppendLine("Цель за укрытием");
 			}
-			attackInfoBuider.Append($"Броня: {personage.ArmorPercent.ToString("0.#%")}");
+			attackInfoBuider.AppendLine($"Броня: {personage.ArmorPercent.ToString("0.#%")}");
+            EquipmentManager equipmentManager = _activePlayer.Personage.EquipmentManager;
+			if (equipmentManager.IsWeaponNeedProjectiles && !equipmentManager.CanReloadWeapon)
+            {
+                attackInfoBuider.Append("Нет предметов: " + equipmentManager.Weapon.WeaponInfo.RequiredProjectile.Name);
+            }
 		}
         _canvasManager.ShowInfoUnderPosition(attackInfoBuider.ToString(), personage.HitPoint.position);
     }
@@ -163,21 +167,21 @@ public class GameManager : MonoBehaviour
 	{
 		if (_gameMode == GameMode.Free)
 		{
-			if (PlayerController.ActiveAction == ActionType.Attack)
+			if (_activePlayer.ActiveAction == ActionType.Attack)
 			{
-				float attackDistance = PlayerController.MaxAttackDistance;
-				PlayerController.InteractWith(attackDistance, AttackInteract, personageController);
+				float attackDistance = _activePlayer.MaxAttackDistance;
+				_activePlayer.InteractWith(attackDistance, AttackInteract, personageController);
 			}
 			else if (personageController.TryGetComponent(out DialogueActor dialogueActor))
 			{
-				PlayerController.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+				_activePlayer.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
 			}
 		}
 		else if (_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
 		{
 			if (BattleManager.CanAttack(personageController.Personage))
 			{
-				PlayerController.StartAttack(personageController);
+				_activePlayer.StartAttack(personageController);
 			}
 		}
 	}
@@ -195,12 +199,12 @@ public class GameManager : MonoBehaviour
     {
         if (GameMode == GameMode.Free)
         {
-            PlayerController.InteractWith(1, ItemInteract, item);
+            _activePlayer.InteractWith(1, ItemInteract, item);
         }
         else if(GameMode == GameMode.Battle)
         {
-            Vector3 distVector = item.transform.position - PlayerController.transform.position;
-            Vector3 distVector2 = item.transform.position - PlayerController.Personage.HitPoint.position;
+            Vector3 distVector = item.transform.position - _activePlayer.transform.position;
+            Vector3 distVector2 = item.transform.position - _activePlayer.Personage.HitPoint.position;
             if (Vector3.SqrMagnitude(distVector) <= 1 || Vector3.SqrMagnitude(distVector2) <= 1)
             {
                 ItemInteract(item);
@@ -228,55 +232,32 @@ public class GameManager : MonoBehaviour
 
     public void ItemInteract(Component item)
     {
-        PlayerController.PickupItem(item as Item);
+        _activePlayer.PickupItem(item as Item);
     }
 
 	public void AttackInteract(Component component)
 	{
 		PersonageController personageController = component as PersonageController;
-		PlayerController.StartAttack(personageController);
-        var waiting = new WaitWhile(() => PlayerController.IsAttacking);
-        StartCoroutine(AfterAttack(waiting, personageController));
-	}
-    
-    private IEnumerator AfterAttack(CustomYieldInstruction attackWaiting, PersonageController personageController)
-    {
-        yield return attackWaiting;
-		if (_gameMode != GameMode.Battle)
-		{
-			personageController.Personage.BattleTeam = BattleTeam.Enemies;
-            PersonageController[] participants = new PersonageController[2 + GameData.Companions.Count];
-            participants[0] = PlayerController;
-            participants[1] = personageController;
-            for(int i = 0; i < GameData.Companions.Count; i++)
-            {
-                participants[i + 2] = GameData.Companions[i].PlayerController;
-			}
-			BattleManager.StartBattle(participants);
-		}
-		else if (!BattleManager.ParticipantPersonages.Contains(personageController))
-		{
-			BattleManager.JoinToBattle(personageController);
-		}
+		_activePlayer.StartAttack(personageController);
 	}
 
 	public void OnGroundPressed(Vector3 hitPoint)
     {
         if(_gameMode == GameMode.Free)
         {
-            PlayerController.OnGroundPressedInFree(hitPoint);
+            _activePlayer.OnGroundPressedInFree(hitPoint);
         }
         else if(_gameMode == GameMode.Battle && BattleManager.ActivePersonage == PlayerPersonage)
         {
-            PlayerController.OnGroundPressedInBattle(hitPoint);
+            _activePlayer.OnGroundPressedInBattle(hitPoint);
         }
     }
 
-	internal void OnPlayerPressed(Player player)
+	internal void OnPlayerPressed(PlayerController player)
 	{
 		if(GameData.ActivePlayer != player)
         {
-            if(GameData.MainPlayer != player && !GameData.Companions.Contains(player))
+            if(GameData.MainPlayer.PlayerController != player && !GameData.Companions.Contains(player))
             {
                 GameData.Companions.Add(player);
                 player.transform.SetParent(null);
@@ -322,7 +303,7 @@ public class GameManager : MonoBehaviour
     
     public void ToggleInvenoty()
     {
-        _canvasManager.ToggleInventory(GameData.Inventory, GameData.ActivePlayer.EquipmentManager);
+        _canvasManager.ToggleInventory(GameData.Inventory, _activePlayer.Personage.EquipmentManager);
         if (_canvasManager.IsInventoryOpen)
         {
             _cameraController.enabled = false;
@@ -348,11 +329,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    internal void SetActivePlayer(Player player)
+    internal void SetActivePlayer(PlayerController player)
     {
 		GameData.ActivePlayer = player;
         _cameraController.OnSetActivePlayer(player.transform);
-		_canvasManager.SetActivePersonage(player.PlayerController, player.EquipmentManager);
+		_canvasManager.SetActivePersonage(player, player.Personage.EquipmentManager);
 	}
 
 	private void OnDestroy()

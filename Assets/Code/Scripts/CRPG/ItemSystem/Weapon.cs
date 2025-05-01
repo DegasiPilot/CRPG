@@ -8,6 +8,7 @@ namespace CRPG.ItemSystem
 		public override ItemInfo ItemInfo => WeaponInfo;
 		public WeaponAnimationManager WeaponAnimationManager;
 		public Vector3 TargetingOffset;
-		public ProjectileItemInfo RequiredProjectile;
+
+		internal bool IsRanged => WeaponInfo.MaxAttackDistance > 2;
 	}
 }

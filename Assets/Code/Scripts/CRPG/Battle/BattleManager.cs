@@ -159,4 +159,17 @@ public static class BattleManager
             EndBattle();
         }
     }
+
+    internal static BattleTeam GetOppostiteTeam(BattleTeam battleTeam)
+    {
+        switch (battleTeam)
+        {
+            case BattleTeam.Allies:
+                return BattleTeam.Enemies;
+            case BattleTeam.Enemies:
+                return BattleTeam.Allies;
+            default:
+                throw new System.ArgumentException("incorrect team", "battleTeam");
+        }
+    }
 }

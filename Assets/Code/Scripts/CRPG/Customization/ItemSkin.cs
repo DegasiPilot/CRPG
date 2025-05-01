@@ -22,7 +22,7 @@ public class ItemSkin : MonoBehaviour
     public void ResetSkin()
     {
         _activeSkin.transform.parent = null;
-        _activeSkin.gameObject.SetActive(false);
-        _activeSkin = null;
+		_activeSkin.gameObject.SetActive(false);
+		_activeSkin = null;
     }
 }

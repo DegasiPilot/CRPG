@@ -41,7 +41,7 @@ public class GameDataManager
 		gameSave.MainPlayerInfo.PersonageInfo.Setup(_globalDataManager.GetRaceInfo);
 		player.PlayerController.Personage.Setup(gameSave.MainPlayerInfo.PersonageInfo);
 		player.PlayerCustomizer.ApplyAppearance(gameSave.MainPersonageAppearance);
-		LoadEquipedItems(gameSave.MainPlayerInfo.EquipedItems, player.EquipmentManager);
+		LoadEquipedItems(gameSave.MainPlayerInfo.EquipedItems, player.PlayerController.Personage.EquipmentManager);
 		GameData.SceneSaveInfo = gameSave.SceneSaveInfo;
 
         if (gameSave.InventoryItems != null)
@@ -76,14 +76,14 @@ public class GameDataManager
 
 	private void LoadCompanions(PlayerSaveInfo[] playerInfos)
 	{
-		GameData.Companions = new List<Player>(playerInfos.Length);
+		GameData.Companions = new List<PlayerController>(playerInfos.Length);
 		for (int i = 0; i < playerInfos.Length; i++)
 		{
-			Player companion = _globalDataManager.GetClone(playerInfos[i].UniqueName).GetComponent<Player>();
+			PlayerController companion = _globalDataManager.GetClone(playerInfos[i].UniqueName).GetComponent<PlayerController>();
 			UnityEngine.Object.DontDestroyOnLoad(companion);
 			companion.transform.SetPositionAndRotation(playerInfos[i].Position, playerInfos[i].Rotation);
 			GameData.Companions.Add(companion);
-			LoadEquipedItems(playerInfos[i].EquipedItems, companion.EquipmentManager);
+			LoadEquipedItems(playerInfos[i].EquipedItems, companion.Personage.EquipmentManager);
 		}
 	}
 

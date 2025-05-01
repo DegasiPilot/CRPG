@@ -3,14 +3,17 @@
 namespace CRPG
 {
     [RequireComponent(typeof(PlayerCustomizer))]
-    class MainPlayer : Player
+    class MainPlayer : MonoBehaviour
     {
+		[field: SerializeField]
+		public PlayerController PlayerController { get; private set; }
+
 		[field: SerializeField]
 		public PlayerCustomizer PlayerCustomizer { get; private set; }
 
-		protected override void OnValidate()
+		protected void OnValidate()
 		{
-			base.OnValidate();
+			if (PlayerController == null) PlayerController = GetComponent<PlayerController>();
 			if (PlayerCustomizer == null) PlayerCustomizer = GetComponent<PlayerCustomizer>();
 		}
 

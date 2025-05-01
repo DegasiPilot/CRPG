@@ -1,4 +1,5 @@
 ﻿using DegasiPilot.UIExtensions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,7 @@ namespace CRPG.UI
     class PlayerPanel : MonoBehaviour
     {
 		[SerializeField] private Image PersonageImage;
-		[SerializeField] private Text PersonageNameText;
+		[SerializeField] private TextMeshProUGUI PersonageNameText;
 		[SerializeField] private LabeledProgressbar LifesProgressbar;
 		[SerializeField] private LabeledProgressbar StaminaProgressbar;
 		[SerializeField] private PersonageActionsView _personageActionsView;
