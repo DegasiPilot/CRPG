@@ -59,9 +59,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -74,7 +74,7 @@ MonoBehaviour:
     m_MaxSize: 40
     m_Alignment: 3
     m_AlignByGeometry: 0
-    m_RichText: 1
+    m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
@@ -130,6 +130,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d673de4006114004a915be8848651783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minusBtn: {fileID: 8267318821467036265}
+  _amontText: {fileID: 5940480987453624003}
+  _plusBtn: {fileID: 2014988475778676855}
 --- !u!1 &2534731817017599494
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,3 +743,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Characteristic: 0
+  _statControl: {fileID: 5896200783371695337}
+  _bonusText: {fileID: 1543492116257308888}

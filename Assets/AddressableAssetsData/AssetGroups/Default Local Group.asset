@@ -102,6 +102,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3787be58bd99af49b6d984cca640c3b
+    m_Address: Item/Arrow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fd694eaa0619b75449cccd810ee50868
     m_Address: Personages/Villager
     m_ReadOnly: 0

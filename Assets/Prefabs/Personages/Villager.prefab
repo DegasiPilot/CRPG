@@ -4068,6 +4068,7 @@ MonoBehaviour:
   HitPoint: {fileID: 3914058878075673610}
   BattleTeam: 2
   PersonageInfo: {fileID: 11400000, guid: 94b8812da776c5847b84c0e4038746c2, type: 2}
+  AnimatorManager: {fileID: 4500549073004318257}
 --- !u!114 &7863414642662084352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4127,7 +4128,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 6
-  <AnimatorManager>k__BackingField: {fileID: 4500549073004318257}
   _controller: {fileID: 4551204505390467794}
   _rigidBody: {fileID: 0}
   _collider: {fileID: 5664904363566332836}

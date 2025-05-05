@@ -44,9 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0707a211824a2bd4aa133fd7ff9cff2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemPrefix: Item/
-  PersonagePrefix: Personages/
   _personageActionLabel:
     m_LabelString: PersonageActionInfo
   _raceInfoLabel:
     m_LabelString: RaceInfo
+  <ItemsPrefix>k__BackingField: Item/

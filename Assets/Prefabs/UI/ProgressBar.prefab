@@ -166,9 +166,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fillImage: {fileID: 5374696171261179831}
-  _animSpeed: 3
   _direction: 0
+  _prefix: 
   Label: {fileID: 6864212865883965412}
+  _needPreview: 0
 --- !u!1 &8015731210124229438
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,10 +262,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 65.3
-  m_fontSizeBase: 36
+  m_fontSize: 65
+  m_fontSizeBase: 65
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 10
   m_fontSizeMax: 72
   m_fontStyle: 0

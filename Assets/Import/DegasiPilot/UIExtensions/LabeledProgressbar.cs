@@ -13,7 +13,7 @@ namespace DegasiPilot.UIExtensions
 		{
 			if (_needPreview)
 			{
-				Label.text = _prefix + "x/x";
+				Label.text = _prefix + "xx/xx";
 			}
 		}
 

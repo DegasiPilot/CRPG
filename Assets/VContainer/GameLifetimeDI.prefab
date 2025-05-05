@@ -49,4 +49,5 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   PlayerPrefab: {fileID: 8972300037286212075, guid: 2a498023343478c46870025ecddb2495, type: 3}
+  MessageBoxPrefab: {fileID: 1520523937708059488, guid: aa9f4a0a3af1bfa479f38a474e4d1bc6, type: 3}
   GlobalDataManagerPrefab: {fileID: -865469081716698347, guid: 0a4e5fe1f23678c4f809fb5ff8d14124, type: 3}

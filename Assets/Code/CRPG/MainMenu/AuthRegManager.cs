@@ -1,0 +1,115 @@
+﻿using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
+using CRPG.DataSaveSystem;
+using CRPG.DataSaveSystem.SaveData;
+
+public class AuthRegManager : MonoBehaviour
+{
+    public InputField LoginInput;
+    public InputField PasswordInput;
+    public GameObject LoginPanel;
+    public Toggle RememberMeToggle;
+    public Text UserPanelLogin;
+
+    bool _isSearchInProgress;
+    StringBuilder errors = new StringBuilder(2);
+    IDataSaveLoader _dataSaveLoader;
+    MessageBoxManager _messageBoxManager;
+
+    internal void Activate(IDataSaveLoader dataSaveLoader, MessageBoxManager messageBoxManager)
+    {
+        LoginPanel.SetActive(true);
+		_dataSaveLoader = dataSaveLoader;
+        _messageBoxManager = messageBoxManager;
+		User user = LocalCashManager.LoadUserCash();
+		if (user != null)
+		{
+			TryEnter(user.Login, user.Password);
+		}
+	}
+
+    private bool CheckFields()
+    {
+        if (string.IsNullOrWhiteSpace(LoginInput.text))
+        {
+            errors.AppendLine("Заполните поле логин");
+        }
+        if (string.IsNullOrWhiteSpace(PasswordInput.text))
+        {
+            errors.AppendLine("Заполните поле пароль");
+        }
+        if (errors.Length > 0)
+        {
+            errors.Remove(errors.Length - 1, 1);
+            _messageBoxManager.ShowMessage(errors.ToString());
+            errors.Clear();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public void TryEnter()
+    {
+        if (!_isSearchInProgress && CheckFields())
+        {
+            TryEnter(LoginInput.text, PasswordInput.text);
+        }
+    }
+
+    private void TryEnter(string login, string password)
+    {
+        _isSearchInProgress = true;
+        if(_dataSaveLoader.TryLogin(login, password, out string errors))
+        {
+			AfterUserInitialized(login, password);
+		}
+        else
+        {
+			_messageBoxManager.ShowMessage(errors);
+		}
+        _isSearchInProgress = false;
+    }
+
+    public void TryRegistrate()
+    {
+        if (!_isSearchInProgress && CheckFields())
+        {
+            _isSearchInProgress = true;
+            if(_dataSaveLoader.TryRegistrate(LoginInput.text, PasswordInput.text, out string errors))
+            {
+				AfterUserInitialized(LoginInput.text, PasswordInput.text);
+			}
+            else
+            {
+                _messageBoxManager.ShowMessage(errors);
+            }
+            _isSearchInProgress = false;
+        }
+    }
+
+    private void AfterUserInitialized(string login, string password)
+    {
+        if (RememberMeToggle.isOn)
+        {
+            LocalCashManager.SaveUserCash(login, password);
+        }
+        else
+        {
+            LocalCashManager.CleanCash();
+        }
+		UserPanelLogin.text = login;
+		LoginPanel.SetActive(false);
+	}
+
+    public void ExitFromAccount()
+    {
+        LoginPanel.SetActive(true);
+        LoginInput.text = "";
+        PasswordInput.text = "";
+        LocalCashManager.CleanCash();
+    }
+}

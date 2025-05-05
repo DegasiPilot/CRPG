@@ -11266,8 +11266,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _animator: {fileID: 4245745844326149324}
-  _rightHand: {fileID: 6571741449048177303}
-  _jumpGroundingTime: 0
+  _rightHand: {fileID: 3212792686176100105}
+  _jumpGroundingTime: 0.558
 --- !u!114 &2210066604714716253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12370,7 +12370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 5
-  <AnimatorManager>k__BackingField: {fileID: 1340514593045557249}
+  _rotateSpeed: 270
   _controller: {fileID: 4410945770364868785}
   _rigidBody: {fileID: 3640927670494120500}
   _collider: {fileID: 6937764839655362251}
@@ -12404,6 +12404,7 @@ MonoBehaviour:
   HitPoint: {fileID: 7214454204642770650}
   BattleTeam: 0
   PersonageInfo: {fileID: 11400000, guid: 72ed5b1eb5a44724088b233e5ee829ad, type: 2}
+  AnimatorManager: {fileID: 0}
 --- !u!195 &4410945770364868785
 NavMeshAgent:
   m_ObjectHideFlags: 0
