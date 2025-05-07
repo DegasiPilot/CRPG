@@ -35,7 +35,7 @@ namespace CRPG.UI
 			{
 				_personage.OnHealthChanged.RemoveListener(UpdateHealthBar);
 				_personage.OnStaminaChanged.RemoveListener(UpdateStaminaBar);
-				_personageController.OnSetDefaultAction.RemoveListener(_actionsViewModel.DeactivateAllActions);
+				_personageController.OnSetAction.RemoveListener(_actionsViewModel.SetActiveAction);
 			}
 			_personageController = personageController;
 
@@ -46,7 +46,7 @@ namespace CRPG.UI
 			_personageController = personageController;
 			personage.OnHealthChanged.AddListener(UpdateHealthBar);
 			personage.OnStaminaChanged.AddListener(UpdateStaminaBar);
-			_personageController.OnSetDefaultAction.AddListener(_actionsViewModel.DeactivateAllActions);
+			_personageController.OnSetAction.AddListener(_actionsViewModel.SetActiveAction);
 			_actionsViewModel.Setup(personage.Actions, _getActionInfo);
 		}
 

@@ -2,7 +2,7 @@
 {
 	internal interface IUnityObjectPool<T> where T : UnityEngine.Object
 	{
-		PooledUnityObject<T> Get();
+		T Get();
 		void Release(T unityObject);
 	}
 }

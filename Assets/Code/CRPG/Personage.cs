@@ -22,6 +22,7 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 
     public int MinAttackEnergy => _equipmentManager.MinAttackEnergy;
     public int MaxAttackEnergy => _equipmentManager.MaxAttackEnergy;
+    public float DodgeCoefficient => (0.1f + (PersonageInfo.Dexterity / 2 * 3)/100f) * _equipmentManager.DodgeModifier;
 
     public float ArmorPercent => _equipmentManager.ArmorPercent;
     public DamageType DamageType => _equipmentManager.DamageType;
@@ -56,23 +57,23 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
             blockedDamage += Mathf.Max(1f, damage * 0.15f); // some strange
         }
         float incomedDamage = damage - blockedDamage;
-		Health -= incomedDamage;
+		Health = MathF.Round(Health - incomedDamage, 1);
         if (Health <= 0)
         {
             Health = 0;
             Death();
         }
         OnHealthChanged.Invoke();
-        Debug.Log($"{PersonageInfo.Name} получил {incomedDamage} урона теперь у него {Health} жизней");
+        // Debug.Log($"{PersonageInfo.Name} получил {incomedDamage} урона теперь у него {Health} жизней");
     }
 
     public void RemoveStamina(float stamina)
     {
         if(stamina > 0)
         {
-			Stamina -= stamina;
+            Stamina = MathF.Round(Stamina - stamina, 1);
 			OnStaminaChanged.Invoke();
-			Debug.Log($"{PersonageInfo.Name} потратил {stamina} энергии теперь у него {Stamina} энергии");
+			// Debug.Log($"{PersonageInfo.Name} потратил {stamina} энергии теперь у него {Stamina} энергии");
 		}
 	}
 

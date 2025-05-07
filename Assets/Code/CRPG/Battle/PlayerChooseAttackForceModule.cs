@@ -5,25 +5,25 @@ namespace CRPG.Battle
 {
 	class PlayerChooseAttackForceModule : ChooseAttackForceModule
 	{
-		[SerializeField] private UnityEvent<float> _onChooseAttackForce;
-		public override UnityEvent<float> OnChooseAttackForce => _onChooseAttackForce;
+		[SerializeField] private UnityEvent<float, float> _onChooseAttackForce;
+		public override UnityEvent<float, float> OnChooseAttackForce => _onChooseAttackForce;
 
-		public override void ChooseAttackForce(Personage personage)
+		public override void ChooseAttackForce(Personage personage, bool canSkip, bool needDefend, float coefficient)
 		{
-			BattleUIManager.Instance.ActivatePlayerActionPanel(personage);
-			BattleUIManager.Instance.AfterPlayerAttack.AddListener(AttackSelected);
+			BattleUIManager.Instance.ActivatePlayerActionPanel(personage, canSkip, needDefend, coefficient);
+			BattleUIManager.Instance.AfterPlayerEnergySelection.AddListener(AttackSelected);
 		}
 
-		private void AttackSelected(float force)
+		private void AttackSelected(float attack, float defence)
 		{
-			BattleUIManager.Instance.AfterPlayerAttack.RemoveListener(AttackSelected);
+			BattleUIManager.Instance.AfterPlayerEnergySelection.RemoveListener(AttackSelected);
 			BattleUIManager.Instance.DeactivatePlayerActionPanel();
-			OnChooseAttackForce.Invoke(force);
+			OnChooseAttackForce.Invoke(attack, defence);
 		}
 
 		private void OnDestroy()
 		{
-			BattleUIManager.Instance?.AfterPlayerAttack.RemoveListener(AttackSelected);
+			BattleUIManager.Instance?.AfterPlayerEnergySelection.RemoveListener(AttackSelected);
 		}
 	}
 }

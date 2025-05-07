@@ -1,17 +1,16 @@
 ﻿using CRPG.DataSaveSystem;
-using System;
 using System.Collections;
 using UnityEngine;
 
 namespace CRPG.Battle
 {
-    class AttackModule : IDisposable
+    class AttackModule : System.IDisposable
     {
         public AttackModule(PersonageController personageController, ChooseAttackForceModule chooseAttackForceModule)
         {
 			_personageController = personageController;
             _chooser = chooseAttackForceModule;
-			_chooser.OnChooseAttackForce.AddListener(Attack);
+			_chooser.OnChooseAttackForce.AddListener(AfterEnergyChoosed);
 		}
 
 		private bool _isAttacking;
@@ -21,9 +20,10 @@ namespace CRPG.Battle
         private ChooseAttackForceModule _chooser;
 		private PersonageController _personageController;
 		private PersonageController _enemy;
-		private float _energy;
+		private float _attack;
+		private float _damageCoefficient;
 
-		public void Attack(PersonageController enemy)
+		public void Attack(PersonageController enemy, bool canSkip, bool needDefend)
 		{
 			var equipmentManager = _personageController.Personage.EquipmentManager;
 			if (equipmentManager.IsWeaponNeedProjectiles)
@@ -39,29 +39,33 @@ namespace CRPG.Battle
 			}
 			_enemy = enemy;
 			_isAttacking = true;
-			_chooser.ChooseAttackForce(_personageController.Personage);
+			_damageCoefficient = RandomizeDamageCoef();
+			_chooser.ChooseAttackForce(_personageController.Personage, canSkip, needDefend, _damageCoefficient);
 		}
 
-		private void Attack(float energy)
+		private void AfterEnergyChoosed(float attack, float defend)
 		{
-			_personageController.StartCoroutine(AttackCoroutine(energy));
+			_attack = attack;
+			BattleManager.EnergyChoosed(_personageController, attack, defend);
 		}
 
 		public void MakeDamage()
 		{
-			_enemy.GetDamage(_energy, _personageController.Personage.DamageType);
+			_enemy.GetDamage(_attack * _damageCoefficient,  _personageController.Personage.DamageType);
 			_isAttackAnim = false;
-			_personageController.Personage.RemoveStamina(_energy);
+			_personageController.Personage.RemoveStamina(_attack);
 			BattleManager.AfterAttack(this);
-			if (IsAttacking) _chooser.ChooseAttackForce(_personageController.Personage);
 
 			_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
 		}
 
-		private IEnumerator AttackCoroutine(float energy)
+		public void StartAttackCoroutine()
 		{
-			_energy = energy;
+			_personageController.StartCoroutine(AttackCoroutine());
+		}
 
+		private IEnumerator AttackCoroutine()
+		{
 			if (_isAttackAnim)
 			{
 				yield return new WaitWhile(() => _isAttackAnim);
@@ -86,14 +90,14 @@ namespace CRPG.Battle
 		{
 			_isAttacking = false;
 			AfterAttack();
-			Debug.Log("End attack");
+			_personageController.EndAttack();
 		}
 
 		public void Dispose()
 		{
 			if(_chooser != null)
 			{
-				_chooser.OnChooseAttackForce.RemoveListener(Attack);
+				_chooser.OnChooseAttackForce.RemoveListener(AfterEnergyChoosed);
 			}
 			if(_personageController != null && _personageController.AnimatorManager != null)
 			{
@@ -108,7 +112,6 @@ namespace CRPG.Battle
 				if(_enemy.Personage.BattleTeam == BattleTeam.Neutrals)
 				{
 					BattleTeam battleTeam = BattleManager.GetOppostiteTeam(_personageController.Personage.BattleTeam);
-					Debug.Log(_enemy.Personage.PersonageInfo.Name + " теперь в команде " + battleTeam);
 					_enemy.Personage.BattleTeam = battleTeam;
 				}
 				PersonageController[] participants = new PersonageController[2 + GameData.Companions.Count];
@@ -124,6 +127,15 @@ namespace CRPG.Battle
 			{
 				BattleManager.JoinToBattle(_enemy);
 			}
+		}
+
+		private float RandomizeDamageCoef()
+		{
+			float energy =
+				_personageController.Personage.EquipmentManager.Weapon == null ?
+				Random.Range(1f, 2f) :
+				Random.Range(2f, 3f);
+			return System.MathF.Round(energy, 1);
 		}
 	}
 }

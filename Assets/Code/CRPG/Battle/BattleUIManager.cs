@@ -16,7 +16,7 @@ public class BattleUIManager : MonoBehaviour
         Instance = this;
 
 		AttackPanelViewModel = new AttackPanelViewModel(AttackPanelView);
-		AttackPanelViewModel.OnAttack += InvokeOnAttack;
+		AttackPanelViewModel.OnSelectEnd += InvokeOnAttack;
 
 		BattleManager.OnBattleStartEvent.AddListener(() =>
         {
@@ -49,9 +49,9 @@ public class BattleUIManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-	public void ActivatePlayerActionPanel(Personage player)
+	public void ActivatePlayerActionPanel(Personage player, bool canSkip, bool needDefend, float coefficient)
 	{
-		AttackPanelViewModel.Activate(player);
+		AttackPanelViewModel.Activate(player, canSkip, needDefend, coefficient);
 	}
 
 	public void DeactivatePlayerActionPanel()
@@ -61,12 +61,12 @@ public class BattleUIManager : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		AttackPanelViewModel.OnAttack -= InvokeOnAttack;
+		AttackPanelViewModel.OnSelectEnd -= InvokeOnAttack;
 	}
 
-	private void InvokeOnAttack(float force)
+	private void InvokeOnAttack(float attack, float defend)
 	{
-		AfterPlayerAttack.Invoke(force);
+		AfterPlayerEnergySelection.Invoke(attack, defend);
 	}
-	[System.NonSerialized] public UnityEvent<float> AfterPlayerAttack = new();
+	[System.NonSerialized] public UnityEvent<float, float> AfterPlayerEnergySelection = new();
 }

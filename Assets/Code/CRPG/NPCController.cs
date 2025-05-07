@@ -3,6 +3,8 @@ using UnityEngine.AI;
 using System.Collections;
 using CRPG.Battle;
 using CRPG.DataSaveSystem;
+using CRPG.Interactions;
+using static UnityEngine.UI.GridLayoutGroup;
 
 [RequireComponent(typeof(NPCChooseAttackForceModule))]
 public class NPCController : PersonageController
@@ -53,8 +55,8 @@ public class NPCController : PersonageController
         }
         if(BattleManager.AttackRaycast(Personage.HitPoint.position, target.Personage.HitPoint.position, MaxAttackDistance, target.Personage))
         {
-            Debug.Log("ShouldStartAttacking");
-            StartCoroutine(SheduleAction(target, StartAttack, () => !IsAttacking));
+            Debug.Log("Should Start Attacking");
+            StartAttack(target);
             yield break;
         }
         else
@@ -64,40 +66,44 @@ public class NPCController : PersonageController
             _controller.CalculatePath(targetPos, _navMeshPath);
 
             Vector3 lastPoint = CutPath(_navMeshPath, BattleManager.RemainMovement, out int lastIndex);
-            float remainMovent = BattleManager.RemainMovement;
-            Vector3? finalPos = null;
-            for (int i = 0; i <= lastIndex - 1; i++)
+            float minDisatnce = Vector3.Distance(lastPoint, target.transform.position);
+            if (minDisatnce <= MaxAttackDistance)
             {
-                Vector3 corner = _navMeshPath.corners[i];
-                if (i > 0)
+                Vector3? finalPos = null;
+                for (int i = 0; i <= lastIndex; i++)
                 {
-                    remainMovent -= Vector3.Distance(corner, _navMeshPath.corners[i - 1]);
-                }
-                if (BattleManager.AttackRaycast(Personage.HitPoint.position, target.Personage.HitPoint.position, MaxAttackDistance + remainMovent, target.Personage))
-                {
+                    Vector3 corner = _navMeshPath.corners[i];
                     float distanceToTarget = Vector3.Distance(corner, target.transform.position);
                     if (distanceToTarget <= MaxAttackDistance)
                     {
-                        finalPos = corner;
+                        if (BattleManager.AttackRaycast(new Vector3(corner.x, target.Personage.HitPoint.position.y, corner.z), target.Personage.HitPoint.position, MaxAttackDistance, target.Personage))
+                        {
+                            if (i == 0)
+                            {
+                                finalPos = corner;
+                            }
+                            else
+                            {
+                                finalPos = Vector3.Lerp(corner, _navMeshPath.corners[i - 1], MaxAttackDistance - distanceToTarget);
+                            }
+                        }
                     }
-                    else
-                    {
-                        finalPos = Vector3.Lerp(corner, _navMeshPath.corners[i + 1], (distanceToTarget - MaxAttackDistance) / distanceToTarget);
-                    }
-                    break;
                 }
-            }
-            if (finalPos != null)
-            {
-                _controller.SetDestination((Vector3)finalPos);
-                StartCoroutine(SheduleAction(target, StartAttack, () => !IsAttacking));
+                if (finalPos.HasValue)
+                {
+                    InteractWith(MaxAttackDistance, finalPos.Value, new AttackInteract(target));
+                }
+                else
+                {
+                    Debug.Log("Enemy finalPos is null\n lastPoint is " + lastPoint);
+                    lastPoint = Vector3.Lerp(lastPoint, _navMeshPath.corners[lastIndex], MaxAttackDistance - minDisatnce);
+                    InteractWith(MaxAttackDistance, lastPoint, new AttackInteract(target));
+                }
             }
             else
             {
-                Debug.Log("Enemy finalPos is null\n lastPoint is " + lastPoint);
-                _controller.SetDestination(lastPoint);
-                StartCoroutine(SheduleAction(target, null, null));
-            }
+				InteractWith(0.01f, lastPoint, new ActionInteract(EndTurn));
+			}
         }
     }
 
@@ -117,19 +123,6 @@ public class NPCController : PersonageController
         return nearestPlayer;
     }
 
-    private IEnumerator SheduleAction(PersonageController personageController, System.Action<PersonageController> action, System.Func<bool> actionEndCheck)
-    {
-        if(action != null)
-        {
-            action.Invoke(personageController);
-            yield return new WaitUntil(actionEndCheck);
-        }
-        _controller.enabled = false;
-        _obstacleComponent.enabled = true;
-        Debug.Log("End enemy turn");
-        BattleManager.SetNextActivePersonage();
-    }
-
     protected override void OnDeath()
     {
         base.OnDeath();
@@ -141,4 +134,21 @@ public class NPCController : PersonageController
         Destroy(this);
         Destroy(_controller);
     }
+
+	public override void EndAttack()
+	{
+		base.EndAttack();
+        if(BattleManager.ActivePersonageController == this)
+        {
+            EndTurn();
+        }
+	}
+
+    private void EndTurn()
+    {
+		_controller.enabled = false;
+		_obstacleComponent.enabled = true;
+		Debug.Log("End enemy turn");
+		BattleManager.SetNextActivePersonage();
+	}
 }

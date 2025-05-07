@@ -1,5 +1,6 @@
 ﻿using CRPG;
 using CRPG.Battle;
+using CRPG.Interactions;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,8 +8,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public abstract class PersonageController : MonoBehaviour
 {
-	public delegate void Interact(Component interactComponent);
-
 	public float Speed;
 	[SerializeField] private float _rotateSpeed = 270f;
 
@@ -29,9 +28,7 @@ public abstract class PersonageController : MonoBehaviour
 	[SerializeField] protected Personage _personage;
 	[SerializeField] private protected ChooseAttackForceModule _chooseAttackForceModule;
 	private AttackModule _attackModule;
-
-	protected Interact _interact;
-	protected Component _interactComponent;
+	internal AttackModule AttackModule => _attackModule;
 
 	[Header("Настройки прыжка")]
 	[SerializeField] protected float _distanceToHeightRatio = 0.4f; // Базовый множитель высоты
@@ -47,6 +44,8 @@ public abstract class PersonageController : MonoBehaviour
 	protected Vector3 _lastAccessablePathDot;
 	protected Vector3 _lastHitPoint;
 	public bool IsMoving { get; private set; }
+
+	protected Interact _interact;
 
 	public void Awake()
 	{
@@ -80,12 +79,11 @@ public abstract class PersonageController : MonoBehaviour
 			}
 			else
 			{
-				if (_interact != null && _interactComponent != null)
+				_controller.velocity = Vector3.zero;
+				if (_interact != null)
 				{
-					_controller.velocity = Vector3.zero;
-					_interact.Invoke(_interactComponent);
+					_interact.Execute(this);
 					_interact = null;
-					_interactComponent = null;
 				}
 				if (_controller.hasPath) _controller.ResetPath();
 				IsMoving = false;
@@ -146,21 +144,13 @@ public abstract class PersonageController : MonoBehaviour
 		_interact = null;
 	}
 
-	public void InteractWith(float maxInteractDistance, Interact interact, Component interactComponent)
-	{
-		GoToPosition(interactComponent.transform.position, maxInteractDistance);
-		_interact = interact;
-		_interactComponent = interactComponent;
-	}
-
 	protected virtual void OnJumpToPosition(Vector3 targetPosition, float jumpHeigth, float jumpDuration) { }
 
 	public IEnumerator JumpToPosition(Vector3 targetPosition, float jumpHeigth, float jumpDuration)
 	{
+		_interact = null;
 		yield return RotateTo(targetPosition);
 		OnJumpToPosition(targetPosition, jumpHeigth, jumpDuration);
-		_interact = null;
-		_interactComponent = null;
 		_isGrounded = false;
 		_controller.enabled = false; // Выключаем NavMeshAgent
 		SetDefaultAction();
@@ -186,12 +176,12 @@ public abstract class PersonageController : MonoBehaviour
 
 	public void StartAttack(PersonageController personageController)
 	{
-		_attackModule.Attack(personageController);
+		BattleManager.StartAttack(this, personageController);
 	}
 
 	public virtual void EndAttack()
 	{
-		
+		SetDefaultAction();
 	}
 
 	public IEnumerator RotateTo(Vector3 targetPos, bool ignoreY = true)
@@ -263,6 +253,17 @@ public abstract class PersonageController : MonoBehaviour
 	{
 		item.transform.SetParent(null);
 		item.OnDropped();
+	}
+
+	public void InteractWith(float maxInteractDistance, Vector3 targetPos, Interact interact)
+	{
+		GoToPosition(targetPos, maxInteractDistance);
+		_interact = interact;
+	}
+
+	public virtual void PickupItem(Item item)
+	{
+		item.gameObject.SetActive(false);
 	}
 
 	private void OnDestroy()

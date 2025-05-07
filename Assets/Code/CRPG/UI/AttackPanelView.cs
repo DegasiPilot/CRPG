@@ -8,25 +8,79 @@ namespace BattleSystem.Views
 {
 	internal class AttackPanelView : MonoBehaviour
 	{
-		public SliderView AttackSliderView;
-		[SerializeField] private TextMeshProUGUI ResultText;
+		[SerializeField] private SliderView AttackSliderView;
+		[SerializeField] private SliderView DefendSliderView;
+		[SerializeField] private TextMeshProUGUI CoefficientText;
+		[SerializeField] private TextMeshProUGUI AttackResultText;
+		[SerializeField] private TextMeshProUGUI DodgeResultText;
 		[SerializeField] private Button AttackButton;
+		[SerializeField] private Button SkipButton;
 
 		public UnityEvent AttackClick => AttackButton.onClick;
+		public UnityEvent SkipClick => SkipButton.onClick;
+		public UnityEvent<float> AttackForceChanged;
+		public UnityEvent<float> DefendForceChanged;
+
+		private bool _canSkip;
 
 		private void Awake()
 		{
-			gameObject.SetActive(false);
+			AttackSliderView.OnValueChanged.AddListener(AttackChanged);
+			DefendSliderView.OnValueChanged.AddListener(DefendChanged);
 		}
 
-		public void RefreshResult(float result)
+		public void RefreshAttackResult(float result)
 		{
-			ResultText.text = result.ToString();
+			AttackResultText.text = result.ToString();
+		}
+
+		public void RefreshDodgeResult(float result)
+		{
+			DodgeResultText.text = result * 100 + "%";
 		}
 
 		public void UpdateAttackBtnInteractable(bool isInteractable)
 		{
 			AttackButton.interactable = isInteractable;
+		}
+
+		public void Refresh(float minAttackEnergy, float maxAttackEnergy, float minDefend, float maxDefend, bool canSkip, bool needDefend, float coefficient)
+		{
+			CoefficientText.text = "x" + coefficient;
+			_canSkip = canSkip;
+			AttackSliderView.Refresh(minAttackEnergy, maxAttackEnergy, canSkip);
+			DefendSliderView.SetActive(needDefend);
+			if (needDefend)
+			{
+				DefendSliderView.Refresh(minDefend, maxDefend);
+			}
+			SkipButton.gameObject.SetActive(canSkip);
+		}
+
+		public void RefreshAttack(float energy)
+		{
+			if (energy == 0) energy = AttackSliderView.MinValue;
+			AttackSliderView.Refresh(energy);
+		}
+
+		public void RefreshDefend(float energy)
+		{
+			if (energy == 0) energy = DefendSliderView.MinValue;
+			DefendSliderView.Refresh(energy);
+		}
+
+		private void AttackChanged(float energy)
+		{
+			if(_canSkip && energy == AttackSliderView.MinValue)
+			{
+				energy = 0;
+			}
+			AttackForceChanged.Invoke(energy);
+		}
+
+		private void DefendChanged(float energy)
+		{
+			DefendForceChanged.Invoke(energy);
 		}
 	}
 }

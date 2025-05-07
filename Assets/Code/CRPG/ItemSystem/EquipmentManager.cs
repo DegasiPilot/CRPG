@@ -73,6 +73,19 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
+	public float DodgeModifier
+	{
+		get
+		{
+			float result = 1;
+			foreach (var armor in Armor)
+			{
+				result -= armor.ArmorInfo.DodgePenalty;
+			}
+			return result;
+		}
+	}
+
 	public IEnumerable<EquipableItem> EquipableItems
     {
         get
@@ -96,7 +109,7 @@ public class EquipmentManager : MonoBehaviour
     }
 
 	public int MinAttackEnergy => Weapon == null ? GlobalRules.MinUnarmedAttackEnergy : Weapon.WeaponInfo.MinEnergy;
-	public int MaxAttackEnergy => Weapon == null ? GlobalRules.MinUnarmedAttackEnergy : Weapon.WeaponInfo.MaxEnergy;
+	public int MaxAttackEnergy => Weapon == null ? GlobalRules.MaxUnarmedAttackEnergy : Weapon.WeaponInfo.MaxEnergy;
 	public float MaxAttackDistance => Weapon == null ? GlobalRules.MaxUnarmedAttackDistance : Weapon.WeaponInfo.MaxAttackDistance;
 
 	private void Awake()

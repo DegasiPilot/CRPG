@@ -4,40 +4,24 @@ using UnityEngine;
 
 namespace BattleSystem.Views
 {
-	internal class PooledNumbersRowView : MonoBehaviour
+	internal class PooledRowView : MonoBehaviour
 	{
 		[SerializeField] protected TextMeshProUGUI TextPrefab;
 		private SmartPool<TextMeshProUGUI> _textSource;
 		private bool IsInitialized => _textSource != null;
 
-		/// <summary>
-		/// Prewent redraw
-		/// </summary>
-		private float _startValue = float.NegativeInfinity;
-		private float _stepsCount = float.NegativeInfinity;
-		private float _step = float.NegativeInfinity;
-
-		public void DisplayNumbersRow(float startValue, int stepsCount, float step)
+		public void DisplayRow(string[] row)
 		{
-			if(_startValue == startValue && _stepsCount == stepsCount && _step == step)
-			{
-				return; //Prewent redraw
-			}
-			else
-			{
-				_startValue = startValue; _stepsCount = stepsCount; _step = step;
-			}
-
 			if (!IsInitialized)
 			{
-				Init(stepsCount + 1);
+				Init(row.Length);
 			}
 			else
 			{
 				ReleaseUsedObjects();
 			}
-
-			for (int i = 0; i <= stepsCount; i++)
+			
+			for (int i = 0; i < row.Length; i++)
 			{
 				var textMeshPro = GetText();
 				textMeshPro.transform.SetParent(transform, false);
@@ -52,19 +36,19 @@ namespace BattleSystem.Views
 
 				Vector2 anchorMin = textMeshPro.rectTransform.anchorMin;
 				Vector2 anchorMax = textMeshPro.rectTransform.anchorMax;
-				float newX = (float)i/stepsCount;
+				float newX = (float)i / (row.Length - 1);
 				anchorMin.x = newX;
 				anchorMax.x = newX;
 				textMeshPro.rectTransform.anchorMin = anchorMin;
 				textMeshPro.rectTransform.anchorMax = anchorMax;
 
-				textMeshPro.text = (startValue + step * i).ToString();
+				textMeshPro.text = row[i];
 			}
 		}
 
 		private void Init(int capacity)
 		{
-			_textSource = new SmartPool<TextMeshProUGUI>(TextPrefab, capacity);
+			_textSource = new SmartComponentPool<TextMeshProUGUI>(TextPrefab, capacity);
 		}
 
 		protected TextMeshProUGUI GetText()

@@ -5,6 +5,8 @@ using UnityEngine.Events;
 using CRPG.Battle;
 using CRPG.DataSaveSystem;
 using CRPG;
+using CRPG.Interactions;
+using System.Collections;
 
 [RequireComponent(typeof(PlayerChooseAttackForceModule))]
 public class PlayerController : PersonageController
@@ -78,7 +80,7 @@ public class PlayerController : PersonageController
             if(_lastHitPoint != Vector3.positiveInfinity && _navMeshPath != null && _navMeshPath.status == NavMeshPathStatus.PathComplete &&
                 Vector3.Distance(hitPoint, _lastHitPoint) <= PathEndHitAccuracy)
             {
-                GoToPosition(_lastAccessablePathDot);
+                GoToPosition(_lastAccessablePathDot, 0.01f);
                 _navMeshPath.ClearCorners();
                 _lastHitPoint = Vector3.positiveInfinity;
                 UnaccesableLineRenderer.enabled = false;
@@ -131,13 +133,12 @@ public class PlayerController : PersonageController
     public override void SetDefaultAction()
     {
         base.SetDefaultAction();
-        OnSetDefaultAction.Invoke();
     }
-    public UnityEvent OnSetDefaultAction;
 
     public override void SetActiveAction(ActionType actionType)
     {
         base.SetActiveAction(actionType);
+        OnSetAction.Invoke(actionType);
         if(actionType == ActionType.Jumping)
         {
             float diametr = GlobalRules.MaxJumpDistance * 2;
@@ -148,8 +149,9 @@ public class PlayerController : PersonageController
             HideSphere();
         }
     }
+	public UnityEvent<ActionType> OnSetAction;
 
-    private void DisplaySphere(float sphereDiametr, float shpereY)
+	private void DisplaySphere(float sphereDiametr, float shpereY)
     {
         Sphere.SetActive(true);
         Sphere.transform.localScale = new Vector3(sphereDiametr, shpereY, sphereDiametr);
@@ -160,12 +162,12 @@ public class PlayerController : PersonageController
         Sphere.SetActive(false);
     }
 
-    public void PickupItem(Item item)
+    public override void PickupItem(Item item)
     {
-        GameData.Inventory.Add(item);
+		base.PickupItem(item);
+		GameData.Inventory.Add(item);
         item.transform.SetParent(Inventory.transform);
         item.OnTaked();
-        item.gameObject.SetActive(false);
     }
 
     public override void DropItem(Item item)
@@ -187,7 +189,7 @@ public class PlayerController : PersonageController
         {
             _controller.speed = _normalAgentSpeed;
         }
-    }
+	}
 
 	protected override void OnJumpToPosition(Vector3 targetPosition, float jumpHeigth, float jumpDuration)
 	{

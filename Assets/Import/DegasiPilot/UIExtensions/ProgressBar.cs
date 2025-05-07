@@ -7,7 +7,7 @@ namespace DegasiPilot.UIExtensions
 	{
 		[SerializeField] private Image _fillImage;
 		private const float _animSpeed = 0.5f;
-		[SerializeField] private Direction _direction;
+		[SerializeField] protected Direction _direction;
 
 		private float _targerSize;
 		private float Value
@@ -67,7 +67,7 @@ namespace DegasiPilot.UIExtensions
 				else
 				{
 					Value += _animSpeed * Time.deltaTime * Mathf.Sign(difference);
-					Debug.Log("Update");
+					//Debug.Log("Update");
 				}
 			}
 		}

@@ -4128,6 +4128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 6
+  _rotateSpeed: 270
   _controller: {fileID: 4551204505390467794}
   _rigidBody: {fileID: 0}
   _collider: {fileID: 5664904363566332836}
@@ -4156,7 +4157,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.78
-  m_BaseOffset: 0
+  m_BaseOffset: -0.06
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!136 &5664904363566332836

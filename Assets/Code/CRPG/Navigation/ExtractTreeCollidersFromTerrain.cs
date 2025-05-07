@@ -32,13 +32,13 @@ public class ExtractTreeCollidersFromTerrain : MonoBehaviour
 
                 Vector3 primitive_scale;
                 primitive_scale = nav_mesh_obstacle.radius * Vector3.one;
-                primitive_scale.y = 2;
+                primitive_scale.y = 2f;
                 GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 obj.name = tree.prefab.name + j;
                 if (terrain.preserveTreePrototypeLayers) obj.layer = tree.prefab.layer;
                 else obj.layer = terrain.gameObject.layer;
                 obj.transform.localScale = primitive_scale;
-                obj.transform.position = instances[j].position;
+                obj.transform.position = instances[j].position + Vector3.up;
                 obj.transform.parent = terrain.transform;
                 obj.isStatic = true;
             }

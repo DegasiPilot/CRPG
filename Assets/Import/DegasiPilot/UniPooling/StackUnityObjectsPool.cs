@@ -20,21 +20,18 @@ namespace DegasiPilot.UniPooling
 			}
 		}
 
-		public PooledUnityObject<T> Get()
+		public T Get()
 		{
-			PooledUnityObject<T> pooledObject = null;
-			while (pooledObject == null)
+			if (_pooledObjects.TryPop(out T innerObject))
 			{
-				if (_pooledObjects.TryPop(out T innerObject))
-				{
-					continue;
-				}
-				else
-				{
-					return new PooledUnityObject<T>(UnityEngine.Object.Instantiate(_prefab), this);
-				}
+				UnityEngine.Debug.Log("Get pooled object");
+				return innerObject;
 			}
-			return pooledObject;
+			else
+			{
+				UnityEngine.Debug.Log("Instance non puled object");
+				return UnityEngine.Object.Instantiate(_prefab);
+			}
 		}
 
 		public void Release(T unityObject)

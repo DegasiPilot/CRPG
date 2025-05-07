@@ -18,6 +18,7 @@ internal class ActionButton : MonoBehaviour, IDisposable
 	[SerializeField] private Image _actionImage;
 
 	private ActionType _myAction;
+	public ActionType MyAction => _myAction;
 
 	private void OnValidate()
 	{
@@ -32,6 +33,11 @@ internal class ActionButton : MonoBehaviour, IDisposable
 	private void OnToggleChanged(bool activate)
 	{
 		OnToggle.Invoke(_myAction, activate);
+	}
+
+	public void SetWithoutNotify(bool activate)
+	{
+		_toggle.SetIsOnWithoutNotify(activate);
 	}
 
 	public void Setup(PersonageActionInfo actionInfo)

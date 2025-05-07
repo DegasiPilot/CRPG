@@ -5,13 +5,15 @@ namespace CRPG.Battle
 {
 	class NPCChooseAttackForceModule : ChooseAttackForceModule
 	{
-		[SerializeField] private UnityEvent<float> _onChooseAttackForce;
-		public override UnityEvent<float> OnChooseAttackForce => _onChooseAttackForce;
+		[SerializeField] private UnityEvent<float,float> _onChooseAttackForce;
+		public override UnityEvent<float,float> OnChooseAttackForce => _onChooseAttackForce;
 
-		public override void ChooseAttackForce(Personage personage)
+		public override void ChooseAttackForce(Personage personage, bool canSkip, bool needDefend, float coef)
 		{
-			float force = Random.Range(personage.MinAttackEnergy, personage.MaxAttackEnergy);
-			OnChooseAttackForce.Invoke(force);
+			float minAttack = canSkip ? 0 : personage.MinAttackEnergy;
+			float force = Random.Range(minAttack, Mathf.Min(personage.MaxAttackEnergy, personage.Stamina));
+			float dodge = needDefend ? Random.Range(0, Mathf.Min(personage.Stamina - force, 4)) : 0;
+			OnChooseAttackForce.Invoke(force, dodge);
 		}
 	}
 }

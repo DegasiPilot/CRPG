@@ -20,7 +20,6 @@ internal class SceneSaveLoadManager : MonoBehaviour
         if (sceneSaveInfo == null)
         {
             GameData.MainPlayer.PlayerController.SetPositonAndRotation(CameraCenter.position, StartPlayerRotation);
-            Debug.Log("Loaded empty game save", this);
             return;
         }
 

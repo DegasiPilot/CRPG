@@ -20,7 +20,6 @@ public class BattlePanel : MonoBehaviour
         }
         _activePortraitIndex = 0;
         _portraitControllers[_activePortraitIndex].Activate();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(gameObject.transform as RectTransform);
     }
 
     public void SetNextActivePersonage()
@@ -36,7 +35,8 @@ public class BattlePanel : MonoBehaviour
             _portraitControllers.ForEach(x => x.SetPrepaired());
         }
         _portraitControllers[_activePortraitIndex].Activate();
-    }
+		LayoutRebuilder.ForceRebuildLayoutImmediate(gameObject.transform as RectTransform);
+	}
 
     public void OnBattleEnd()
     {

@@ -19,6 +19,7 @@ public static class BattleManager
     private static int _activePersonageIndex;
     private static List<PersonageController> _participantPersonages;
     private readonly static Dictionary<PersonageController, int> _personagesInitiative = new();
+    private readonly static FigtherInfo[] _activeFigthers = new FigtherInfo[2];
 
     public static void StartBattle(PersonageController[] participantPersonages)
     {
@@ -94,6 +95,70 @@ public static class BattleManager
         }
     }
 
+    internal static void StartAttack(PersonageController attacker, PersonageController defender)
+    {
+        _activeFigthers[0] = new FigtherInfo() { PersonageController = attacker };
+        _activeFigthers[1] = new FigtherInfo() { PersonageController = defender };
+        if (ParticipantPersonages != null && ParticipantPersonages.Contains(defender))
+        {
+            attacker.AttackModule.Attack(defender, false, true);
+            defender.AttackModule.Attack(attacker, true, true);
+        }
+        else
+        {
+            attacker.AttackModule.Attack(defender, false, false);
+            EnergyChoosed(defender, 0, 0);
+        }
+    }
+
+    internal static void EnergyChoosed(PersonageController personageController, float attack, float defence)
+    {
+        bool isAllReady = true;
+        for(int i = 0; i < _activeFigthers.Length; i++)
+        {
+			if (personageController == _activeFigthers[i].PersonageController)
+			{
+				_activeFigthers[i].EnergyToAttack = attack;
+				_activeFigthers[i].EnergyToDefend = defence;
+			}
+            isAllReady = isAllReady && _activeFigthers[i].IsReady;
+		}
+        if (isAllReady)
+        {
+			for (int i = 0; i < _activeFigthers.Length; i++)
+			{
+                if (_activeFigthers[i].EnergyToAttack > 0)
+                {
+                    for (int j = 0; j < _activeFigthers.Length; j++)
+                    {
+                        if(i != j)
+                        {
+                            if (IsDodged(_activeFigthers[j]) == false)
+                            {
+                                _activeFigthers[i].PersonageController.AttackModule.StartAttackCoroutine();
+                            }
+                            else
+                            {
+                                _activeFigthers[i].PersonageController.EndAttack();
+                            }
+                        }
+                    }
+                }
+                if (_activeFigthers[i].EnergyToDefend > 0)
+                {
+                    _activeFigthers[i].PersonageController.Personage.RemoveStamina(_activeFigthers[i].EnergyToDefend);
+                }
+			}
+		}
+    }
+
+    internal static bool IsDodged(FigtherInfo figtherInfo)
+    {
+        float dodgeChance = figtherInfo.EnergyToDefend * figtherInfo.PersonageController.Personage.DodgeCoefficient;
+        float result = Random.Range(0, 1f);
+        return result <= dodgeChance;
+    }
+
     internal static void AfterAttack(AttackModule attackModule)
     {
         RemainActions--;
@@ -119,10 +184,17 @@ public static class BattleManager
     public static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
     {
         Ray ray = new Ray(attackerPos, targetPos - attackerPos);
-        if(Physics.Raycast(ray, out RaycastHit hit, maxDistance)
-            && hit.collider.gameObject.TryGetComponent(out Personage personage) && personage == targetPersonage)
+        if(Physics.Raycast(ray, out RaycastHit hit, maxDistance + 0.02f /*Прощаем небольшую погрешность*/))
         {
-            return true;
+            if(hit.collider.gameObject.TryGetComponent(out Personage personage) && personage == targetPersonage)
+            {
+				return true;
+			}
+            else
+            {
+                Debug.Log("Hit to not personage");
+                return false;
+            }
         }
         else
         {

@@ -106,7 +106,6 @@ namespace CRPG.PersonageRedactor
 			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent - 5 - 6;
 #endif
 
-
 			_characteristicRedactors = new CharacteristicRedactorViewModel[_personageCreator.StatRedactors.Length];
 			for(int i = 0; i < _personageCreator.StatRedactors.Length; i++)
 			{
@@ -266,10 +265,10 @@ namespace CRPG.PersonageRedactor
 				_playerCustomizer.ApplyAppearance(appearance);
 				_personageInfo.PersonagePortrait = _personageCreator.SavePersonagePortrait();
 
-				_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
 				GameData.InitializeNewGame(_personageInfo);
 				MaleObject.transform.rotation = Quaternion.identity;
 				FemaleObject.transform.rotation = Quaternion.identity;
+				_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
 				SceneManager.LoadScene("SampleScene");
 			}
 			else

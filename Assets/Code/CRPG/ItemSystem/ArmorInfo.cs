@@ -8,4 +8,5 @@ internal class ArmorInfo : ItemInfo
     public float ArmorPercent => _armorPercent / 100f;
     public BodyPart WearableBodyPart;
     [Min(0)] public float ArmorWeight;
+    [Range(0,1)] public float DodgePenalty;
 }

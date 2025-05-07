@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
+using CRPG.Interactions;
 
 public class GameManager : MonoBehaviour
 {
@@ -171,11 +172,11 @@ public class GameManager : MonoBehaviour
 			if (_activePlayer.ActiveAction == ActionType.Attack)
 			{
 				float attackDistance = _activePlayer.MaxAttackDistance;
-				_activePlayer.InteractWith(attackDistance, AttackInteract, personageController);
+				_activePlayer.InteractWith(attackDistance, personageController.transform.position, new AttackInteract(personageController));
 			}
 			else if (personageController.TryGetComponent(out DialogueActor dialogueActor))
 			{
-				_activePlayer.InteractWith(dialogueActor.MaxDialogueDistance, StartDialogue, dialogueActor);
+				_activePlayer.InteractWith(dialogueActor.MaxDialogueDistance, dialogueActor.transform.position, new DialogueInteract(dialogueActor, this));
 			}
 		}
 		else if (_gameMode == GameMode.Battle && BattleManager.ActivePersonageController == _activePlayer)
@@ -200,7 +201,7 @@ public class GameManager : MonoBehaviour
     {
         if (GameMode == GameMode.Free)
         {
-            _activePlayer.InteractWith(1, ItemInteract, item);
+            _activePlayer.InteractWith(1, item.transform.position, new PickupItemInteract(item));
         }
         else if(GameMode == GameMode.Battle)
         {
@@ -208,7 +209,7 @@ public class GameManager : MonoBehaviour
             Vector3 distVector2 = item.transform.position - _activePlayer.Personage.HitPoint.position;
             if (Vector3.SqrMagnitude(distVector) <= 1 || Vector3.SqrMagnitude(distVector2) <= 1)
             {
-                ItemInteract(item);
+                _activePlayer.PickupItem(item);
             }
             else
             {
@@ -223,24 +224,13 @@ public class GameManager : MonoBehaviour
         _currentComponentUnderPointer = null;
     }
 
-    public void StartDialogue(Component dialogueActor)
+    public void StartDialogue(DialogueActor dialogueActor)
     {
-        _dialogueParser.SetSecondDialogueActor(dialogueActor as DialogueActor);
-        _cameraController.FocusOn(dialogueActor as DialogueActor);
+        _dialogueParser.SetSecondDialogueActor(dialogueActor);
+        _cameraController.FocusOn(dialogueActor);
         _dialogueParser.TryStartDialogue();
         ChangeGameMode(GameMode.Dialogue);
     }
-
-    public void ItemInteract(Component item)
-    {
-        _activePlayer.PickupItem(item as Item);
-    }
-
-	public void AttackInteract(Component component)
-	{
-		PersonageController personageController = component as PersonageController;
-		_activePlayer.StartAttack(personageController);
-	}
 
 	public void OnGroundPressed(Vector3 hitPoint)
     {

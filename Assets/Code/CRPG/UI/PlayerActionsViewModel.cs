@@ -44,6 +44,14 @@ namespace CRPG.UI
 			OnTogglePlayerAction.Invoke(actionType, activate);
 		}
 
+		public void SetActiveAction(ActionType actionType)
+		{
+			foreach(ActionButton actionButton in _actionButtons)
+			{
+				actionButton.SetWithoutNotify(actionButton.MyAction == actionType);
+			}
+		}
+
 		public void DeactivateAllActions()
 		{
 			_view.DeactivateAllActions();
