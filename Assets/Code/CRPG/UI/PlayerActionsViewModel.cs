@@ -2,15 +2,15 @@
 
 namespace CRPG.UI
 {
-    class PlayerActionsViewModel : IDisposable
-    {
-        public PlayerActionsViewModel(PersonageActionsView view)
-        {
-            _view = view;
-        }
+	class PlayerActionsViewModel : IDisposable
+	{
+		public PlayerActionsViewModel(PersonageActionsView view)
+		{
+			_view = view;
+		}
 
-        private PersonageActionsView _view;
-        private ActionButton[] _actionButtons;
+		private PersonageActionsView _view;
+		private ActionButton[] _actionButtons;
 
 		public event Action<ActionType, bool> OnTogglePlayerAction;
 
@@ -18,7 +18,7 @@ namespace CRPG.UI
 		{
 			Clear();
 			_actionButtons = new ActionButton[personageActions.Length];
-			for(int i = 0; i < personageActions.Length; i++)
+			for (int i = 0; i < personageActions.Length; i++)
 			{
 				ActionButton actionButton = _view.InstantiateActionButton();
 				actionButton.Setup(getActionInfo.Invoke(personageActions[i]));
@@ -46,7 +46,7 @@ namespace CRPG.UI
 
 		public void SetActiveAction(ActionType actionType)
 		{
-			foreach(ActionButton actionButton in _actionButtons)
+			foreach (ActionButton actionButton in _actionButtons)
 			{
 				actionButton.SetWithoutNotify(actionButton.MyAction == actionType);
 			}

@@ -2,8 +2,8 @@
 
 namespace CRPG.DataSaveSystem.SaveData
 {
-    public class SceneSaveInfo
-    {
-        public SaveObjectInfo[] SaveObjectInfos;
-    }
+	public class SceneSaveInfo
+	{
+		public SaveObjectInfo[] SaveObjectInfos;
+	}
 }

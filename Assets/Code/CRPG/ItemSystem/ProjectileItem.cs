@@ -10,6 +10,7 @@ namespace CRPG.ItemSystem
 		public Projectile Projectile => _projectile;
 
 		internal Rigidbody Rigidbody => rb;
+		internal Collider Collider => collider;
 
 		protected override void OnValidate()
 		{

@@ -5,23 +5,52 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using DialogueSystem.DataContainers;
+using UnityEditor.Callbacks;
 
 namespace DialogueSystem.Editor
 {
     public class StoryGraph : EditorWindow
     {
-        private string _fileName;
         private string _filePath;
 
         private StoryGraphView _graphView;
 
-        [MenuItem("Graph/Narrative Graph")]
+		[OnOpenAsset(1)]
+		public static bool OpenGameStateWindow(int instanceID, int line)
+		{
+            if(EditorUtility.InstanceIDToObject(instanceID) is not DialogueContainer)
+            {
+                return false;
+            }
+			bool windowIsOpen = HasOpenInstances<StoryGraph>();
+
+			if (!windowIsOpen)
+			{
+                CreateGraphViewWindow();
+			}
+			else
+			{
+				FocusWindowIfItsOpen<StoryGraph>();
+			}
+
+			var window = GetWindow<StoryGraph>();
+
+			string assetPath = AssetDatabase.GetAssetPath(instanceID);
+			var saveUtility = GraphSaveUtility.GetInstance(window._graphView);
+			window._filePath = assetPath;
+			saveUtility.LoadNarrative(assetPath);
+			window.RegenerateToolbar();
+
+            return true;
+		}
+
+		[MenuItem("Graph/Narrative Graph")]
         public static void CreateGraphViewWindow()
         {
             CreateWindow<StoryGraph>("Dialogue");
         }
 
-        private void ConstructGraphView()
+		private void ConstructGraphView()
         {
             _graphView = new StoryGraphView(this)
             {
@@ -43,9 +72,9 @@ namespace DialogueSystem.Editor
             toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.CreateNew)) { text = "New" });
             toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.Save)) { text = "Save" });
             toolbar.Add(new Button(() => RequestDataOperation(DataOperationType.Load)) { text = "Load" });
-            if (_fileName != string.Empty)
+            if (_filePath != string.Empty)
             {
-                var fileNameTextField = new Label($"File Name: {_fileName}");
+                var fileNameTextField = new Label($"File Path: {_filePath}");
                 toolbar.Add(fileNameTextField);
             }
             rootVisualElement.Add(toolbar);
@@ -58,7 +87,6 @@ namespace DialogueSystem.Editor
             {
                 case DataOperationType.CreateNew:
                     {
-                        _fileName = string.Empty;
                         _filePath = string.Empty;
                         rootVisualElement.Remove(_graphView);
                         ConstructGraphView();
@@ -74,17 +102,16 @@ namespace DialogueSystem.Editor
                         }
                         else saveUtility.SaveGraph(out _filePath);
 
-                        Debug.Log($"Saved Narrative at: {_filePath}");
-                        _fileName = _filePath.Split('/').Last();
-                        _fileName = _fileName[..^6];
+                        Debug.Log($"Saved Narrative at: {_filePath}", AssetDatabase.LoadAssetAtPath<DialogueContainer>(_filePath));
                         RegenerateToolbar();
                         break;
                     }
                 case DataOperationType.Load: 
                     {
-                        saveUtility.LoadNarrative(out _filePath, out _fileName);
-                        RegenerateToolbar();
-                        break;
+                        saveUtility.SelectPathForLoad(out _filePath);
+                        saveUtility.LoadNarrative(_filePath);
+						RegenerateToolbar();
+						break;
                     }
             }
         }

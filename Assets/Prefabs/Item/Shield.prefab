@@ -51,6 +51,9 @@ MonoBehaviour:
   UniqueName: Item/Shield
   _saveableComponents:
   - {fileID: 1477564216660781064}
+  AfterLoadEndEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!54 &1005630725532122486
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -77,7 +80,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &7460609226290493714
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,6 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba1a6669c044bf40a86aa3577a41d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 1005630725532122486}
+  collider: {fileID: 7460609226290493714}
+  RotationInHand: {x: 0, y: 0, z: 0}
   ArmorInfo: {fileID: 11400000, guid: b0979fdbbf2fb124392eaaac26ce1fb7, type: 2}
 --- !u!1 &1935842565358669191
 GameObject:

@@ -1,5 +1,5 @@
 ﻿public enum NodeType
 {
-    Dialogue = 0,
-    CharacteristicCheck
+	Dialogue = 0,
+	CharacteristicCheck
 }

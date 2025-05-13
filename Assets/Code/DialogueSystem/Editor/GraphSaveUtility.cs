@@ -5,7 +5,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using DialogueSystem.DataContainers;
 using UnityEngine.UIElements;
-using System;
 
 namespace DialogueSystem.Editor
 {
@@ -37,35 +36,26 @@ namespace DialogueSystem.Editor
                 return;
 
             SaveGraph(filePath);
-            EditorUtility.RevealInFinder($"{filePath}");
         }
 
         public void SaveGraph(string filePath)
         {
-            var dialogueContainerObject = ScriptableObject.CreateInstance<DialogueContainer>();
-            if (!SaveNodes(dialogueContainerObject))
+			var dialogueContainerObject = AssetDatabase.LoadAssetAtPath<DialogueContainer>(filePath);
+
+			if (dialogueContainerObject != null && AssetDatabase.Contains(dialogueContainerObject))
+			{
+                AssetDatabase.DeleteAsset(filePath);
+			}
+
+			dialogueContainerObject = ScriptableObject.CreateInstance<DialogueContainer>();
+
+			if (!SaveNodes(dialogueContainerObject))
                 return;
             SaveExposedProperties(dialogueContainerObject);
-            var loadedAsset = AssetDatabase.LoadAssetAtPath($"{filePath}", typeof(DialogueContainer));
 
-            if (loadedAsset == null || !AssetDatabase.Contains(loadedAsset))
-            {
-                AssetDatabase.CreateAsset(dialogueContainerObject, $"{filePath}");
-            }
-            else
-            {
-                var container = loadedAsset as DialogueContainer;
-                if (container != null)
-                {
-                    container.NodeLinks = dialogueContainerObject.NodeLinks;
-                    container.DialogueNodeData = dialogueContainerObject.DialogueNodeData;
-                    container.CharacteristicNodeData = dialogueContainerObject.CharacteristicNodeData;
-                    container.ExposedProperties = dialogueContainerObject.ExposedProperties;
-                    EditorUtility.SetDirty(container);
-                }
-            }
-
-            AssetDatabase.SaveAssets();
+			AssetDatabase.CreateAsset(dialogueContainerObject, $"{filePath}");
+			AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         private bool SaveNodes(DialogueContainer dialogueContainerObject)
@@ -76,12 +66,19 @@ namespace DialogueSystem.Editor
             {
                 var outputNode = connectedSockets[i].output.node as SaveableNode;
                 var inputNode = connectedSockets[i].input.node as SaveableNode;
-                dialogueContainerObject.NodeLinks.Add(new NodeLinkData
+                if (outputNode.EntyPoint)
                 {
-                    BaseNodeGUID = outputNode.GUID,
-                    PortName = connectedSockets[i].output.portName,
-                    TargetNodeGUID = inputNode.GUID
-                });
+                    dialogueContainerObject.StartNodeGuid = inputNode.GUID;
+                }
+                else
+                {
+					dialogueContainerObject.NodeLinks.Add(new NodeLinkData
+					{
+						BaseNodeGUID = outputNode.GUID,
+						PortName = connectedSockets[i].output.portName,
+						TargetNodeGUID = inputNode.GUID
+					});
+				}
             }
 
             foreach (var node in Nodes.Where(node => !node.EntyPoint))
@@ -120,20 +117,19 @@ namespace DialogueSystem.Editor
             dialogueContainer.ExposedProperties.AddRange(_graphView.ExposedProperties);
         }
 
-        public void LoadNarrative(out string filePath, out string fileName)
+        public void SelectPathForLoad(out string filePath)
         {
-            fileName = string.Empty;
-            // open file explorer to get file path
-            filePath = EditorUtility.OpenFilePanel("Load Narrative", Application.dataPath + "/ScriptableObjects/Dialogues", "asset");
-            if (filePath.Length == 0) 
-                return;
+			// open file explorer to get file path
+			filePath = EditorUtility.OpenFilePanel("Load Narrative", Application.dataPath + "/ScriptableObjects/Dialogues", "asset");
+			if (filePath.Length == 0)
+				return;
 
-            // reduce the file path to only include the path to the file from the Application.dataPath folder
-            filePath = filePath.Replace(Application.dataPath, "Assets");
-            // find the last / in the file path and get the file name
-            var startIndex = filePath.LastIndexOf("/", StringComparison.Ordinal) + 1;
-            var endIndex = filePath.LastIndexOf(".asset", StringComparison.Ordinal);
-            fileName = filePath.Substring(startIndex, endIndex - startIndex);
+			// reduce the file path to only include the path to the file from the Application.dataPath folder
+			filePath = filePath.Replace(Application.dataPath, "Assets");
+		}
+
+        public void LoadNarrative(string filePath)
+        {
             // shorten the file path to only include the path to the file from the Assets folder
             _dialogueContainer = AssetDatabase.LoadAssetAtPath<DialogueContainer>(filePath);
 
@@ -150,8 +146,7 @@ namespace DialogueSystem.Editor
         /// </summary>
         private void ClearGraph()
         {
-            Nodes.Find(x => x.EntyPoint).GUID = _dialogueContainer.NodeLinks[0].BaseNodeGUID;
-            foreach (var perNode in Nodes)
+			foreach (var perNode in Nodes)
             {
                 if (perNode.EntyPoint) continue;
                 Edges.Where(x => x.input.node == perNode).ToList()
@@ -167,7 +162,7 @@ namespace DialogueSystem.Editor
         {
             foreach (var perNode in _dialogueContainer.DialogueNodeData)
             {
-                var tempNode = _graphView.CreateDialogueNode(perNode.DialogueTitle, perNode.DialogueText, Vector2.zero);
+                var tempNode = _graphView.CreateDialogueNode(perNode.DialogueTitle, perNode.DialogueText, perNode.Position);
                 tempNode.GUID = perNode.NodeGUID;
                 _graphView.AddElement(tempNode);
 
@@ -190,15 +185,30 @@ namespace DialogueSystem.Editor
         {
             for (var i = 0; i < Nodes.Count; i++)
             {
+                if (Nodes[i].GUID == _dialogueContainer.StartNodeGuid)
+                {
+					LinkNodesTogether(Nodes.First(x => x.EntyPoint).outputContainer[0].Q<Port>(), Nodes[i].inputContainer[0].Q<Port>());
+				}
                 var k = i; //Prevent access to modified closure
                 var connections = _dialogueContainer.NodeLinks.Where(x => x.BaseNodeGUID == Nodes[k].GUID).ToList();
                 for (var j = 0; j < connections.Count(); j++)
                 {
                     var targetNodeGUID = connections[j].TargetNodeGUID;
                     var targetNode = Nodes.First(x => x.GUID == targetNodeGUID);
+
+                    int outputIndex = j;
+                    if (connections[j].PortName == "Успех")
+                    {
+                        j = 0;
+                    }
+                    else if (connections[j].PortName == "Провал")
+                    {
+                        j = 1;
+                    }
+
                     LinkNodesTogether(Nodes[i].outputContainer[j].Q<Port>(), targetNode.inputContainer[0].Q<Port>());
 
-                    SaveableNodeData saveableNode = _dialogueContainer.DialogueNodeData.FirstOrDefault(x => x.NodeGUID == targetNodeGUID);
+					SaveableNodeData saveableNode = _dialogueContainer.DialogueNodeData.FirstOrDefault(x => x.NodeGUID == targetNodeGUID);
                     saveableNode ??= _dialogueContainer.CharacteristicNodeData.FirstOrDefault(x => x.NodeGUID == targetNodeGUID);
                     targetNode.SetPosition(new Rect(saveableNode.Position, Vector2.zero));
                 }

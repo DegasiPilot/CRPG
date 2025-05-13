@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 namespace CRPG.UI
 {
-    class PlayerPanel : MonoBehaviour
-    {
+	class PlayerPanel : MonoBehaviour
+	{
 		[SerializeField] private Image PersonageImage;
 		[SerializeField] private TextMeshProUGUI PersonageNameText;
 		[SerializeField] private LabeledProgressbar LifesProgressbar;
 		[SerializeField] private LabeledProgressbar StaminaProgressbar;
+		[SerializeField] private TextMeshProUGUI RemainActionsText;
 		[SerializeField] private PersonageActionsView _personageActionsView;
 		public PersonageActionsView PersonageActionsView => _personageActionsView;
 
@@ -40,6 +41,11 @@ namespace CRPG.UI
 		public void UpdateStaminaBar(float stamina, float maxStamina)
 		{
 			StaminaProgressbar.Refresh(stamina, maxStamina);
+		}
+
+		public void UpdateActions(float actions, float maxActions)
+		{
+			RemainActionsText.text = "Действия: " + actions + '/' + maxActions;
 		}
 	}
 }

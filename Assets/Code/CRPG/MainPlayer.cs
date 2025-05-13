@@ -2,9 +2,9 @@
 
 namespace CRPG
 {
-    [RequireComponent(typeof(PlayerCustomizer))]
-    class MainPlayer : MonoBehaviour
-    {
+	[RequireComponent(typeof(PlayerCustomizer))]
+	class MainPlayer : MonoBehaviour
+	{
 		[field: SerializeField]
 		public PlayerController PlayerController { get; private set; }
 

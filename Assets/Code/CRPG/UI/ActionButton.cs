@@ -7,14 +7,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Toggle))]
 internal class ActionButton : MonoBehaviour, IDisposable
 {
-    public UnityEvent<ActionType, bool> OnToggle;
+	public UnityEvent<ActionType, bool> OnToggle;
 	public ToggleGroup ToggleGroup
 	{
 		get => _toggle.group;
 		set => _toggle.group = value;
 	}
 
-    [SerializeField] private Toggle _toggle;
+	[SerializeField] private Toggle _toggle;
 	[SerializeField] private Image _actionImage;
 
 	private ActionType _myAction;
@@ -22,7 +22,7 @@ internal class ActionButton : MonoBehaviour, IDisposable
 
 	private void OnValidate()
 	{
-		if(_toggle == null) _toggle = GetComponent<Toggle>();
+		if (_toggle == null) _toggle = GetComponent<Toggle>();
 	}
 
 	private void Awake()
@@ -41,10 +41,10 @@ internal class ActionButton : MonoBehaviour, IDisposable
 	}
 
 	public void Setup(PersonageActionInfo actionInfo)
-    {
-        _actionImage.sprite = actionInfo.Icon;
-        _myAction = actionInfo.ActionType;
-    }
+	{
+		_actionImage.sprite = actionInfo.Icon;
+		_myAction = actionInfo.ActionType;
+	}
 
 	private void OnDestroy()
 	{

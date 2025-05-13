@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace CRPG.Battle
 {
-    class AttackModule : System.IDisposable
-    {
-        public AttackModule(PersonageController personageController, ChooseAttackForceModule chooseAttackForceModule)
-        {
+	class AttackModule : System.IDisposable
+	{
+		public AttackModule(PersonageController personageController, ChooseAttackForceModule chooseAttackForceModule)
+		{
 			_personageController = personageController;
-            _chooser = chooseAttackForceModule;
+			_chooser = chooseAttackForceModule;
 			_chooser.OnChooseAttackForce.AddListener(AfterEnergyChoosed);
 		}
 
@@ -17,7 +17,7 @@ namespace CRPG.Battle
 		private bool _isAttackAnim;
 		public bool IsAttacking => _isAttackAnim || _isAttacking;
 
-        private ChooseAttackForceModule _chooser;
+		private ChooseAttackForceModule _chooser;
 		private PersonageController _personageController;
 		private PersonageController _enemy;
 		private float _attack;
@@ -25,10 +25,11 @@ namespace CRPG.Battle
 
 		public void Attack(PersonageController enemy, bool canSkip, bool needDefend)
 		{
+			if (_personageController.Personage.Stamina <= 0) return;
 			var equipmentManager = _personageController.Personage.EquipmentManager;
 			if (equipmentManager.IsWeaponNeedProjectiles)
 			{
-				if(equipmentManager.TryReloadWeapon())
+				if (equipmentManager.TryReloadWeapon())
 				{
 
 				}
@@ -51,11 +52,11 @@ namespace CRPG.Battle
 
 		public void MakeDamage()
 		{
-			_enemy.GetDamage(_attack * _damageCoefficient,  _personageController.Personage.DamageType);
+			_personageController.Personage.Stamina -= _attack;
+			_enemy.GetDamage(_attack * _damageCoefficient, _personageController.Personage.DamageType);
 			_isAttackAnim = false;
-			_personageController.Personage.RemoveStamina(_attack);
-			BattleManager.AfterAttack(this);
 
+			EndAttack();
 			_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
 		}
 
@@ -89,17 +90,17 @@ namespace CRPG.Battle
 		public void EndAttack()
 		{
 			_isAttacking = false;
-			AfterAttack();
 			_personageController.EndAttack();
+			AfterAttack();
 		}
 
 		public void Dispose()
 		{
-			if(_chooser != null)
+			if (_chooser != null)
 			{
 				_chooser.OnChooseAttackForce.RemoveListener(AfterEnergyChoosed);
 			}
-			if(_personageController != null && _personageController.AnimatorManager != null)
+			if (_personageController != null && _personageController.AnimatorManager != null)
 			{
 				_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
 			}
@@ -107,9 +108,13 @@ namespace CRPG.Battle
 
 		private void AfterAttack()
 		{
+			if (_enemy.Personage.Health <= 0)
+			{
+				return;
+			}
 			if (GameManager.Instance.GameMode != GameMode.Battle)
 			{
-				if(_enemy.Personage.BattleTeam == BattleTeam.Neutrals)
+				if (_enemy.Personage.BattleTeam == BattleTeam.Neutrals)
 				{
 					BattleTeam battleTeam = BattleManager.GetOppostiteTeam(_personageController.Personage.BattleTeam);
 					_enemy.Personage.BattleTeam = battleTeam;

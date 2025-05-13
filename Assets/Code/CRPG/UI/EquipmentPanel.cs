@@ -2,8 +2,8 @@
 
 namespace CRPG.UI
 {
-    class EquipmentPanel : MonoBehaviour
-    {
+	class EquipmentPanel : MonoBehaviour
+	{
 		[SerializeField] private EquipmentSlotUI HealmetSlot;
 		[SerializeField] private EquipmentSlotUI BodySlot;
 		[SerializeField] private EquipmentSlotUI LeftHandSlot;

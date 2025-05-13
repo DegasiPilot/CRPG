@@ -20,7 +20,7 @@ namespace CRPG.UI
 		{
 			ReleaseSlot();
 			_equipmentSlot = equipmentSlot;
-			if(_equipmentSlot.EquipableItem != null)
+			if (_equipmentSlot.EquipableItem != null)
 			{
 				EquipItem(_equipmentSlot.EquipableItem.ItemInfo);
 			}

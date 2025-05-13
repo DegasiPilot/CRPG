@@ -6,19 +6,19 @@ using VContainer.Unity;
 
 public class MainMenuLifetimeScope : LifetimeScope
 {
-    [SerializeField] private MainMenuScript MainMenuScript;
+	[SerializeField] private MainMenuScript MainMenuScript;
 
-    protected override void Configure(IContainerBuilder builder)
-    {
-        builder.RegisterComponent(MainMenuScript);
-        builder.Register<GameDataManager>(Lifetime.Singleton);
-        builder.Register<MainMenuViewModel>(Lifetime.Singleton);
-        builder.RegisterBuildCallback(ResolveViewModels);
-    }
+	protected override void Configure(IContainerBuilder builder)
+	{
+		builder.RegisterComponent(MainMenuScript);
+		builder.Register<GameDataManager>(Lifetime.Singleton);
+		builder.Register<MainMenuViewModel>(Lifetime.Singleton);
+		builder.RegisterBuildCallback(ResolveViewModels);
+	}
 
-    private void ResolveViewModels(IObjectResolver resolver)
-    {
-        resolver.Resolve<MainMenuViewModel>();
-        resolver.Resolve<GameDataManager>();
-    }
+	private void ResolveViewModels(IObjectResolver resolver)
+	{
+		resolver.Resolve<MainMenuViewModel>();
+		resolver.Resolve<GameDataManager>();
+	}
 }

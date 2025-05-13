@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using VContainer.Unity;
 using VContainer;
+using VContainer.Unity;
 namespace CRPG.PersonageRedactor
 {
-    class PersonageRedactorBootstrap : MonoBehaviour
-    {
-        [SerializeField] private LifetimeScope Scope;
+	class PersonageRedactorBootstrap : MonoBehaviour
+	{
+		[SerializeField] private LifetimeScope Scope;
 
 		private void Awake()
 		{

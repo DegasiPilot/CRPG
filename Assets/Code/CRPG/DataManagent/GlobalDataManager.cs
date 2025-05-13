@@ -1,4 +1,5 @@
 ﻿using CRPG.DataManagement;
+using CRPG.DataSaveSystem;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,8 +7,10 @@ using UnityEngine.AddressableAssets;
 
 namespace CRPG
 {
-    public class GlobalDataManager : MonoBehaviour
-    {
+	public class GlobalDataManager : MonoBehaviour
+	{
+		internal static IDataSaveLoader DataSaveLoader = LocalSaveLoader.Instance;
+
 		[SerializeField] private AssetLabelReference _personageActionLabel;
 		[SerializeField] private AssetLabelReference _raceInfoLabel;
 		//[field: SerializeField] public string ItemsPrefix { get; private set; }

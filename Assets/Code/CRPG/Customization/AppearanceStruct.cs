@@ -3,7 +3,7 @@
 namespace CRPG.Customization
 {
 	public struct AppearanceStruct
-    {
+	{
 		public int HairIndex;
 		public int BeardIndex;
 		public Color HairsColor;

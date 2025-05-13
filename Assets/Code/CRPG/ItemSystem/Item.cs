@@ -4,32 +4,32 @@ using UnityEngine;
 [RequireComponent(typeof(SaveableGameobject))]
 public abstract class Item : MonoBehaviour, ISaveBlocker
 {
-    public abstract ItemInfo ItemInfo { get; }
+	public abstract ItemInfo ItemInfo { get; }
 
 	public virtual bool IsBlockSave => IsInInventory;
 
 	public bool IsInInventory { get; private set; }
 
-    [SerializeField] protected Rigidbody rb;
-	[SerializeField] private new Collider collider;
+	[SerializeField] protected Rigidbody rb;
+	[SerializeField] protected new Collider collider;
 
-    protected virtual void OnValidate()
-    {
-        if(rb == null) TryGetComponent(out rb);
-        if(collider == null) TryGetComponent(out collider);
-    }
+	protected virtual void OnValidate()
+	{
+		if (rb == null) TryGetComponent(out rb);
+		if (collider == null) TryGetComponent(out collider);
+	}
 
-    public void OnTaked()
-    {
-        rb.isKinematic = true;
-        collider.enabled = false;
-        IsInInventory = true;
-    }
+	public void OnTaked()
+	{
+		rb.isKinematic = true;
+		collider.enabled = false;
+		IsInInventory = true;
+	}
 
-    public void OnDropped()
-    {
-        rb.isKinematic = false;
-        collider.enabled = true;
+	public void OnDropped()
+	{
+		rb.isKinematic = false;
+		collider.enabled = true;
 		IsInInventory = false;
 	}
 }

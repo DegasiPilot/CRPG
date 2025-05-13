@@ -127,13 +127,13 @@ public abstract class PersonageController : MonoBehaviour
 		return Vector3.zero;
 	}
 
-	protected virtual void GoToPosition(Vector3 position, float maxTargetOffset = 0.1f)
+	protected virtual void GoToPosition(NavMeshHit hit, float maxTargetOffset = 0.1f)
 	{
 		_controller.stoppingDistance = maxTargetOffset;
 		NavMeshPath path = new();
-		NavMesh.SamplePosition(position, out NavMeshHit hit, 2f, NavMesh.AllAreas);
+
 		_controller.CalculatePath(hit.position, path);
-		position = Vector3.MoveTowards(position, path.corners[path.corners.Length - 2], _controller.radius);
+		var position = Vector3.MoveTowards(hit.position, path.corners[path.corners.Length - 2], _controller.radius);
 		_controller.SetDestination(position);
 		_interact = null;
 	}
@@ -176,6 +176,7 @@ public abstract class PersonageController : MonoBehaviour
 
 	public void StartAttack(PersonageController personageController)
 	{
+		Debug.Log("Should Start Attacking");
 		BattleManager.StartAttack(this, personageController);
 	}
 
@@ -257,8 +258,11 @@ public abstract class PersonageController : MonoBehaviour
 
 	public void InteractWith(float maxInteractDistance, Vector3 targetPos, Interact interact)
 	{
-		GoToPosition(targetPos, maxInteractDistance);
-		_interact = interact;
+		if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, maxInteractDistance, NavMesh.AllAreas))
+		{
+			GoToPosition(hit, maxInteractDistance - Vector3.Distance(targetPos, hit.position));
+			_interact = interact;
+		}
 	}
 
 	public virtual void PickupItem(Item item)

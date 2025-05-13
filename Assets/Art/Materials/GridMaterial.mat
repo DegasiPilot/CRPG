@@ -114,8 +114,8 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _GridSize: 1
-    - _LineWidth: 0.03
+    - _GridSize: 10
+    - _LineWidth: 0.05
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -136,11 +136,11 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BackgroundColor: {r: 0.7132075, g: 0.7132075, b: 0.7132075, a: 1}
+    - _BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GridColor: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 1}
+    - _GridColor: {r: 0.41501522, g: 0, b: 0.72199994, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

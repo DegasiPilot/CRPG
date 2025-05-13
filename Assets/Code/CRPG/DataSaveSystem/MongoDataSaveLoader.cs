@@ -1,21 +1,39 @@
-﻿using MongoDB.Driver;
-using CRPG.DataSaveSystem.SaveData;
-using UnityEngine;
+﻿using CRPG.DataSaveSystem.SaveData;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
+using UnityEngine;
 
 namespace CRPG.DataSaveSystem
 {
 	internal class MongoDataSaveLoader : IDataSaveLoader
 	{
+		public bool IsUserLogined => _activeUser != null;
+		public string UserLogin => IsUserLogined ? _activeUser.Login : "Неавторизованный пользователь";
+		public bool CanExit => true;
+
 		const string connectionUri = "mongodb://localhost:27017";
 		const string DbName = "CRPG_DB";
 		MongoClient client = new MongoClient(connectionUri);
 		private User _activeUser;
 
-		public MongoDataSaveLoader()
+		private static MongoDataSaveLoader _instance;
+		public static MongoDataSaveLoader Instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = new MongoDataSaveLoader();
+				}
+				return _instance;
+			}
+
+		}
+
+		private MongoDataSaveLoader()
 		{
 			var objectSerializer = new ObjectSerializer(ObjectSerializer.AllAllowedTypes);
 			BsonSerializer.RegisterSerializer(objectSerializer);
@@ -25,25 +43,37 @@ namespace CRPG.DataSaveSystem
 			}
 		}
 
-		private IMongoCollection<T> TryGetCollection<T>(out string errors)
+		public bool Ping()
 		{
-			var database = client.GetDatabase(DbName);
-			for(int attempt = 1; attempt <= 3; attempt++)
+			for (int attempt = 1; attempt <= 3; attempt++)
 			{
 				if (client.Cluster.Description.State != MongoDB.Driver.Core.Clusters.ClusterState.Disconnected)
 				{
-					errors = string.Empty;
-					return database.GetCollection<T>(typeof(T).Name + "s");
+					return true;
 				}
 				Thread.Sleep(150);
 			}
-			errors = "Нет соединения с бд";
-			return null;
+			return false;
+		}
+
+		private IMongoCollection<T> TryGetCollection<T>(out string errors)
+		{
+			var database = client.GetDatabase(DbName);
+			if (Ping())
+			{
+				errors = string.Empty;
+				return database.GetCollection<T>(typeof(T).Name + "s");
+			}
+			else
+			{
+				errors = "Нет соединения с бд";
+				return null;
+			}
 		}
 
 		public void CreateGameSaveInfo(GameSaveInfo gameSave)
 		{
-			if(_activeUser == null)
+			if (_activeUser == null)
 			{
 				Debug.LogError("No active user");
 			}
@@ -57,7 +87,7 @@ namespace CRPG.DataSaveSystem
 		public bool TryLogin(string login, string password, out string errors)
 		{
 			var users = TryGetCollection<User>(out errors);
-			if(users == null)
+			if (users == null)
 			{
 				return false;
 			}
@@ -83,7 +113,7 @@ namespace CRPG.DataSaveSystem
 		public bool TryRegistrate(string login, string password, out string errors)
 		{
 			var collection = TryGetCollection<User>(out errors);
-			if(collection == null)
+			if (collection == null)
 			{
 				return false;
 			}

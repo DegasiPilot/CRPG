@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace CRPG.UI
 {
-    class ProjectileSlotUI : ItemSlotUI
+	class ProjectileSlotUI : ItemSlotUI
 	{
 		[SerializeField] private Sprite defaultSprite;
 		[SerializeField] private TextMeshProUGUI _text;
@@ -25,7 +25,7 @@ namespace CRPG.UI
 			_projectileSlot = projectileSlot;
 			if (_projectileSlot.ProjectileItems != null)
 			{
-				EquipItem(_projectileSlot.ProjectileItemInfo);
+				EquipProjectile();
 			}
 			_projectileSlot.OnEquipProjectile += EquipProjectile;
 			_projectileSlot.OnUnequipItems += UnequipItem;
@@ -38,6 +38,7 @@ namespace CRPG.UI
 				_projectileSlot.OnEquipProjectile -= EquipProjectile;
 				_projectileSlot.OnUnequipItems -= UnequipItem;
 				UnequipItem();
+				_projectileSlot = null;
 			}
 		}
 

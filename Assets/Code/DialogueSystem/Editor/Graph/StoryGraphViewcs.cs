@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DialogueSystem.DataContainers;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 
@@ -235,13 +232,15 @@ namespace DialogueSystem.Editor
             var portLabel = generatedPort.contentContainer.Q<Label>("type");
             generatedPort.contentContainer.Remove(portLabel);
             generatedPort.contentContainer.Add(new Label("Успех"));
+            generatedPort.portName = "Успех";
             node.outputContainer.Add(generatedPort);
 
             var generatedPort2 = GetPortInstance(node, Direction.Output);
             portLabel = generatedPort2.contentContainer.Q<Label>("type");
             generatedPort2.contentContainer.Remove(portLabel);
             generatedPort2.contentContainer.Add(new Label("Провал"));
-            node.outputContainer.Add(generatedPort2);
+			generatedPort2.portName = "Провал";
+			node.outputContainer.Add(generatedPort2);
         }
 
         private void RemovePort(Node node, Port socket)
@@ -260,7 +259,7 @@ namespace DialogueSystem.Editor
             node.RefreshExpandedState();
         }
 
-        private Port GetPortInstance(Node node, Direction nodeDirection,
+        internal Port GetPortInstance(Node node, Direction nodeDirection,
             Port.Capacity capacity = Port.Capacity.Single)
         {
             return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(bool));

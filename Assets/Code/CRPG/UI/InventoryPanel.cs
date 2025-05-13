@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 namespace CRPG.UI
 {
@@ -112,7 +111,8 @@ namespace CRPG.UI
 
 		public void OnEquipButtonClick()
 		{
-			if (_activeItemSlot.OnEquipButtonClick(_equipmentManager)) {
+			if (_activeItemSlot.OnEquipButtonClick(_equipmentManager))
+			{
 				_activeItemSlot = null;
 			}
 		}

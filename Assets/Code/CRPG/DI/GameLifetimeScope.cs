@@ -3,7 +3,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace CRPG.DI 
+namespace CRPG.DI
 {
 	public class GameLifetimeScope : LifetimeScope
 	{
@@ -16,7 +16,6 @@ namespace CRPG.DI
 			GlobalDataManager globalDataManager = Instantiate(GlobalDataManagerPrefab);
 			DontDestroyOnLoad(globalDataManager);
 			builder.RegisterInstance(globalDataManager);
-			builder.Register<IDataSaveLoader, MongoDataSaveLoader>(Lifetime.Singleton);
 			GameData.MainPlayer = Instantiate(PlayerPrefab);
 			DontDestroyOnLoad(GameData.MainPlayer);
 			builder.RegisterInstance(PlayerPrefab);

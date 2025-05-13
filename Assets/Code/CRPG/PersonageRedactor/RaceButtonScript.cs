@@ -7,7 +7,7 @@ public class RaceButtonScript : MonoBehaviour
 {
 	[SerializeField] private RaceInfo _raceInfo;
 	[SerializeField] private Image _iconImage;
-    [SerializeField] private Button _button;
+	[SerializeField] private Button _button;
 
 	private void OnValidate()
 	{
@@ -15,7 +15,7 @@ public class RaceButtonScript : MonoBehaviour
 		{
 			_button = GetComponent<Button>();
 		}
-		if(_iconImage != null && _raceInfo != null)
+		if (_iconImage != null && _raceInfo != null)
 		{
 			_iconImage.sprite = _raceInfo.Sprite;
 		}

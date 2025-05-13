@@ -3,14 +3,14 @@ using UnityEngine.UI;
 
 namespace CRPG.UI
 {
-    class PersonageActionsView : MonoBehaviour
-    {
+	class PersonageActionsView : MonoBehaviour
+	{
 		[SerializeField] private ActionButton _prefab;
 		[SerializeField] private ToggleGroup _toggleGroup;
 
 		private void OnValidate()
 		{
-			if(_toggleGroup == null)
+			if (_toggleGroup == null)
 			{
 				_toggleGroup = GetComponent<ToggleGroup>();
 			}

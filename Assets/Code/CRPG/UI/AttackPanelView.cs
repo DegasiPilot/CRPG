@@ -31,7 +31,7 @@ namespace BattleSystem.Views
 
 		public void RefreshAttackResult(float result)
 		{
-			AttackResultText.text = result.ToString();
+			AttackResultText.text = result.ToString("0.##");
 		}
 
 		public void RefreshDodgeResult(float result)
@@ -71,7 +71,7 @@ namespace BattleSystem.Views
 
 		private void AttackChanged(float energy)
 		{
-			if(_canSkip && energy == AttackSliderView.MinValue)
+			if (_canSkip && energy == AttackSliderView.MinValue)
 			{
 				energy = 0;
 			}

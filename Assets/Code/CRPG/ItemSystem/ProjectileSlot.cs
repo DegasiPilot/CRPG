@@ -12,7 +12,7 @@ namespace CRPG.ItemSystem
 
 		public override void ClearSlot()
 		{
-			foreach(var item in ProjectileItems)
+			foreach (var item in ProjectileItems)
 			{
 				item.IsEquiped = false;
 			}
@@ -22,7 +22,7 @@ namespace CRPG.ItemSystem
 
 		public override void OnDropButtonClick(Action<Item> dropItemCallback)
 		{
-			foreach(ProjectileItem projectile in ProjectileItems)
+			foreach (ProjectileItem projectile in ProjectileItems)
 			{
 				dropItemCallback.Invoke(projectile);
 			}
@@ -31,7 +31,7 @@ namespace CRPG.ItemSystem
 
 		public override bool OnEquipButtonClick(EquipmentManager equipmentManager)
 		{
-			if(ProjectileItems != null)
+			if (ProjectileItems != null)
 			{
 				equipmentManager.UnequipProjectile(this);
 				return false;
@@ -63,7 +63,7 @@ namespace CRPG.ItemSystem
 		internal void EquipProjectile(ProjectileItem projectileItem)
 		{
 			projectileItem.IsEquiped = true;
-			if(ProjectileItems == null)
+			if (ProjectileItems == null)
 			{
 				ProjectileItems = new List<ProjectileItem>() { projectileItem };
 			}
@@ -96,7 +96,7 @@ namespace CRPG.ItemSystem
 			int count = ProjectileItems.Count;
 			int lastIndex = ProjectileItems.Count - 1;
 			ProjectileItem projectileItem = ProjectileItems[lastIndex];
-			if(count == 1)
+			if (count == 1)
 			{
 				ProjectileItems = null;
 			}

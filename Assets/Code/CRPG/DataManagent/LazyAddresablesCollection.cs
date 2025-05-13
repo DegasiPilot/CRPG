@@ -5,8 +5,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace CRPG.DataManagement
 {
-    class LazyAddresablesCollection<T> : IDisposable
-    {
+	class LazyAddresablesCollection<T> : IDisposable
+	{
 		internal LazyAddresablesCollection(string label)
 		{
 			_label = label;

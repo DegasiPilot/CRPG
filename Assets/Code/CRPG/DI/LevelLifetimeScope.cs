@@ -3,7 +3,7 @@ using VContainer.Unity;
 
 public class LevelLifetimeScope : LifetimeScope
 {
-    protected override void Configure(IContainerBuilder builder)
-    {
-    }
+	protected override void Configure(IContainerBuilder builder)
+	{
+	}
 }

@@ -12,9 +12,8 @@ namespace CRPG.MainMenu
 		private List<GameSaveInfo> _saves;
 		private MainMenuScript _mainMenuScript;
 
-		public MainMenuViewModel(IDataSaveLoader dataSaveLoader, GameDataManager gameDataManager, MainMenuScript mainMenuScript, MessageBoxManager messageBoxManager)
+		public MainMenuViewModel(GameDataManager gameDataManager, MainMenuScript mainMenuScript, MessageBoxManager messageBoxManager)
 		{
-			_dataSaveLoader = dataSaveLoader;
 			_messageBoxManager = messageBoxManager;
 			_gameDataManager = gameDataManager;
 			_mainMenuScript = mainMenuScript;
@@ -27,6 +26,21 @@ namespace CRPG.MainMenu
 
 		public void Awake()
 		{
+			MongoDataSaveLoader mongo = MongoDataSaveLoader.Instance;
+			if (mongo.Ping())
+			{
+				_dataSaveLoader = mongo;
+			}
+			else
+			{
+				if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
+				{
+					_messageBoxManager.ShowMessage("Нет подключения к БД. Включен оффлайн режим");
+				}
+				_dataSaveLoader = LocalSaveLoader.Instance;
+			}
+
+			GlobalDataManager.DataSaveLoader = _dataSaveLoader;
 			_mainMenuScript.AuthRegManager.Activate(_dataSaveLoader, _messageBoxManager);
 		}
 

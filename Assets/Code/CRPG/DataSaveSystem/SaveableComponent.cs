@@ -2,9 +2,9 @@
 
 namespace CRPG.DataSaveSystem
 {
-    interface ISaveableComponent
-    {
-        object Save();
-        void Load(IReadOnlyCollection<object> componentsData);
-    }
+	interface ISaveableComponent
+	{
+		object Save();
+		void Load(IReadOnlyCollection<object> componentsData);
+	}
 }

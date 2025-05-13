@@ -2,8 +2,8 @@
 
 namespace CRPG.Interactions
 {
-    class PickupItemInteract : Interact
-    {
+	class PickupItemInteract : Interact
+	{
 		private Item _item;
 
 		public PickupItemInteract(Item item)

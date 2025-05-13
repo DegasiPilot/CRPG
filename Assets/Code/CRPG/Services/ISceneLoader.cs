@@ -2,8 +2,8 @@
 
 namespace CRPG.Services
 {
-    public interface ISceneLoader
-    {
-        public void LoadScene(Scene scene);
-    }
+	public interface ISceneLoader
+	{
+		public void LoadScene(Scene scene);
+	}
 }

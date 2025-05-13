@@ -1,14 +1,14 @@
-﻿using CRPG.DataSaveSystem;
+﻿using CRPG.Customization;
+using CRPG.DataSaveSystem;
 using System;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
-using CRPG.Customization;
+using UnityEngine.SceneManagement;
 
 namespace CRPG.PersonageRedactor
 {
-    class PersonageCreatorViewModel : IDisposable
-    {
+	class PersonageCreatorViewModel : IDisposable
+	{
 		public event Action OnNoMoreStatPoints;
 		public event Action OnGetStatPoints;
 
@@ -24,8 +24,8 @@ namespace CRPG.PersonageRedactor
 		private const int _maxPointsForStat = 9;
 
 		private int _maxStatPointForSpent => _personageInfo.RaceInfo != null &&
-			_personageInfo.RaceInfo.Race == Race.Human ? 9 + _humanStatPointsBonus : 9;
-		private const int _humanStatPointsBonus = 2;
+			_personageInfo.RaceInfo.Race == Race.Human ? 8 + _humanStatPointsBonus : 8;
+		private const int _humanStatPointsBonus = 3;
 		private IDataSaveLoader _dataSaveLoader;
 		private GlobalDataManager _globalDataManager;
 		private PlayerCustomizer _playerCustomizer => GameData.MainPlayer.PlayerCustomizer;
@@ -36,7 +36,7 @@ namespace CRPG.PersonageRedactor
 			get => _hairColor;
 			set
 			{
-				if(HairColor != value)
+				if (HairColor != value)
 				{
 					_hairColor = value;
 					_personageCreator.HairColor = value;
@@ -79,9 +79,9 @@ namespace CRPG.PersonageRedactor
 		private CharacteristicRedactorViewModel[] _characteristicRedactors;
 		private PersonageCreator _personageCreator;
 
-		internal PersonageCreatorViewModel(PersonageCreator personageCreator, IDataSaveLoader dataSaveLoader, GlobalDataManager globalDataManager)
+		internal PersonageCreatorViewModel(PersonageCreator personageCreator, GlobalDataManager globalDataManager)
 		{
-			_dataSaveLoader = dataSaveLoader;
+			_dataSaveLoader = GlobalDataManager.DataSaveLoader;
 			_globalDataManager = globalDataManager;
 			_personageCreator = personageCreator;
 			_personageInfo = GameData.MainPlayer.PlayerController.Personage.PersonageInfo;
@@ -98,7 +98,7 @@ namespace CRPG.PersonageRedactor
 			_personageCreator.OnRotate += OnRotate;
 			_personageCreator.OnGenderChanged.AddListener(GenderChanged);
 			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent;
-#if DEBUG
+#if UNITY_EDITOR
 			SetName("Тестовый игрок");
 			_personageCreator.SetNameWithoutNotify("Тестовый игрок");
 			_personageInfo.Strength = 5;
@@ -107,7 +107,7 @@ namespace CRPG.PersonageRedactor
 #endif
 
 			_characteristicRedactors = new CharacteristicRedactorViewModel[_personageCreator.StatRedactors.Length];
-			for(int i = 0; i < _personageCreator.StatRedactors.Length; i++)
+			for (int i = 0; i < _personageCreator.StatRedactors.Length; i++)
 			{
 				_characteristicRedactors[i] = new CharacteristicRedactorViewModel(this, _personageCreator.StatRedactors[i]);
 			}
@@ -184,7 +184,7 @@ namespace CRPG.PersonageRedactor
 		{
 			if (_personageInfo.RaceInfo == null || raceInfo.Race != _personageInfo.RaceInfo.Race)
 			{
-				if(_personageInfo.RaceInfo != null)
+				if (_personageInfo.RaceInfo != null)
 				{
 					RemoveOldRaceBonus();
 				}
@@ -218,7 +218,7 @@ namespace CRPG.PersonageRedactor
 			switch (_personageInfo.RaceInfo.Race)
 			{
 				case Race.Human:
-					if(_personageInfo.UnSpendedStatPoints < _maxStatPointForSpent)
+					if (_personageInfo.UnSpendedStatPoints < _maxStatPointForSpent)
 					{
 						_personageInfo.UnSpendedStatPoints += _humanStatPointsBonus;
 					}

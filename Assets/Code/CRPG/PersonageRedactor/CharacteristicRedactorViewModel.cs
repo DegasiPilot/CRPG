@@ -1,7 +1,7 @@
 ﻿namespace CRPG.PersonageRedactor
 {
-    class CharacteristicRedactorViewModel
-    {
+	class CharacteristicRedactorViewModel
+	{
 		private PersonageCreatorViewModel _creator;
 		private CharacteristicRedactor _view;
 

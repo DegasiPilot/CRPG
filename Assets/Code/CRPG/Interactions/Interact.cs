@@ -2,8 +2,8 @@
 
 namespace CRPG.Interactions
 {
-    public abstract class Interact
-    {
-        public abstract void Execute(PersonageController executor);
-    }
+	public abstract class Interact
+	{
+		public abstract void Execute(PersonageController executor);
+	}
 }

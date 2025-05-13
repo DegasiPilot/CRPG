@@ -6,20 +6,20 @@ using System.Collections.Generic;
 
 public class GameDataManager
 {
-    private MainPlayer _playerPrefab;
+	private MainPlayer _playerPrefab;
 	private GlobalDataManager _globalDataManager;
 
-    internal GameDataManager(MainPlayer playerPrefab, GlobalDataManager globalDataManager)
-    {
+	internal GameDataManager(MainPlayer playerPrefab, GlobalDataManager globalDataManager)
+	{
 		_playerPrefab = playerPrefab;
 		_globalDataManager = globalDataManager;
-		if(GameData.MainPlayer != null)
+		if (GameData.MainPlayer != null)
 		{
 			UnityEngine.Object.Destroy(GameData.MainPlayer.gameObject);
 		}
 		if (GameData.Companions != null)
 		{
-			foreach(var companion in GameData.Companions)
+			foreach (var companion in GameData.Companions)
 			{
 				UnityEngine.Object.Destroy(companion.gameObject);
 			}
@@ -32,8 +32,8 @@ public class GameDataManager
 		InitPlayer(player);
 	}
 
-    public void LoadGameSave(GameSaveInfo gameSave)
-    {
+	public void LoadGameSave(GameSaveInfo gameSave)
+	{
 		var player = UnityEngine.Object.Instantiate(_playerPrefab,
 			gameSave.MainPlayerInfo.Position,
 			gameSave.MainPlayerInfo.Rotation);
@@ -44,10 +44,10 @@ public class GameDataManager
 		LoadEquipedItems(gameSave.MainPlayerInfo.EquipedItems, player.PlayerController.Personage.EquipmentManager);
 		GameData.SceneSaveInfo = gameSave.SceneSaveInfo;
 
-        if (gameSave.InventoryItems != null)
-        {
-            LoadInventory(gameSave.InventoryItems, player.PlayerController.Inventory.transform);
-        }
+		if (gameSave.InventoryItems != null)
+		{
+			LoadInventory(gameSave.InventoryItems, player.PlayerController.Inventory.transform);
+		}
 
 		if (gameSave.CompanionsInfo != null)
 		{
@@ -61,8 +61,8 @@ public class GameDataManager
 		GameData.MainPlayer = player;
 	}
 
-    private void LoadInventory(string[] inventoryItems, UnityEngine.Transform inventory)
-    {
+	private void LoadInventory(string[] inventoryItems, UnityEngine.Transform inventory)
+	{
 		GameData.Inventory = new List<Item>(inventoryItems.Length);
 		for (int i = 0; i < inventoryItems.Length; i++)
 		{

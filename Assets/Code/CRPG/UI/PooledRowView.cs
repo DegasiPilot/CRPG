@@ -20,7 +20,7 @@ namespace BattleSystem.Views
 			{
 				ReleaseUsedObjects();
 			}
-			
+
 			for (int i = 0; i < row.Length; i++)
 			{
 				var textMeshPro = GetText();

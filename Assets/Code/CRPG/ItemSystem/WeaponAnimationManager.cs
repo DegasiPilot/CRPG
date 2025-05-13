@@ -2,13 +2,13 @@
 
 namespace CRPG.ItemSystem
 {
-    class WeaponAnimationManager : MonoBehaviour
-    {
+	class WeaponAnimationManager : MonoBehaviour
+	{
 		public Transform Target { get; set; }
 		public ItemSkin RightHand { get; set; }
 
 		[Tooltip("Место за которое держат тетиву")]
-        [SerializeField] private Transform _bowKeyTransform;
+		[SerializeField] private Transform _bowKeyTransform;
 
 		private Vector3 _defaultLocalPosition;
 		private bool _isAiming;

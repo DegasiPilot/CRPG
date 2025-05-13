@@ -24,12 +24,10 @@ namespace DegasiPilot.UniPooling
 		{
 			if (_pooledObjects.TryPop(out T innerObject))
 			{
-				UnityEngine.Debug.Log("Get pooled object");
 				return innerObject;
 			}
 			else
 			{
-				UnityEngine.Debug.Log("Instance non puled object");
 				return UnityEngine.Object.Instantiate(_prefab);
 			}
 		}

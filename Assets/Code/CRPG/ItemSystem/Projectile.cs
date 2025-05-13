@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace CRPG
 {
-    class Projectile : MonoBehaviour
-    {
+	class Projectile : MonoBehaviour
+	{
 		[Tooltip("Базовый множитель высоты")]
-		[SerializeField] float _distanceToHeightRatio = 0.4f; 
+		[SerializeField] float _distanceToHeightRatio = 0.4f;
 		[SerializeField] Vector3 _headOffset;
 		[SerializeField] float _maxFireOffset;
-		
+
 		Transform _target;
 
 		private Vector3 _headPosition
@@ -46,7 +46,7 @@ namespace CRPG
 
 			// Фиксируем позицию после окончания
 			_headPosition = targetPosition;
-			if(_target != null && Vector3.Distance(_target.position, _headPosition) < 1f)
+			if (_target != null && Vector3.Distance(_target.position, _headPosition) < 1f)
 			{
 				transform.SetParent(_target);
 			}

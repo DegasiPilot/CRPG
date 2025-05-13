@@ -2,8 +2,8 @@
 
 namespace CRPG.Interactions
 {
-    class DialogueInteract : Interact
-    {
+	class DialogueInteract : Interact
+	{
 		DialogueActor _dialogueActor;
 		GameManager _gameManager;
 

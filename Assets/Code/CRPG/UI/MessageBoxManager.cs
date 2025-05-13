@@ -4,92 +4,103 @@ using UnityEngine.UI;
 
 public class MessageBoxManager : MonoBehaviour
 {
-    private static Coroutine _emergenceMessageRoutine;
-    private static Coroutine _hideMessageRoutine;
-    private static float _alphaFactor = 0;
+	private static Coroutine _emergenceMessageRoutine;
+	private static Coroutine _hideMessageRoutine;
+	private static float _alphaFactor = 0;
 
-    public GameObject MessageBoxCanvas;
-    public Image MessageBackground;
-    public Text MessageTextblock;
-    public float MessageEmergenceTime;
-    public float MessageTime;
-    public float MessageHideTime;
+	public GameObject MessageBoxCanvas;
+	public Image MessageBackground;
+	public Text MessageTextblock;
+	public float MessageEmergenceTime;
+	public float MessageTimePerCharacter;
+	public float MessageHideTime;
 
-    private Color _normalTextColor;
-    private Color _normalBackgroundColor;
+	private Color _normalTextColor;
+	private Color _normalBackgroundColor;
 
-    private void Awake()
-    {
-        _normalTextColor = MessageTextblock.color;
-        _normalBackgroundColor = MessageBackground.color;
-        DontDestroyOnLoad(gameObject);
-    }
+	private string _message;
 
-    public void ShowMessage(string message)
-    {
-        MessageBoxCanvas.SetActive(true);
-        MessageTextblock.text = message;
-        EmergenceMessage();
-        Debug.Log(message, this);
-    }
+	private void Awake()
+	{
+		_normalTextColor = MessageTextblock.color;
+		_normalBackgroundColor = MessageBackground.color;
+		DontDestroyOnLoad(gameObject);
+	}
 
-    private void EmergenceMessage()
-    {
-        if (_emergenceMessageRoutine != null)
-        {
-            StopCoroutine(_emergenceMessageRoutine);
-        }
-        if (_hideMessageRoutine != null)
-        {
-            StopCoroutine(_hideMessageRoutine);
-        }
-        _emergenceMessageRoutine = StartCoroutine(EmergenceMessageRoutine());
+	public void ShowMessage(string message)
+	{
+		if (_message != null)
+		{
+			_message += "\n" + message;
+		}
+		else
+		{
+			_message = message;
+		}
+		MessageBoxCanvas.SetActive(true);
+		MessageTextblock.text = message;
+		Debug.Log(message, this);
+		EmergenceMessage();
+	}
 
-        IEnumerator EmergenceMessageRoutine()
-        {
-            while (_alphaFactor < 1)
-            {
-                yield return null;
-                _alphaFactor += Time.deltaTime / MessageEmergenceTime;
-                Color messageBackgroundColor = _normalBackgroundColor;
-                messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
-                MessageBackground.color = messageBackgroundColor;
-                Color messageTextColor = _normalTextColor;
-                messageTextColor.a = _normalTextColor.a * _alphaFactor;
-                MessageTextblock.color = _normalTextColor * _alphaFactor;
-            }
-            HideMessage();
-        }
-    }
+	private void EmergenceMessage()
+	{
+		if (_emergenceMessageRoutine != null)
+		{
+			StopCoroutine(_emergenceMessageRoutine);
+		}
+		if (_hideMessageRoutine != null)
+		{
+			StopCoroutine(_hideMessageRoutine);
+		}
+		_emergenceMessageRoutine = StartCoroutine(EmergenceMessageRoutine());
 
-    private void HideMessage()
-    {
-        if(_hideMessageRoutine != null)
-        {
-            StopCoroutine(_hideMessageRoutine);
-        }
-        _hideMessageRoutine = StartCoroutine(HideMessageRoutine());
+		IEnumerator EmergenceMessageRoutine()
+		{
+			while (_alphaFactor < 1)
+			{
+				yield return null;
+				_alphaFactor += Time.deltaTime / MessageEmergenceTime;
+				Color messageBackgroundColor = _normalBackgroundColor;
+				messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
+				MessageBackground.color = messageBackgroundColor;
+				Color messageTextColor = _normalTextColor;
+				messageTextColor.a = _normalTextColor.a * _alphaFactor;
+				MessageTextblock.color = _normalTextColor * _alphaFactor;
+			}
+			HideMessage();
+		}
+	}
 
-        IEnumerator HideMessageRoutine()
-        {
-            float t = 1;
-            while (t > 0)
-            {
-                yield return null;
-                t -= Time.deltaTime / MessageTime;
-            }
+	private void HideMessage()
+	{
+		if (_hideMessageRoutine != null)
+		{
+			StopCoroutine(_hideMessageRoutine);
+		}
+		_hideMessageRoutine = StartCoroutine(HideMessageRoutine());
 
-            while(_alphaFactor > 0)
-            {
-                yield return null;
-                _alphaFactor -= Time.deltaTime / MessageHideTime;
-                Color messageBackgroundColor = _normalBackgroundColor;
-                messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
-                MessageBackground.color = messageBackgroundColor;
-                Color messageTextColor = _normalTextColor;
-                messageTextColor.a = _normalTextColor.a * _alphaFactor;
-                MessageTextblock.color = _normalTextColor * _alphaFactor;
-            }
-        }
-    }
+		IEnumerator HideMessageRoutine()
+		{
+			Debug.Log("Calculated length " + _message.Length * MessageTimePerCharacter);
+			float t = 1;
+			while (t > 0)
+			{
+				yield return null;
+				t -= Time.deltaTime / (_message.Length * MessageTimePerCharacter);
+			}
+
+			while (_alphaFactor > 0)
+			{
+				yield return null;
+				_alphaFactor -= Time.deltaTime / MessageHideTime;
+				Color messageBackgroundColor = _normalBackgroundColor;
+				messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
+				MessageBackground.color = messageBackgroundColor;
+				Color messageTextColor = _normalTextColor;
+				messageTextColor.a = _normalTextColor.a * _alphaFactor;
+				MessageTextblock.color = _normalTextColor * _alphaFactor;
+			}
+		}
+	}
 }

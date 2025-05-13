@@ -2,14 +2,12 @@
 namespace CRPG.DataSaveSystem.SaveData
 {
 	public class MainPlayerSaveInfo
-    {
+	{
 		public string Name;
 
 		public int Strength;
 		public int Dexterity;
 		public int Constitution;
-		public int Intelligence;
-		public int Wisdom;
 		public int Charisma;
 
 		public int UnSpendedStatPoints;

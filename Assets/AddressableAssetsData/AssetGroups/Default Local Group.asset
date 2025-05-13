@@ -21,6 +21,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d45cc643ab5569439a0977a2ea3c115
+    m_Address: Item/FinalSword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 26ba48c108a7195489456fb112f236f3
     m_Address: Item/Shield
     m_ReadOnly: 0
@@ -47,6 +52,16 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 536e84108b1b48b45ba0bd25f0e0b0b2
     m_Address: Personages/Alex
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56a73c783c8d3af428cc10ed923b725e
+    m_Address: Item/PlayerSword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5d078158fcb335f45aa06caa9104327b
+    m_Address: Level1/HramBlocker
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -89,12 +104,6 @@ MonoBehaviour:
     m_Address: Personages/Skeleton
     m_ReadOnly: 0
     m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ae3c0075623491d429ea82d9af786c48
-    m_Address: RacesInfo/OrcInfo
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - RaceInfo
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b859ee7fcf24f8a4c94f064b4dc7ba54
     m_Address: Item/Stick

@@ -2,8 +2,8 @@
 
 namespace CRPG
 {
-    static class PhysicHelper
-    {
+	static class PhysicHelper
+	{
 		public static Vector3 JumpToPosition(Vector3 startPos, Vector3 targetPosition, float jumpHeigth, float progress)
 		{
 			// Параболическая траектория (y = -4x^2 + 4x)

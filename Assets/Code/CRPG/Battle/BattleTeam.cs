@@ -1,6 +1,6 @@
 ﻿public enum BattleTeam
 {
-    Allies = 0,
-    Enemies,
-    Neutrals,
+	Allies = 0,
+	Enemies,
+	Neutrals,
 }

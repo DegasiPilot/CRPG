@@ -6,7 +6,30 @@ namespace CRPG.DataSaveSystem
 {
 	internal class LocalSaveLoader : IDataSaveLoader
 	{
-		private User _user = new();
+		private static LocalSaveLoader _instance;
+		public static LocalSaveLoader Instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = new LocalSaveLoader();
+				}
+				return _instance;
+			}
+
+		}
+
+		public bool IsUserLogined => true;
+		public string UserLogin => _user.Login;
+		public bool CanExit => false;
+
+		private User _user = new() { Login = "Оффлайн" };
+
+		private LocalSaveLoader()
+		{
+
+		}
 
 		public void CreateGameSaveInfo(GameSaveInfo gameSave)
 		{
@@ -20,16 +43,16 @@ namespace CRPG.DataSaveSystem
 
 		public GameSaveInfo GetLastGameSave()
 		{
-			return _user.GameSaves[_user.GameSaves.Count - 1];
+			return _user.GameSaves?[_user.GameSaves.Count - 1];
 		}
 
 		public bool TryLogin(string login, string password, out string errors)
 		{
-			if(_user.Login != login)
+			if (_user.Login != login)
 			{
 				errors = "Неверный логин";
 			}
-			else if(_user.Password != password)
+			else if (_user.Password != password)
 			{
 				errors = "Неверный пароль";
 			}

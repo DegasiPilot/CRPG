@@ -2,8 +2,8 @@
 
 namespace CRPG.UI
 {
-    class PlayerPanelViewModel : IDisposable
-    {
+	class PlayerPanelViewModel : IDisposable
+	{
 		internal PlayerPanelViewModel(PlayerPanel view, Func<ActionType, PersonageActionInfo> getActionInfo)
 		{
 			_view = view;
@@ -12,7 +12,7 @@ namespace CRPG.UI
 			_getActionInfo = getActionInfo;
 		}
 
-        private PlayerPanel _view;
+		private PlayerPanel _view;
 		private PlayerController _personageController;
 		private Personage _personage => _personageController?.Personage;
 		private PlayerActionsViewModel _actionsViewModel;
@@ -28,6 +28,11 @@ namespace CRPG.UI
 			_view.UpdateStaminaBar(_personage.Stamina, _personage.MaxStamina);
 		}
 
+		private void UpdateRemainActions()
+		{
+			_view.UpdateActions(_personage.RemainActions, _personage.MaxActions);
+		}
+
 		public void SetActivePersonage(PlayerController personageController)
 		{
 			Personage personage = personageController.Personage;
@@ -35,6 +40,7 @@ namespace CRPG.UI
 			{
 				_personage.OnHealthChanged.RemoveListener(UpdateHealthBar);
 				_personage.OnStaminaChanged.RemoveListener(UpdateStaminaBar);
+				_personage.OnRemainActionsChanged.RemoveListener(UpdateRemainActions);
 				_personageController.OnSetAction.RemoveListener(_actionsViewModel.SetActiveAction);
 			}
 			_personageController = personageController;
@@ -42,10 +48,12 @@ namespace CRPG.UI
 			_view.PlayerName = personage.PersonageInfo.Name;
 			UpdateHealthBar();
 			UpdateStaminaBar();
+			UpdateRemainActions();
 			_view.PlayerPortrait = personage.PersonageInfo.PersonagePortrait;
 			_personageController = personageController;
 			personage.OnHealthChanged.AddListener(UpdateHealthBar);
 			personage.OnStaminaChanged.AddListener(UpdateStaminaBar);
+			_personage.OnRemainActionsChanged.AddListener(UpdateRemainActions);
 			_personageController.OnSetAction.AddListener(_actionsViewModel.SetActiveAction);
 			_actionsViewModel.Setup(personage.Actions, _getActionInfo);
 		}

@@ -32,7 +32,7 @@ namespace BattleSystem.ViewModels
 			get => _attackEnergy;
 			set
 			{
-				if  (value != _attackEnergy &&
+				if (value != _attackEnergy &&
 					(value >= MinAttackEnergy) &&
 					 value <= MaxAttackEnergy)
 				{

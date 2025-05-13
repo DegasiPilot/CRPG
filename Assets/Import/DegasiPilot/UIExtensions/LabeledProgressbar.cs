@@ -7,12 +7,12 @@ namespace DegasiPilot.UIExtensions
 	{
 		[SerializeField] private string _prefix;
 		[SerializeField] private TextMeshProUGUI Label;
+		[TextArea]
+		[SerializeField] private string _separator = "/";
+
 #if UNITY_EDITOR
 		[SerializeField] private string _previewString = "xx";
 		[SerializeField] private bool _needPreview;
-		[TextArea]
-		[SerializeField] private string _separator = "/";
-#endif
 
 		private void OnValidate()
 		{
@@ -21,6 +21,7 @@ namespace DegasiPilot.UIExtensions
 				Label.text = _prefix + _previewString + _separator + _previewString;
 			}
 		}
+#endif
 
 		public override void Refresh(float value, float maxValue, bool IsPermanent = false)
 		{

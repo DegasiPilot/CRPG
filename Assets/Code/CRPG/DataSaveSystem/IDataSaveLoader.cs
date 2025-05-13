@@ -5,6 +5,10 @@ namespace CRPG.DataSaveSystem
 {
 	internal interface IDataSaveLoader
 	{
+		public bool IsUserLogined { get; }
+		public string UserLogin { get; }
+		public bool CanExit { get; }
+
 		public bool TryLogin(string login, string password, out string errors);
 		public bool TryRegistrate(string login, string password, out string errors);
 

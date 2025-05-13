@@ -11,9 +11,9 @@ internal class InventorySlot : ItemSlot
 
 	private IEnumerable<T> ItemsAs<T>() where T : Item
 	{
-		foreach(var item in Items)
+		foreach (var item in Items)
 		{
-			if(item is T requiredItem)
+			if (item is T requiredItem)
 			{
 				yield return requiredItem;
 			}
@@ -21,8 +21,8 @@ internal class InventorySlot : ItemSlot
 	}
 
 	public void EquipItem(Item item)
-    {
-		if(Items == null)
+	{
+		if (Items == null)
 		{
 			Items = new List<Item>() { item };
 		}
@@ -46,15 +46,15 @@ internal class InventorySlot : ItemSlot
 		OnEquipItem.Invoke(Items[0].ItemInfo);
 	}
 
-    public override void ClearSlot()
-    {
+	public override void ClearSlot()
+	{
 		OnClearSlot?.Invoke();
 		Items = null;
-    }
+	}
 
 	public override bool TrySetupItemContextMenu(ItemContextMenu itemContextMenu)
 	{
-		if(Items != null)
+		if (Items != null)
 		{
 			itemContextMenu.Setup(Items[0].ItemInfo, Items[0] is EquipableItem equipableItem, false);
 			return true;
@@ -69,7 +69,7 @@ internal class InventorySlot : ItemSlot
 	{
 		if (Items[0] is EquipableItem equipableItem)
 		{
-			if(Items.Count > 1)
+			if (Items.Count > 1)
 			{
 				equipmentManager.EquipProjectiles(ItemsAs<ProjectileItem>());
 			}
@@ -88,7 +88,7 @@ internal class InventorySlot : ItemSlot
 
 	public override void OnDropButtonClick(Action<Item> dropItemCallback)
 	{
-		foreach(var item in Items)
+		foreach (var item in Items)
 		{
 			dropItemCallback.Invoke(item);
 		}

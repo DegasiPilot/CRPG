@@ -2,8 +2,8 @@
 
 namespace CRPG.ItemSystem
 {
-    class DefaultItemsEquiper : MonoBehaviour
-    {
+	class DefaultItemsEquiper : MonoBehaviour
+	{
 		[SerializeField] private EquipmentManager _equipmentManager;
 
 		[Header("Items")]

@@ -2,8 +2,8 @@
 
 namespace CRPG.Interactions
 {
-    class AttackInteract : Interact
-    {
+	class AttackInteract : Interact
+	{
 		PersonageController _enemy;
 
 		public AttackInteract(PersonageController enemy)
