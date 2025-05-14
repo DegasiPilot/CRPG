@@ -136,6 +136,11 @@ public class PlayerController : PersonageController
 
 	public override void SetActiveAction(ActionType actionType)
 	{
+		if(_activeAction == ActionType.Movement)
+		{
+			AccesableLineRenderer.enabled = false;
+			UnaccesableLineRenderer.enabled = false;
+		}
 		base.SetActiveAction(actionType);
 		OnSetAction.Invoke(actionType);
 		if (actionType == ActionType.Jumping)

@@ -14,8 +14,6 @@ public class RaceInfo : ScriptableObject
 	public int StrengthBonus;
 	public int DexterityBonus;
 	public int ConstitutionBonus;
-	public int IntelligenceBonus;
-	public int WisdomBonus;
 	public int CharismaBonus;
 
 	public int this[Characteristics index]

@@ -158,10 +158,6 @@ public class GameManager : MonoBehaviour
 			{
 				attackInfoBuider.AppendLine("Нет предметов: " + equipmentManager.Weapon.WeaponInfo.RequiredProjectile.Name);
 			}
-			if (GameMode == GameMode.Battle && distance - 0.01f > ActivePlayer.MaxAttackDistance)
-			{
-				attackInfoBuider.AppendLine("Слишком далеко!");
-			}
 			if (ActivePlayer.Personage.Stamina < ActivePlayer.Personage.MinAttackEnergy)
 			{
 				attackInfoBuider.AppendLine("Недостаточно энергии!");

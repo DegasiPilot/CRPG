@@ -49,7 +49,7 @@ MonoBehaviour:
   MessageBackground: {fileID: 1932195293036403237}
   MessageTextblock: {fileID: 7664783815381494445}
   MessageEmergenceTime: 0.15
-  MessageTimePerCharacter: 0.06
+  MessageTimePerCharacter: 0.05
   MessageHideTime: 0.3
 --- !u!1 &1853209037987207716
 GameObject:

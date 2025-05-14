@@ -55,6 +55,10 @@ public class EquipmentManager : MonoBehaviour
 			{
 				yield return boorsArmor;
 			}
+			if(LeftHandSlot.EquipableItem is Armor shield)
+			{
+				yield return shield;
+			}
 		}
 	}
 

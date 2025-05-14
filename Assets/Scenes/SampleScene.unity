@@ -3907,8 +3907,8 @@ MonoBehaviour:
   _prefix: "\u0416\u0438\u0437\u043D\u0438: "
   Label: {fileID: 933288384}
   _separator: /
-  _needPreview: 1
   _previewString: xx
+  _needPreview: 1
 --- !u!1 &475221705
 GameObject:
   m_ObjectHideFlags: 0
@@ -4055,8 +4055,8 @@ MonoBehaviour:
   _prefix: "\u042D\u043D\u0435\u0440\u0433\u0438\u044F: "
   Label: {fileID: 555138001}
   _separator: /
-  _needPreview: 1
   _previewString: xx
+  _needPreview: 1
 --- !u!1 &505572400
 GameObject:
   m_ObjectHideFlags: 0
@@ -5575,7 +5575,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!108 &705507994
 Light:
@@ -14264,9 +14264,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4644635268742137867, guid: 5d078158fcb335f45aa06caa9104327b, type: 3}
+      propertyPath: _personage
+      value: 
+      objectReference: {fileID: 4787714208677936499}
     - target: {fileID: 2487265747814121898, guid: 5d078158fcb335f45aa06caa9104327b, type: 3}
       propertyPath: m_Name
       value: Blocker
+      objectReference: {fileID: 0}
+    - target: {fileID: 2487265747814121898, guid: 5d078158fcb335f45aa06caa9104327b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6170563175807126363, guid: 5d078158fcb335f45aa06caa9104327b, type: 3}
       propertyPath: m_LocalPosition.x

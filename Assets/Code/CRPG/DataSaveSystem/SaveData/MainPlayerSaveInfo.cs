@@ -10,8 +10,6 @@ namespace CRPG.DataSaveSystem.SaveData
 		public int Constitution;
 		public int Charisma;
 
-		public int UnSpendedStatPoints;
-
 		public Race Race { get; set; }
 
 		public byte[] ImageBytes { get; set; }

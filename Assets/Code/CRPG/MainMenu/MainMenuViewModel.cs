@@ -33,10 +33,10 @@ namespace CRPG.MainMenu
 			}
 			else
 			{
-				if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
-				{
+				//if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
+				//{
 					_messageBoxManager.ShowMessage("Нет подключения к БД. Включен оффлайн режим");
-				}
+				//}
 				_dataSaveLoader = LocalSaveLoader.Instance;
 			}
 

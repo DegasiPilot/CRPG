@@ -52,7 +52,7 @@ public class PersonageInfo : ScriptableObject
 		Charisma = personageSaveInfo.Charisma;
 
 		RaceInfo = getRaceInfo.Invoke(personageSaveInfo.Race);
-		UnSpendedStatPoints = personageSaveInfo.UnSpendedStatPoints;
+		UnSpendedStatPoints = 0;
 
 		_personagePortrait = new Texture2D(1, 1);
 		_personagePortrait.LoadImage(personageSaveInfo.ImageBytes);
@@ -73,7 +73,6 @@ public class PersonageInfo : ScriptableObject
 		personageSaveInfo.Charisma = Charisma;
 
 		personageSaveInfo.Race = RaceInfo.Race;
-		personageSaveInfo.UnSpendedStatPoints = UnSpendedStatPoints;
 
 		personageSaveInfo.ImageBytes = _personagePortrait.EncodeToPNG();
 
@@ -109,8 +108,7 @@ public class PersonageInfo : ScriptableObject
 		}
 	}
 
-	//public int GetCharacteristicBonus(Characteristics characteristic) => (this[characteristic] - 10) / 2;
-	public int GetCharacteristicBonus(Characteristics characteristic) => (this[characteristic]);
+	public int GetCharacteristicBonus(Characteristics characteristic) => this[characteristic] / 2;
 
 	public void ResetPersonageInfo()
 	{

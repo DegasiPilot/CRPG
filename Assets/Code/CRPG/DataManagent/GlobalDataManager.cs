@@ -47,11 +47,19 @@ namespace CRPG
 
 		public GameObject GetClone(string key)
 		{
-			var operation = Addressables.LoadAssetAsync<GameObject>(key);
-			operation.WaitForCompletion();
-			GameObject go = Instantiate(operation.Result);
-			operation.Release();
-			return go;
+			try
+			{
+				var operation = Addressables.LoadAssetAsync<GameObject>(key);
+				operation.WaitForCompletion();
+				GameObject go = Instantiate(operation.Result);
+				operation.Release();
+				return go;
+			}
+			catch
+			{
+				Debug.LogError("No addresable for key " + key);
+				return null;
+			}
 		}
 	}
 }

@@ -26,8 +26,11 @@ namespace CRPG.PersonageRedactor
 		private int _maxStatPointForSpent => _personageInfo.RaceInfo != null &&
 			_personageInfo.RaceInfo.Race == Race.Human ? 8 + _humanStatPointsBonus : 8;
 		private const int _humanStatPointsBonus = 3;
+
 		private IDataSaveLoader _dataSaveLoader;
 		private GlobalDataManager _globalDataManager;
+		private MessageBoxManager _messageBoxManager;
+
 		private PlayerCustomizer _playerCustomizer => GameData.MainPlayer.PlayerCustomizer;
 
 		private Color _hairColor;
@@ -79,8 +82,9 @@ namespace CRPG.PersonageRedactor
 		private CharacteristicRedactorViewModel[] _characteristicRedactors;
 		private PersonageCreator _personageCreator;
 
-		internal PersonageCreatorViewModel(PersonageCreator personageCreator, GlobalDataManager globalDataManager)
+		internal PersonageCreatorViewModel(PersonageCreator personageCreator, GlobalDataManager globalDataManager, MessageBoxManager messageBoxManager)
 		{
+			_messageBoxManager = messageBoxManager;
 			_dataSaveLoader = GlobalDataManager.DataSaveLoader;
 			_globalDataManager = globalDataManager;
 			_personageCreator = personageCreator;
@@ -98,6 +102,8 @@ namespace CRPG.PersonageRedactor
 			_personageCreator.OnRotate += OnRotate;
 			_personageCreator.OnGenderChanged.AddListener(GenderChanged);
 			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent;
+
+			SetName(string.Empty);
 #if UNITY_EDITOR
 			SetName("Тестовый игрок");
 			_personageCreator.SetNameWithoutNotify("Тестовый игрок");
@@ -240,41 +246,57 @@ namespace CRPG.PersonageRedactor
 
 		public void TrySavePersonage()
 		{
-			if (_personageInfo.UnSpendedStatPoints == 0 && !string.IsNullOrEmpty(_personageInfo.Name))
+			string errors = null;
+			if (string.IsNullOrEmpty(_personageInfo.Name))
 			{
-				ApplyBonuses();
-				AppearanceStruct appearance = new AppearanceStruct();
-				foreach (var redactor in _personageCreator.ApperanceRedactors)
+				errors = "Введите имя персонажа";
+			}
+			if (_personageInfo.UnSpendedStatPoints > 0)
+			{
+				if(errors == null)
 				{
-					switch (redactor.MyAppearancePart)
-					{
-						case AppearancePart.Hairs:
-							appearance.HairIndex = redactor.ActiveIndex;
-							break;
-						case AppearancePart.Beard:
-							appearance.BeardIndex = redactor.ActiveIndex;
-							break;
-						case AppearancePart.Face:
-							appearance.FaceIndex = redactor.ActiveIndex;
-							break;
-					}
+					errors = "Распределите все очки характеристик";
 				}
-				appearance.HairsColor = HairColor;
-				appearance.SkinColor = SkinColor;
-				GameData.MainPersonageAppearance = appearance;
-				_playerCustomizer.ApplyAppearance(appearance);
-				_personageInfo.PersonagePortrait = _personageCreator.SavePersonagePortrait();
+				else
+				{
+					errors += "\n" + "Распределите все очки характеристик";
+				}
+			}
 
-				GameData.InitializeNewGame(_personageInfo);
-				MaleObject.transform.rotation = Quaternion.identity;
-				FemaleObject.transform.rotation = Quaternion.identity;
-				_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
-				SceneManager.LoadScene("SampleScene");
-			}
-			else
+			if (!string.IsNullOrEmpty(errors))
 			{
-				Debug.Log("personage not ready");
+				_messageBoxManager.ShowMessage(errors);
+				return;
 			}
+
+			ApplyBonuses();
+			AppearanceStruct appearance = new AppearanceStruct();
+			foreach (var redactor in _personageCreator.ApperanceRedactors)
+			{
+				switch (redactor.MyAppearancePart)
+				{
+					case AppearancePart.Hairs:
+						appearance.HairIndex = redactor.ActiveIndex;
+						break;
+					case AppearancePart.Beard:
+						appearance.BeardIndex = redactor.ActiveIndex;
+						break;
+					case AppearancePart.Face:
+						appearance.FaceIndex = redactor.ActiveIndex;
+						break;
+				}
+			}
+			appearance.HairsColor = HairColor;
+			appearance.SkinColor = SkinColor;
+			GameData.MainPersonageAppearance = appearance;
+			_playerCustomizer.ApplyAppearance(appearance);
+			_personageInfo.PersonagePortrait = _personageCreator.SavePersonagePortrait();
+
+			GameData.InitializeNewGame(_personageInfo);
+			MaleObject.transform.rotation = Quaternion.identity;
+			FemaleObject.transform.rotation = Quaternion.identity;
+			_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
+			SceneManager.LoadScene("SampleScene");
 		}
 
 		private void ApplyBonuses()
@@ -287,7 +309,7 @@ namespace CRPG.PersonageRedactor
 
 		public void SetName(string name)
 		{
-			_personageInfo.Name = name;
+			_personageInfo.Name = name.Trim();
 		}
 
 		private int CostOfStatPoint(int statPointNunber) => 1;

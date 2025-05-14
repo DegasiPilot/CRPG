@@ -101,6 +101,7 @@ namespace CRPG.DataSaveSystem
 				foreach (var item in items)
 				{
 					itemNames[i] = item.GetComponent<SaveableGameobject>().UniqueName;
+					i++;
 				}
 				return itemNames;
 			}

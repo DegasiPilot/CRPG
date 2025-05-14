@@ -173,15 +173,17 @@ public static class BattleManager
 						}
 					}
 				}
-				if (GameManager.Instance.GameMode == GameMode.Battle && _activeFigthers[i].EnergyToDefend > 0)
+				if (GameManager.Instance.GameMode == GameMode.Battle)
 				{
-					isSpendAction = true;
-					_activeFigthers[i].PersonageController.Personage.Stamina -= _activeFigthers[i].EnergyToDefend;
-				}
-
-				if (GameManager.Instance.GameMode == GameMode.Battle && isSpendAction)
-				{
-					_activeFigthers[i].PersonageController.Personage.RemainActions--;
+					if(_activeFigthers[i].EnergyToDefend > 0)
+					{
+						isSpendAction = true;
+						_activeFigthers[i].PersonageController.Personage.Stamina -= _activeFigthers[i].EnergyToDefend;
+					}
+					if (isSpendAction)
+					{
+						_activeFigthers[i].PersonageController.Personage.RemainActions--;
+					}
 				}
 
 				if (!string.IsNullOrEmpty(message))
@@ -239,6 +241,7 @@ public static class BattleManager
 		foreach (PersonageController personageController in _participantPersonages)
 		{
 			personageController.Personage.Stamina = personageController.Personage.PersonageInfo.MaxStamina;
+			personageController.Personage.RemainActions = personageController.Personage.MaxActions;
 		}
 		OnBattleEndEvent.Invoke();
 		_participantPersonages = null;

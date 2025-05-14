@@ -39,7 +39,6 @@ public class MessageBoxManager : MonoBehaviour
 		}
 		MessageBoxCanvas.SetActive(true);
 		MessageTextblock.text = message;
-		Debug.Log(message, this);
 		EmergenceMessage();
 	}
 
@@ -82,7 +81,6 @@ public class MessageBoxManager : MonoBehaviour
 
 		IEnumerator HideMessageRoutine()
 		{
-			Debug.Log("Calculated length " + _message.Length * MessageTimePerCharacter);
 			float t = 1;
 			while (t > 0)
 			{
