@@ -1,5 +1,6 @@
 ﻿using CRPG.DataSaveSystem;
 using CRPG.DataSaveSystem.SaveData;
+using System;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -114,9 +115,11 @@ public class AuthRegManager : MonoBehaviour
 	private void AfterUserInitialized(string login)
 	{
 		UserPanelLogin.text = login;
-		ExitButton.interactable = _dataSaveLoader.CanExit;
+		ExitButton.gameObject.SetActive(_dataSaveLoader.CanExit);
 		LoginPanel.SetActive(false);
+		AfterUserInitializedEvent?.Invoke();
 	}
+	public event Action AfterUserInitializedEvent;
 
 	public void ExitFromAccount()
 	{

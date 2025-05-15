@@ -9,7 +9,11 @@ namespace CRPG
 {
 	public class GlobalDataManager : MonoBehaviour
 	{
+#if UNITY_EDITOR
 		internal static IDataSaveLoader DataSaveLoader = LocalSaveLoader.Instance;
+#else
+		internal static IDataSaveLoader DataSaveLoader;
+#endif
 
 		[SerializeField] private AssetLabelReference _personageActionLabel;
 		[SerializeField] private AssetLabelReference _raceInfoLabel;

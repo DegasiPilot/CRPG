@@ -13,6 +13,7 @@ namespace CRPG.DataSaveSystem
 		public bool IsUserLogined => _activeUser != null;
 		public string UserLogin => IsUserLogined ? _activeUser.Login : "Неавторизованный пользователь";
 		public bool CanExit => true;
+		public bool HasSaves => _activeUser?.GameSaves != null && _activeUser.GameSaves.Count > 0;
 
 		const string connectionUri = "mongodb://localhost:27017";
 		const string DbName = "CRPG_DB";

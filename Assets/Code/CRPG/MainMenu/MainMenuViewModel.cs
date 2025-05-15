@@ -33,15 +33,23 @@ namespace CRPG.MainMenu
 			}
 			else
 			{
-				//if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
-				//{
+				if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
+				{
 					_messageBoxManager.ShowMessage("Нет подключения к БД. Включен оффлайн режим");
-				//}
+				}
 				_dataSaveLoader = LocalSaveLoader.Instance;
 			}
 
 			GlobalDataManager.DataSaveLoader = _dataSaveLoader;
+			_mainMenuScript.AuthRegManager.AfterUserInitializedEvent += AfterUserInitialized;
 			_mainMenuScript.AuthRegManager.Activate(_dataSaveLoader, _messageBoxManager);
+		}
+
+		private void AfterUserInitialized()
+		{
+			bool hasSaves = _dataSaveLoader.HasSaves;
+			_mainMenuScript.LoadLastGameButton.gameObject.SetActive(hasSaves);
+			_mainMenuScript.LoadGameButton.gameObject.SetActive(hasSaves);
 		}
 
 		public void StartNewGame()

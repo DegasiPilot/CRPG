@@ -1,13 +1,34 @@
+using CRPG.DataSaveSystem;
 using DialogueSystem.DataContainers;
 using DialogueSystem.Runtime.DialogueVariants;
 using System.Collections.Generic;
 using UnityEngine;
+using CRPG.DataSaveSystem.SaveData;
 
 [RequireComponent(typeof(PersonageController))]
-public class DialogueActor : MonoBehaviour
+public class DialogueActor : MonoBehaviour, ISaveableComponent
 {
-	public DialogueContainer Dialogue;
+	[SerializeField] private DialogueContainer _defaultDialogue;
 	[SerializeField] private List<DialogueVariant> _dialogueVariants;
+
+	public DialogueContainer Dialogue
+	{
+		get
+		{
+			if (_dialogueVariants != null)
+			{
+				foreach (DialogueVariant dialogueVariant in _dialogueVariants)
+				{
+					if (dialogueVariant.CheckCondition(this))
+					{
+						return dialogueVariant.DialogueContainer;
+					}
+				}
+			}
+			return _defaultDialogue;
+		}
+	}
+
 	public float MaxDialogueDistance;
 	public Transform PlaceForCamera;
 
@@ -31,15 +52,21 @@ public class DialogueActor : MonoBehaviour
 	{
 		_personageController.AnimatorManager.EndDialogueAnim();
 		DialogueInteractionsCount++;
-		if (_dialogueVariants != null)
+	}
+
+	public object Save()
+	{
+		return new DialogueActorSaveData() { DialogueInteractionsCount = this.DialogueInteractionsCount };
+	}
+
+	public void Load(IReadOnlyCollection<object> componentsData)
+	{
+		foreach(var componentData in componentsData)
 		{
-			foreach (DialogueVariant dialogueVariant in _dialogueVariants)
+			if(componentData is DialogueActorSaveData data)
 			{
-				if (dialogueVariant.CheckCondition(this))
-				{
-					Dialogue = dialogueVariant.DialogueContainer;
-					break;
-				}
+				DialogueInteractionsCount = data.DialogueInteractionsCount;
+				return;
 			}
 		}
 	}

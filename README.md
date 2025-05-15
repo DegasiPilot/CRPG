@@ -14,3 +14,6 @@ Goblin by Caro Asercion under CC BY 3.0
 Duration icon by Delapouite under CC BY 3.0
 Blade bite icon by Lorc under CC BY 3.0
 Farmer icon by Delapouite under CC BY 3.0
+
+Music:
+Soliloquy by Matthew Pablo https://opengameart.org/content/soliloquy under CC-BY

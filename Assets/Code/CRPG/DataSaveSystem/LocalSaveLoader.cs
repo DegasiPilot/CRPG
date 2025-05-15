@@ -23,6 +23,7 @@ namespace CRPG.DataSaveSystem
 		public bool IsUserLogined => true;
 		public string UserLogin => _user.Login;
 		public bool CanExit => false;
+		public bool HasSaves => _user?.GameSaves != null && _user.GameSaves.Count > 0;
 
 		private User _user = new() { Login = "Оффлайн" };
 

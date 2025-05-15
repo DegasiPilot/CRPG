@@ -15,5 +15,6 @@ namespace CRPG.DataSaveSystem
 		public void CreateGameSaveInfo(GameSaveInfo gameSave);
 		public GameSaveInfo GetLastGameSave();
 		public List<GameSaveInfo> GetAllGameSaves();
+		public bool HasSaves { get; }
 	}
 }
