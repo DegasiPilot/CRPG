@@ -42,7 +42,7 @@ namespace CRPG.ItemSystem
 			}
 		}
 
-		public override void SetupItemItemInfoPanel(ItemInfoPanel itemInfoPanel)
+		public override void SetupItemInfoPanel(ItemInfoPanel itemInfoPanel)
 		{
 			itemInfoPanel.Setup(ProjectileItems[0].ItemInfo);
 		}

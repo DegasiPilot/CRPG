@@ -95,7 +95,7 @@ internal class InventorySlot : ItemSlot
 		ClearSlot();
 	}
 
-	public override void SetupItemItemInfoPanel(ItemInfoPanel itemInfoPanel)
+	public override void SetupItemInfoPanel(ItemInfoPanel itemInfoPanel)
 	{
 		itemInfoPanel.Setup(Items[0].ItemInfo);
 	}

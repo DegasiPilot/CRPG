@@ -45,7 +45,7 @@ public class EquipmentSlot : ItemSlot
 		}
 	}
 
-	public override void SetupItemItemInfoPanel(ItemInfoPanel itemInfoPanel)
+	public override void SetupItemInfoPanel(ItemInfoPanel itemInfoPanel)
 	{
 		itemInfoPanel.Setup(EquipableItem.ItemInfo);
 	}

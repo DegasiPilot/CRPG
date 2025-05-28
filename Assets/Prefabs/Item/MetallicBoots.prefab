@@ -2405,7 +2405,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &5951506373100402708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2442,6 +2442,9 @@ MonoBehaviour:
   UniqueName: Item/MetallicBoots
   _saveableComponents:
   - {fileID: 2304555315516954149}
+  AfterLoadEndEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2304555315516954149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2454,6 +2457,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba1a6669c044bf40a86aa3577a41d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 6437950240049691658}
+  collider: {fileID: 5951506373100402708}
+  RotationInHand: {x: 0, y: 0, z: 0}
   ArmorInfo: {fileID: 11400000, guid: 7d4c43ccd489464408ab70a0bf2bd20d, type: 2}
 --- !u!1 &7698793149443936095
 GameObject:

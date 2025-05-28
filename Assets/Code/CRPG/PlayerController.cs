@@ -48,22 +48,27 @@ public class PlayerController : PersonageController
 				GoToPosition(navMeshHit);
 				break;
 			case ActionType.Jumping:
-				float jumpDistance = Vector3.Distance(navMeshHit.position, transform.position);
-				if (jumpDistance < GlobalRules.MaxJumpDistance)
-				{
-					float calculatedHeight = Mathf.Clamp(
-						jumpDistance * _distanceToHeightRatio,
-						_minJumpHeight,
-						_maxJumpHeight
-					);
-					float duration = PhysicHelper.CalculateJumpDuration(calculatedHeight);
-					StartCoroutine(JumpToPosition(navMeshHit.position, calculatedHeight, duration));
-				}
+				TryJump(navMeshHit);
 				break;
 		}
 		if (_activeAction != _defaultAction)
 		{
 			SetDefaultAction();
+		}
+	}
+
+	private void TryJump(NavMeshHit navMeshHit)
+	{
+		float jumpDistance = Vector3.Distance(navMeshHit.position, transform.position);
+		if (jumpDistance < GlobalRules.MaxJumpDistance)
+		{
+			float calculatedHeight = Mathf.Clamp(
+				jumpDistance * _distanceToHeightRatio,
+				_minJumpHeight,
+				_maxJumpHeight
+			);
+			float duration = PhysicHelper.CalculateJumpDuration(calculatedHeight);
+			StartCoroutine(JumpToPosition(navMeshHit.position, calculatedHeight, duration));
 		}
 	}
 
@@ -73,59 +78,79 @@ public class PlayerController : PersonageController
 		{
 			return;
 		}
-		if (_activeAction == ActionType.Movement && BattleManager.RemainMovement > 0 && BattleManager.ActivePersonageController == this)
+		if (BattleManager.ActivePersonageController == this)
 		{
-			if (_lastHitPoint != Vector3.positiveInfinity && _navMeshPath != null && _navMeshPath.status == NavMeshPathStatus.PathComplete &&
-				Vector3.Distance(hitPoint, _lastHitPoint) <= PathEndHitAccuracy)
+			switch (_activeAction)
 			{
-				NavMesh.SamplePosition(_lastAccessablePathDot, out var hit, 0.01f, NavMesh.AllAreas);
-				GoToPosition(hit, 0.01f);
-				_navMeshPath.ClearCorners();
-				_lastHitPoint = Vector3.positiveInfinity;
-				UnaccesableLineRenderer.enabled = false;
-				AccesableLineRenderer.enabled = false;
-				BattleManager.RemainMovement -= Mathf.Min(BattleManager.RemainMovement, _pathLength);
-				_pathLength = 0;
-				return;
+				case ActionType.Movement:
+					if(BattleManager.RemainMovement > 0)
+					{
+						GroundPressedInBattleForMovement(navMeshHit.position);
+					}
+					break;
+				case ActionType.Jumping:
+					if(Personage.RemainActions > 0)
+					{
+						TryJump(navMeshHit);
+						Personage.RemainActions--;
+					}
+					break;
 			}
-			_controller.CalculatePath(hitPoint, _navMeshPath);
-			_lastHitPoint = hitPoint;
+		}
+	}
 
-			if (_navMeshPath.status == NavMeshPathStatus.PathComplete)
+	public void GroundPressedInBattleForMovement(Vector3 hitPoint)
+	{
+		if (_lastHitPoint != Vector3.positiveInfinity && _navMeshPath != null && _navMeshPath.status == NavMeshPathStatus.PathComplete &&
+					Vector3.Distance(hitPoint, _lastHitPoint) <= PathEndHitAccuracy)
+		{
+			NavMesh.SamplePosition(_lastAccessablePathDot, out var hit, 0.01f, NavMesh.AllAreas);
+			GoToPosition(hit, 0.01f);
+			_navMeshPath.ClearCorners();
+			_lastHitPoint = Vector3.positiveInfinity;
+			UnaccesableLineRenderer.enabled = false;
+			AccesableLineRenderer.enabled = false;
+			BattleManager.RemainMovement -= Mathf.Min(BattleManager.RemainMovement, _pathLength);
+			_pathLength = 0;
+			return;
+		}
+		_controller.CalculatePath(hitPoint, _navMeshPath);
+		_lastHitPoint = hitPoint;
+
+		if (_navMeshPath.status == NavMeshPathStatus.PathComplete)
+		{
+			_pathLength = PathLength(_navMeshPath);
+			if (_pathLength > BattleManager.RemainMovement)
 			{
-				_pathLength = PathLength(_navMeshPath);
-				if (_pathLength > BattleManager.RemainMovement)
-				{
-					UnaccesableLineRenderer.enabled = true;
-					AccesableLineRenderer.enabled = true;
-					_lastAccessablePathDot = CutPath(_navMeshPath, BattleManager.RemainMovement, out int lastIndex);
-					var accesablePath = _navMeshPath.corners.Take(lastIndex + 1).ToArray();
-					accesablePath[lastIndex] = _lastAccessablePathDot;
-					AccesableLineRenderer.positionCount = accesablePath.Length;
-					AccesableLineRenderer.SetPositions(accesablePath);
-					var unaccesablePath = _navMeshPath.corners.TakeLast(_navMeshPath.corners.Length -
-						accesablePath.Length + 2).ToArray();
-					unaccesablePath[0] = _lastAccessablePathDot;
-					UnaccesableLineRenderer.positionCount = unaccesablePath.Length;
-					UnaccesableLineRenderer.SetPositions(unaccesablePath);
-				}
-				else
-				{
-					UnaccesableLineRenderer.enabled = false;
-					AccesableLineRenderer.enabled = true;
-					_lastAccessablePathDot = _navMeshPath.corners.Last();
-					AccesableLineRenderer.positionCount = _navMeshPath.corners.Count();
-					AccesableLineRenderer.SetPositions(_navMeshPath.corners);
-				}
+				UnaccesableLineRenderer.enabled = true;
+				AccesableLineRenderer.enabled = true;
+				_lastAccessablePathDot = CutPath(_navMeshPath, BattleManager.RemainMovement, out int lastIndex);
+				var accesablePath = _navMeshPath.corners.Take(lastIndex + 1).ToArray();
+				accesablePath[lastIndex] = _lastAccessablePathDot;
+				AccesableLineRenderer.positionCount = accesablePath.Length;
+				AccesableLineRenderer.SetPositions(accesablePath);
+				var unaccesablePath = _navMeshPath.corners.TakeLast(_navMeshPath.corners.Length -
+					accesablePath.Length + 2).ToArray();
+				unaccesablePath[0] = _lastAccessablePathDot;
+				UnaccesableLineRenderer.positionCount = unaccesablePath.Length;
+				UnaccesableLineRenderer.SetPositions(unaccesablePath);
 			}
 			else
 			{
-				AccesableLineRenderer.enabled = false;
-				UnaccesableLineRenderer.enabled = true;
-				_lastAccessablePathDot = Vector3.zero;
-				UnaccesableLineRenderer.positionCount = 2;
-				UnaccesableLineRenderer.SetPositions(new Vector3[2] { transform.position, hitPoint });
+				UnaccesableLineRenderer.enabled = false;
+				AccesableLineRenderer.enabled = true;
+				_lastAccessablePathDot = _navMeshPath.corners.Last();
+				AccesableLineRenderer.positionCount = _navMeshPath.corners.Count();
+				AccesableLineRenderer.SetPositions(_navMeshPath.corners);
 			}
+		}
+		else
+		{
+			AccesableLineRenderer.enabled = false;
+			UnaccesableLineRenderer.enabled = true;
+			_lastAccessablePathDot = Vector3.zero;
+			UnaccesableLineRenderer.positionCount = 2;
+			UnaccesableLineRenderer.SetPositions(new Vector3[2] { transform.position, hitPoint });
 		}
 	}
 

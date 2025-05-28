@@ -17,13 +17,6 @@ public class GameDataManager
 		{
 			UnityEngine.Object.Destroy(GameData.MainPlayer.gameObject);
 		}
-		if (GameData.Companions != null)
-		{
-			foreach (var companion in GameData.Companions)
-			{
-				UnityEngine.Object.Destroy(companion.gameObject);
-			}
-		}
 	}
 
 	public void InitNewGame()
@@ -48,11 +41,6 @@ public class GameDataManager
 		{
 			LoadInventory(gameSave.InventoryItems, player.PlayerController.Inventory.transform);
 		}
-
-		if (gameSave.CompanionsInfo != null)
-		{
-			LoadCompanions(gameSave.CompanionsInfo);
-		}
 	}
 
 	private void InitPlayer(MainPlayer player)
@@ -71,20 +59,6 @@ public class GameDataManager
 			item.gameObject.SetActive(false);
 			item.OnTaked();
 			GameData.Inventory.Add(item);
-		}
-	}
-
-	private void LoadCompanions(PlayerSaveInfo[] playerInfos)
-	{
-		GameData.Companions = new List<PlayerController>(playerInfos.Length);
-		for (int i = 0; i < playerInfos.Length; i++)
-		{
-			PlayerController companion = _globalDataManager.GetClone(playerInfos[i].UniqueName).GetComponent<PlayerController>();
-			UnityEngine.Object.DontDestroyOnLoad(companion);
-			companion.transform.SetPositionAndRotation(playerInfos[i].Position, playerInfos[i].Rotation);
-			companion.Personage.Setup(playerInfos[i].PersonageSaveInfo);
-			GameData.Companions.Add(companion);
-			LoadEquipedItems(playerInfos[i].EquipedItems, companion.Personage.EquipmentManager);
 		}
 	}
 

@@ -111,21 +111,16 @@ public static class BattleManager
 	{
 		_activeFigthers[0] = new FigtherInfo() { PersonageController = attacker };
 		_activeFigthers[1] = new FigtherInfo() { PersonageController = defender };
-		if (ParticipantPersonages != null && ParticipantPersonages.Contains(defender))
+		if (ParticipantPersonages != null && ParticipantPersonages.Contains(defender) &&
+			defender.Personage.RemainActions > 0)
 		{
-			attacker.AttackModule.Attack(defender, false, true);
-			if (defender.Personage.RemainActions > 0)
-			{
-				defender.AttackModule.Attack(attacker, true, true);
-			}
-			else
-			{
-				EnergyChoosed(defender, 0, 0);
-			}
+			bool canDefenderAttack = AttackRaycast(defender.Personage, defender.MaxAttackDistance, attacker.Personage);
+			attacker.AttackModule.Attack(defender, false, true, canDefenderAttack);
+			defender.AttackModule.Attack(attacker, true, canDefenderAttack, true);
 		}
 		else
 		{
-			attacker.AttackModule.Attack(defender, false, false);
+			attacker.AttackModule.Attack(defender, false, true, false);
 			EnergyChoosed(defender, 0, 0);
 		}
 	}
@@ -164,7 +159,6 @@ public static class BattleManager
 								message += _activeFigthers[j].PersonageController.Personage.PersonageInfo.Name
 									+ " уклонился";
 								_activeFigthers[i].PersonageController.AttackModule.EndAttack();
-
 							}
 							else
 							{
@@ -173,6 +167,10 @@ public static class BattleManager
 						}
 					}
 				}
+				else if (_activeFigthers[i].PersonageController.AttackModule.IsAttacking)
+				{
+					_activeFigthers[i].PersonageController.AttackModule.EndAttack();
+				}
 				if (GameManager.Instance.GameMode == GameMode.Battle)
 				{
 					if(_activeFigthers[i].EnergyToDefend > 0)
@@ -180,6 +178,7 @@ public static class BattleManager
 						isSpendAction = true;
 						_activeFigthers[i].PersonageController.Personage.Stamina -= _activeFigthers[i].EnergyToDefend;
 					}
+
 					if (isSpendAction)
 					{
 						_activeFigthers[i].PersonageController.Personage.RemainActions--;
@@ -203,8 +202,8 @@ public static class BattleManager
 
 	public static bool CanAttack(Personage personage)
 	{
-		if (personage.RemainActions > 0 &&
-			AttackRaycast(ActivePersonageController.Personage.HitPoint.position, personage.HitPoint.position, ActivePersonageController.MaxAttackDistance, personage))
+		if (ActivePersonageController.Personage.RemainActions > 0 &&
+			AttackRaycast(ActivePersonageController.Personage, ActivePersonageController.MaxAttackDistance, personage))
 		{
 			return true;
 		}
@@ -214,10 +213,16 @@ public static class BattleManager
 		}
 	}
 
-	public static bool AttackRaycast(Vector3 attackerPos, Vector3 targetPos, float maxDistance, Personage targetPersonage)
+	public static bool AttackRaycast(Personage attacker, float maxDistance, Personage targetPersonage)
 	{
-		Ray ray = new Ray(attackerPos, targetPos - attackerPos);
-		if (Physics.Raycast(ray, out RaycastHit hit, maxDistance + 0.02f /*Прощаем небольшую погрешность*/))
+		bool result = AttackRaycast(attacker.HitPoint.position, maxDistance, targetPersonage);
+		return result;
+	}
+
+	public static bool AttackRaycast(Vector3 attackerPos, float maxDistance, Personage targetPersonage)
+	{
+		Ray ray = new Ray(attackerPos, targetPersonage.HitPoint.position - attackerPos);
+		if (Physics.Raycast(ray, out RaycastHit hit, maxDistance + 0.03f /*Прощаем небольшую погрешность*/))
 		{
 			if (hit.collider.gameObject.TryGetComponent(out Personage personage) && personage == targetPersonage)
 			{
@@ -225,13 +230,11 @@ public static class BattleManager
 			}
 			else
 			{
-				Debug.Log("Hit to not personage");
 				return false;
 			}
 		}
 		else
 		{
-			Debug.DrawRay(attackerPos, targetPos - attackerPos, Color.red, maxDistance);
 			return false;
 		}
 	}

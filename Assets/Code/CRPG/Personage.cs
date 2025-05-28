@@ -1,6 +1,5 @@
 using CRPG.DataSaveSystem;
 using CRPG.DataSaveSystem.SaveData;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,8 +21,8 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 	public ActionType[] Actions => new ActionType[] { ActionType.Jumping, ActionType.Attack };
 
 	public int MinAttackEnergy => _equipmentManager.MinAttackEnergy;
-	public int MaxAttackEnergy => _equipmentManager.MaxAttackEnergy;
-	public float DodgeCoefficient => (0.1f + (PersonageInfo.Dexterity / 2 * 3) / 100f) * _equipmentManager.DodgeModifier;
+	public int MaxAttackEnergy => Mathf.Min(PersonageInfo.DefaultMaxEnergyToAttack, _equipmentManager.MaxAttackEnergy);
+	public float DodgeCoefficient => (0.1f + (PersonageInfo.Dexterity / 2f * 3) / 100f) * _equipmentManager.DodgeModifier;
 
 	public float ArmorPercent => _equipmentManager.ArmorPercent;
 	public DamageType DamageType => _equipmentManager.DamageType;
@@ -68,7 +67,7 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 			else
 			{
 				var oldValue = _stamina;
-				_stamina = MathF.Round(value, 1);
+				_stamina = System.MathF.Round(value,1);
 				OnStaminaChanged.Invoke();
 			}
 		}
@@ -93,6 +92,14 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 
 	public AnimatorManager AnimatorManager;
 
+	protected virtual void Awake()
+	{
+		if(PersonageInfo != null)
+		{
+			Setup();
+		}
+	}
+
 	public void Setup()
 	{
 		Health = PersonageInfo.MaxHealth;
@@ -115,7 +122,7 @@ public class Personage : MonoBehaviour, ISaveableComponent, ISaveBlocker
 			blockedDamage += Mathf.Max(1f, damage * 0.15f); // some strange
 		}
 		float incomedDamage = damage - blockedDamage;
-		Health = MathF.Round(Health - incomedDamage, 1);
+		Health = System.MathF.Round(Health - incomedDamage, 1);
 		if (Health <= 0)
 		{
 			Health = 0;

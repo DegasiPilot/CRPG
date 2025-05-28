@@ -2,6 +2,7 @@
 using CRPG.Battle;
 using CRPG.Interactions;
 using System.Collections;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -130,11 +131,7 @@ public abstract class PersonageController : MonoBehaviour
 	protected virtual void GoToPosition(NavMeshHit hit, float maxTargetOffset = 0.1f)
 	{
 		_controller.stoppingDistance = maxTargetOffset;
-		NavMeshPath path = new();
-
-		_controller.CalculatePath(hit.position, path);
-		var position = Vector3.MoveTowards(hit.position, path.corners[path.corners.Length - 2], _controller.radius);
-		_controller.SetDestination(position);
+		_controller.SetDestination(hit.position);
 		_interact = null;
 	}
 
@@ -176,7 +173,6 @@ public abstract class PersonageController : MonoBehaviour
 
 	public void StartAttack(PersonageController personageController)
 	{
-		Debug.Log("Should Start Attacking");
 		BattleManager.StartAttack(this, personageController);
 	}
 
@@ -187,6 +183,11 @@ public abstract class PersonageController : MonoBehaviour
 
 	public IEnumerator RotateTo(Vector3 targetPos, bool ignoreY = true)
 	{
+		return RotateTo(targetPos, Quaternion.identity, ignoreY);
+	}
+
+	public IEnumerator RotateTo(Vector3 targetPos, Quaternion offset, bool ignoreY = true)
+	{
 		Quaternion startRot = transform.rotation;
 		Vector3 startPosition = Personage.HitPoint.position;
 		if (ignoreY)
@@ -194,9 +195,9 @@ public abstract class PersonageController : MonoBehaviour
 			startPosition.y = targetPos.y;
 		}
 		Quaternion finalRot = Quaternion.LookRotation(targetPos - startPosition);
-		if (_personage.EquipmentManager.Weapon != null && _personage.EquipmentManager.Weapon.TargetingOffset != Vector3.zero)
+		if (offset != Quaternion.identity)
 		{
-			finalRot *= Quaternion.Euler(_personage.EquipmentManager.Weapon.TargetingOffset);
+			finalRot *= offset;
 		}
 		float angle = Quaternion.Angle(startRot, finalRot);
 		float t = 0;
@@ -258,10 +259,27 @@ public abstract class PersonageController : MonoBehaviour
 
 	public void InteractWith(float maxInteractDistance, Vector3 targetPos, Interact interact)
 	{
-		if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, maxInteractDistance, NavMesh.AllAreas))
+		if (NavMesh.SamplePosition(targetPos, out NavMeshHit firstHit, maxInteractDistance, NavMesh.AllAreas))
 		{
-			GoToPosition(hit, maxInteractDistance - Vector3.Distance(targetPos, hit.position));
+			GoToPosition(firstHit, maxInteractDistance - Vector3.Distance(targetPos, firstHit.position));
 			_interact = interact;
+		}
+		else if (NavMesh.SamplePosition(targetPos, out NavMeshHit possibleHit, maxInteractDistance + 1, NavMesh.AllAreas))
+		{
+			targetPos.y = possibleHit.position.y; //ignore height
+			if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, maxInteractDistance, NavMesh.AllAreas))
+			{
+				GoToPosition(hit, maxInteractDistance - Vector3.Distance(targetPos, hit.position));
+				_interact = interact;
+			}
+			else
+			{
+				Debug.Log("Very bad. TargetPos is: " + targetPos);
+			}
+		}
+		else
+		{
+			Debug.Log("Baaaad. TargetPos is: " + targetPos);
 		}
 	}
 

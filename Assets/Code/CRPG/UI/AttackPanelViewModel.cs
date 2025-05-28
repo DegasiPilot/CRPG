@@ -36,21 +36,27 @@ namespace BattleSystem.ViewModels
 					(value >= MinAttackEnergy) &&
 					 value <= MaxAttackEnergy)
 				{
-					_attackEnergy = value;
+					ForceAttackUpdate(value);
 				}
 				else if (value < MinAttackEnergy && _canSkip)
 				{
-					_attackEnergy = 0;
+					ForceAttackUpdate(0);
 				}
 				else
 				{
 					return;
 				}
-				_view.RefreshAttack(AttackEnergy);
-				_view.RefreshAttackResult(AttackEnergy * _coefficient);
-				_view.UpdateAttackBtnInteractable(CanAttack);
 			}
 		}
+
+		private void ForceAttackUpdate(float attack)
+		{
+			_attackEnergy = attack;
+			_view.RefreshAttack(AttackEnergy);
+			_view.RefreshAttackResult(Mathf.Min(AttackEnergy * _coefficient, 100f));
+			_view.UpdateAttackBtnInteractable(CanAttack);
+		}
+
 		private float _defendEnergy = 0;
 		public float DefendEnergy
 		{
@@ -61,12 +67,17 @@ namespace BattleSystem.ViewModels
 					value >= MinDefendEnergy &&
 					value <= MaxDefendEnergy)
 				{
-					_defendEnergy = value;
-					_view.RefreshDefend(DefendEnergy);
-					_view.RefreshDodgeResult(DefendEnergy * _selfPlayer.DodgeCoefficient);
-					_view.UpdateAttackBtnInteractable(CanAttack);
+					ForceDefendUpdate(value);
 				}
 			}
+		}
+		
+		private void ForceDefendUpdate(float defendEnergy)
+		{
+			_defendEnergy = defendEnergy;
+			_view.RefreshDefend(DefendEnergy);
+			_view.RefreshDodgeResult(DefendEnergy * _selfPlayer.DodgeCoefficient);
+			_view.UpdateAttackBtnInteractable(CanAttack);
 		}
 
 		public System.Action<float, float> OnSelectEnd;
@@ -86,14 +97,14 @@ namespace BattleSystem.ViewModels
 
 		private bool CanAttack => AttackEnergy + DefendEnergy > 0 && _selfPlayer.Stamina >= AttackEnergy + DefendEnergy;
 
-		public void Activate(Personage player, bool canSkip, bool needDefend, float coefficient)
+		public void Activate(Personage player, bool canSkip, bool canAttack, bool needDefend, float coefficient)
 		{
 			_canSkip = canSkip;
 			_coefficient = coefficient;
 			_selfPlayer = player;
-			_view.Refresh(MinAttackEnergy, MaxAttackEnergy, MinDefendEnergy, MaxDefendEnergy, canSkip, needDefend, coefficient);
-			AttackEnergy = MinAttackEnergy;
-			DefendEnergy = 0;
+			_view.Refresh(MinAttackEnergy, MaxAttackEnergy, MinDefendEnergy, MaxDefendEnergy, canSkip, canAttack, needDefend, coefficient);
+			ForceAttackUpdate(MinAttackEnergy);
+			ForceDefendUpdate(0);
 			_view.gameObject.SetActive(true);
 		}
 

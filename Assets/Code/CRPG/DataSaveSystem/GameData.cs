@@ -15,7 +15,6 @@ namespace CRPG.DataSaveSystem
 		public static SceneSaveInfo SceneSaveInfo;
 		public static List<Item> Inventory = new List<Item>();
 		internal static MainPlayer MainPlayer;
-		internal static List<PlayerController> Companions = new List<PlayerController>();
 		internal static PlayerController ActivePlayer;
 		internal static AppearanceStruct MainPersonageAppearance { get; set; }
 
@@ -48,40 +47,9 @@ namespace CRPG.DataSaveSystem
 				MainPersonageAppearance = MainPersonageAppearance,
 				SceneSaveInfo = SceneSaveInfo,
 				InventoryItems = ItemNames(notEquipedItems),
-				CompanionsInfo = SaveCompanions(),
 			};
 
 			return gameSave;
-		}
-
-		private static PlayerSaveInfo[] SaveCompanions()
-		{
-			if (Companions.Count <= 0)
-			{
-				return null;
-			}
-			var CompanionsInfo = new PlayerSaveInfo[Companions.Count];
-			for (int i = 0; i < CompanionsInfo.Length; i++)
-			{
-				PersonageSaveInfo personageSaveInfo;
-				if (Companions[i].Personage.Save() is PersonageSaveInfo saveInfo)
-				{
-					personageSaveInfo = saveInfo;
-				}
-				else
-				{
-					throw new Exception("Personage.Save() return not PersonageSaveInfo");
-				}
-				CompanionsInfo[i] = new PlayerSaveInfo()
-				{
-					UniqueName = Companions[i].GetComponent<SaveableGameobject>().UniqueName,
-					Position = Companions[i].transform.position,
-					Rotation = Companions[i].transform.rotation,
-					EquipedItems = ItemNames(Companions[i].Personage.EquipmentManager.EquipableItems),
-					PersonageSaveInfo = personageSaveInfo,
-				};
-			}
-			return CompanionsInfo;
 		}
 
 		public static void InitializeNewGame(PersonageInfo personageInfo)

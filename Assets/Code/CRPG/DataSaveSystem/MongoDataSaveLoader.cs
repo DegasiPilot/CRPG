@@ -118,6 +118,7 @@ namespace CRPG.DataSaveSystem
 			{
 				return false;
 			}
+			login = login.Trim().ToLower();
 			var result = collection.Find(x => x.Login == login);
 			if (result != null && result.Any())
 			{
@@ -132,6 +133,11 @@ namespace CRPG.DataSaveSystem
 				_activeUser = collection.Find(x => x.Login == login).Single();
 				return true;
 			}
+		}
+
+		public void ExitFromAccount()
+		{
+			_activeUser = null;
 		}
 
 		public GameSaveInfo GetLastGameSave()

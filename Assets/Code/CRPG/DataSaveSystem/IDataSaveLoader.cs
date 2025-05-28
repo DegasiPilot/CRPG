@@ -11,6 +11,7 @@ namespace CRPG.DataSaveSystem
 
 		public bool TryLogin(string login, string password, out string errors);
 		public bool TryRegistrate(string login, string password, out string errors);
+		public void ExitFromAccount();
 
 		public void CreateGameSaveInfo(GameSaveInfo gameSave);
 		public GameSaveInfo GetLastGameSave();

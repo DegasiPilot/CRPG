@@ -49,9 +49,9 @@ public class BattleUIManager : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-	public void ActivatePlayerActionPanel(Personage player, bool canSkip, bool needDefend, float coefficient)
+	public void ActivatePlayerActionPanel(Personage player, bool canSkip, bool canAttack, bool needDefend, float coefficient)
 	{
-		AttackPanelViewModel.Activate(player, canSkip, needDefend, coefficient);
+		AttackPanelViewModel.Activate(player, canSkip, canAttack, needDefend, coefficient);
 	}
 
 	public void DeactivatePlayerActionPanel()

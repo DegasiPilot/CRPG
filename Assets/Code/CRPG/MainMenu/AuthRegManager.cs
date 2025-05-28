@@ -11,8 +11,8 @@ public class AuthRegManager : MonoBehaviour
 	public InputField PasswordInput;
 	public GameObject LoginPanel;
 	public Toggle RememberMeToggle;
+	public GameObject UserPanel;
 	public Text UserPanelLogin;
-	public Button ExitButton;
 
 	bool _isSearchInProgress;
 	StringBuilder errors = new StringBuilder(2);
@@ -21,6 +21,7 @@ public class AuthRegManager : MonoBehaviour
 
 	internal void Activate(IDataSaveLoader dataSaveLoader, MessageBoxManager messageBoxManager)
 	{
+		UserPanel.SetActive(false);
 		_dataSaveLoader = dataSaveLoader;
 		if (dataSaveLoader.IsUserLogined)
 		{
@@ -71,6 +72,7 @@ public class AuthRegManager : MonoBehaviour
 	private void TryEnter(string login, string password)
 	{
 		_isSearchInProgress = true;
+		login = login.Trim().ToLower();
 		if (_dataSaveLoader.TryLogin(login, password, out string errors))
 		{
 			AfterUserInitialized(login, password);
@@ -114,8 +116,9 @@ public class AuthRegManager : MonoBehaviour
 
 	private void AfterUserInitialized(string login)
 	{
+		login = char.ToUpper(login[0]) + login[1..];
 		UserPanelLogin.text = login;
-		ExitButton.gameObject.SetActive(_dataSaveLoader.CanExit);
+		UserPanel.SetActive(_dataSaveLoader.CanExit);
 		LoginPanel.SetActive(false);
 		AfterUserInitializedEvent?.Invoke();
 	}
@@ -127,5 +130,6 @@ public class AuthRegManager : MonoBehaviour
 		LoginInput.text = "";
 		PasswordInput.text = "";
 		LocalCashManager.CleanCash();
+		_dataSaveLoader.ExitFromAccount();
 	}
 }

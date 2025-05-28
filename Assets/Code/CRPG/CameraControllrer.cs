@@ -45,10 +45,7 @@ namespace CRPG
 
 					if (objectUnderPointer.TryGetComponent(out PlayerController player))
 					{
-						if (IsClick)
-						{
-							GameManager.Instance.OnPlayerPressed(player);
-						}
+						GameManager.Instance.OnPlayerUnderPointer(player);
 					}
 					else if (objectUnderPointer.TryGetComponent(out PersonageController personageController))
 					{
@@ -58,7 +55,7 @@ namespace CRPG
 						}
 						else
 						{
-							GameManager.Instance.OnPersonageUnderPointer(personageController.Personage);
+							GameManager.Instance.OnPersonageUnderPointer(personageController);
 						}
 					}
 					else if (objectUnderPointer.TryGetComponent(out Item item))
@@ -95,13 +92,13 @@ namespace CRPG
 		{
 			float h = Input.GetAxis("Horizontal");
 			float v = Input.GetAxis("Vertical");
+			transform.parent.Translate(Vector3.up * (_playerPosition.y - transform.parent.position.y));
 			transform.parent.Translate(new Vector3(h, 0, v) * Time.deltaTime * MoveSpeed);
-			Vector3 cameraPos = new Vector3(transform.parent.position.x, 0, transform.parent.position.z);
-			Vector3 player2DPos = new Vector3(_playerPosition.x, 0, _playerPosition.z);
-			float sqrDistance = Vector3.SqrMagnitude(cameraPos - player2DPos);
+			Vector3 cameraPos = new Vector3(transform.parent.position.x, transform.parent.position.y, transform.parent.position.z);
+			float sqrDistance = Vector3.SqrMagnitude(cameraPos - _playerPosition);
 			if (sqrDistance > MaxDistanceFromPlayer * MaxDistanceFromPlayer)
 			{
-				transform.parent.position = Vector3.MoveTowards(player2DPos, cameraPos, MaxDistanceFromPlayer);
+				transform.parent.position = Vector3.MoveTowards(_playerPosition, cameraPos, MaxDistanceFromPlayer);
 			}
 		}
 

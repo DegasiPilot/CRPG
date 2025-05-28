@@ -22,6 +22,8 @@ namespace CRPG
 		public Button StartNewGameButton;
 		public Button ExitGameButton;
 
+		public Button ExitFromAccountButton;
+
 		public AuthRegManager AuthRegManager;
 
 		private void Start()
@@ -49,6 +51,12 @@ namespace CRPG
 
 		public void LoadScene(string name) => SceneManager.LoadScene(name);
 
-		public void ApplicationQuit() => Application.Quit();
+		public void ApplicationQuit()
+		{
+			Application.Quit();
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.ExitPlaymode();
+#endif
+		}
 	}
 }

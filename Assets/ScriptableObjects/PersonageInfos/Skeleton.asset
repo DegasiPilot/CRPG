@@ -13,12 +13,10 @@ MonoBehaviour:
   m_Name: Skeleton
   m_EditorClassIdentifier: 
   Name: "\u0421\u043A\u0435\u043B\u0435\u0442"
-  Strength: 8
-  Dexterity: 8
-  Constitution: 10
-  Intelligence: 8
-  Wisdom: 8
-  Charisma: 6
+  Strength: 2
+  Dexterity: 0
+  Constitution: 3
+  Charisma: 0
   UnSpendedStatPoints: 0
   _raceIfo: {fileID: 11400000, guid: 412e1856d8c5f1e4086dcd01d20be936, type: 2}
   _personagePortrait: {fileID: 2800000, guid: 0a7c97429123a8a409fe5c6898d42deb, type: 3}

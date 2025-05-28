@@ -9,4 +9,9 @@ internal class ArmorInfo : ItemInfo
 	public BodyPart WearableBodyPart;
 	[Min(0)] public float ArmorWeight;
 	[Range(0, 1)] public float DodgePenalty;
+
+	public override string GetFullDescrition()
+	{
+		return base.GetFullDescrition() + '\n' + "Коэффициент брони: " + _armorPercent + '%';
+	}
 }

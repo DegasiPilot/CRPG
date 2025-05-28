@@ -36,7 +36,7 @@ namespace DialogueSystem.Runtime
 			_checkNode = nodeData;
 			_nodeLinkData = nodeLinks;
 
-			string characteristicName = Translator.Translate(_checkNode.Characteristic);
+			string characteristicName = TextHelper.Translate(_checkNode.Characteristic);
 			CharacteristicNameText.text = characteristicName;
 			DifficultyNumberText.text = _checkNode.CheckDifficulty.ToString();
 			_bonus = personage.GetCharacteristicBonus(nodeData.Characteristic);
@@ -51,7 +51,7 @@ namespace DialogueSystem.Runtime
 				CheckResult checkResult = CharacteristicChecker.Check(_bonus, _checkNode.CheckDifficulty, out int diceResult, out int finalResult);
 				ResultNumberText.transform.parent.gameObject.SetActive(true);
 				ResultNumberText.text = diceResult.ToString();
-				ResultText.text = Translator.Translate(checkResult);
+				ResultText.text = TextHelper.Translate(checkResult);
 				ResultText.color = checkResult < CheckResult.Succes ? Color.red : Color.green;
 				_nextNodeGIUD = checkResult >= CheckResult.Succes ? _nodeLinkData[0].TargetNodeGUID :
 					_nodeLinkData[1].TargetNodeGUID;

@@ -44,11 +44,15 @@ namespace BattleSystem.Views
 			AttackButton.interactable = isInteractable;
 		}
 
-		public void Refresh(float minAttackEnergy, float maxAttackEnergy, float minDefend, float maxDefend, bool canSkip, bool needDefend, float coefficient)
+		public void Refresh(float minAttackEnergy, float maxAttackEnergy, float minDefend, float maxDefend, bool canSkip, bool canAttack, bool needDefend, float coefficient)
 		{
 			CoefficientText.text = "x" + coefficient;
 			_canSkip = canSkip;
-			AttackSliderView.Refresh(minAttackEnergy, maxAttackEnergy, canSkip);
+			AttackSliderView.SetActive(canAttack);
+			if (canAttack)
+			{
+				AttackSliderView.Refresh(minAttackEnergy, maxAttackEnergy, canSkip);
+			}
 			DefendSliderView.SetActive(needDefend);
 			if (needDefend)
 			{

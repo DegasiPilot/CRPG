@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb2966aa1f948c4794b44dece52bd4f, type: 3}
   m_Name: Villager
   m_EditorClassIdentifier: 
-  Name: "\u041A\u0440\u0435\u0441\u0442\u044C\u044F\u043D\u0438\u043D"
+  Name: "\u041A\u0443\u0437\u043D\u0435\u0446"
   Strength: 8
   Dexterity: 1
   Constitution: 8
-  Intelligence: 8
-  Wisdom: 8
   Charisma: 8
   UnSpendedStatPoints: 0
   _raceIfo: {fileID: 11400000, guid: 43b096bd5bea7a74bbbd6a62dda329b9, type: 2}

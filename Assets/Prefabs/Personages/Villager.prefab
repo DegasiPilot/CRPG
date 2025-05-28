@@ -1374,7 +1374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bab131d2da0b9c04a94b49dd9370b47f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <DialogueContainer>k__BackingField: {fileID: 11400000, guid: 116fe902212e67642a6a5fc4cc3eeb4e, type: 2}
+  <DialogueContainer>k__BackingField: {fileID: 11400000, guid: 95b0aa426b9ede44091c5c2c853def64, type: 2}
   _condition: {fileID: 623603100644768387}
 --- !u!114 &623603100644768387
 MonoBehaviour:
@@ -4124,6 +4124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a6bfb698a9c594585386783bd8da14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
   _equipmentManager: {fileID: 2533627567701044875}
   IsDead: 0
   HitPoint: {fileID: 3914058878075673610}
@@ -4142,7 +4145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0de9a9886225f44cabb0d9a07145f50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Dialogue: {fileID: 11400000, guid: 941bb4b0ab3a2c14fb132a59ff0804fe, type: 2}
+  _defaultDialogue: {fileID: 11400000, guid: 941bb4b0ab3a2c14fb132a59ff0804fe, type: 2}
   _dialogueVariants:
   - {fileID: 7832293386176769820}
   MaxDialogueDistance: 3
@@ -4162,6 +4165,10 @@ MonoBehaviour:
   UniqueName: Personages/Villager
   _saveableComponents:
   - {fileID: 5057756617465351894}
+  - {fileID: 7863414642662084352}
+  AfterLoadEndEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!208 &6655648466084085824
 NavMeshObstacle:
   m_ObjectHideFlags: 0

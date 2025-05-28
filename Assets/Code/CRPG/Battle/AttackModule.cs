@@ -23,7 +23,7 @@ namespace CRPG.Battle
 		private float _attack;
 		private float _damageCoefficient;
 
-		public void Attack(PersonageController enemy, bool canSkip, bool needDefend)
+		public void Attack(PersonageController enemy, bool canSkip, bool canAttack, bool needDefend)
 		{
 			if (_personageController.Personage.Stamina <= 0) return;
 			var equipmentManager = _personageController.Personage.EquipmentManager;
@@ -41,7 +41,7 @@ namespace CRPG.Battle
 			_enemy = enemy;
 			_isAttacking = true;
 			_damageCoefficient = RandomizeDamageCoef();
-			_chooser.ChooseAttackForce(_personageController.Personage, canSkip, needDefend, _damageCoefficient);
+			_chooser.ChooseAttackForce(_personageController.Personage, canSkip, canAttack, needDefend, _damageCoefficient);
 		}
 
 		private void AfterEnergyChoosed(float attack, float defend)
@@ -75,9 +75,16 @@ namespace CRPG.Battle
 
 			_personageController.AnimatorManager.OnContactEnemy.AddListener(MakeDamage);
 
-			yield return _personageController.RotateTo(_enemy.Personage.HitPoint.position);
-
 			var equipmentManager = _personageController.Personage.EquipmentManager;
+			if (equipmentManager.Weapon != null && equipmentManager.Weapon.TargetingOffset != Vector3.zero)
+			{
+				yield return _personageController.RotateTo(_enemy.Personage.HitPoint.position, Quaternion.Euler(equipmentManager.Weapon.TargetingOffset));
+			}
+			else
+			{
+				yield return _personageController.RotateTo(_enemy.Personage.HitPoint.position);
+			}
+
 			bool isArmed = equipmentManager.Weapon != null;
 			var weaponAnimManager = equipmentManager.Weapon != null ? equipmentManager.Weapon.WeaponAnimationManager : null;
 			_personageController.AnimatorManager.StartAttackAnim(
@@ -119,13 +126,9 @@ namespace CRPG.Battle
 					BattleTeam battleTeam = BattleManager.GetOppostiteTeam(_personageController.Personage.BattleTeam);
 					_enemy.Personage.BattleTeam = battleTeam;
 				}
-				PersonageController[] participants = new PersonageController[2 + GameData.Companions.Count];
+				PersonageController[] participants = new PersonageController[2];
 				participants[0] = GameData.MainPlayer.PlayerController;
 				participants[1] = _enemy;
-				for (int i = 0; i < GameData.Companions.Count; i++)
-				{
-					participants[i + 2] = GameData.Companions[i];
-				}
 				BattleManager.StartBattle(participants);
 			}
 			else if (!BattleManager.ParticipantPersonages.Contains(_enemy))

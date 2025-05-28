@@ -72,6 +72,11 @@ namespace CRPG.DataSaveSystem
 			return true;
 		}
 
+		public void ExitFromAccount()
+		{
+			Debug.LogWarning("Try local exit");
+		}
+
 		public void UpdateUser(User user)
 		{
 			_user.Login = user.Login;

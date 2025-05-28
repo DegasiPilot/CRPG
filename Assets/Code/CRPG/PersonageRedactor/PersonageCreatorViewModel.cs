@@ -24,7 +24,7 @@ namespace CRPG.PersonageRedactor
 		private const int _maxPointsForStat = 9;
 
 		private int _maxStatPointForSpent => _personageInfo.RaceInfo != null &&
-			_personageInfo.RaceInfo.Race == Race.Human ? 8 + _humanStatPointsBonus : 8;
+			_personageInfo.RaceInfo.Race == Race.Human ? 6 + _humanStatPointsBonus : 6;
 		private const int _humanStatPointsBonus = 3;
 
 		private IDataSaveLoader _dataSaveLoader;
@@ -104,13 +104,6 @@ namespace CRPG.PersonageRedactor
 			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent;
 
 			SetName(string.Empty);
-#if UNITY_EDITOR
-			SetName("Тестовый игрок");
-			_personageCreator.SetNameWithoutNotify("Тестовый игрок");
-			_personageInfo.Strength = 5;
-			_personageInfo.Constitution = 6;
-			_personageInfo.UnSpendedStatPoints = _maxStatPointForSpent - 5 - 6;
-#endif
 
 			_characteristicRedactors = new CharacteristicRedactorViewModel[_personageCreator.StatRedactors.Length];
 			for (int i = 0; i < _personageCreator.StatRedactors.Length; i++)

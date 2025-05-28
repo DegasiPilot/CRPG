@@ -8,9 +8,9 @@ namespace CRPG.Battle
 		[SerializeField] private UnityEvent<float, float> _onChooseAttackForce;
 		public override UnityEvent<float, float> OnChooseAttackForce => _onChooseAttackForce;
 
-		public override void ChooseAttackForce(Personage personage, bool canSkip, bool needDefend, float coefficient)
+		public override void ChooseAttackForce(Personage personage, bool canSkip, bool canAttack, bool needDefend, float coefficient)
 		{
-			BattleUIManager.Instance.ActivatePlayerActionPanel(personage, canSkip, needDefend, coefficient);
+			BattleUIManager.Instance.ActivatePlayerActionPanel(personage, canSkip, canAttack, needDefend, coefficient);
 			BattleUIManager.Instance.AfterPlayerEnergySelection.AddListener(AttackSelected);
 		}
 

@@ -2,15 +2,21 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Terrain))]
 public class ExtractTreeCollidersFromTerrain : MonoBehaviour
 {
+
 	[ContextMenu("Extract")]
 	public void Extract()
 	{
+		foreach(Terrain terrain in GetComponentsInChildren<Terrain>())
+		{
+			Extract(terrain);
+		}
+	}
+
+	public void Extract(Terrain terrain)
+	{
 		Debug.Log("ExtractTreeCollidersFromTerrain::Extract");
-		Terrain terrain = GetComponent<Terrain>();
-		Clear();
 		Debug.Log("Tree prototypes count: " + terrain.terrainData.treePrototypes.Length);
 		for (int i = 0; i < terrain.terrainData.treePrototypes.Length; i++)
 		{

@@ -120,7 +120,7 @@ namespace CRPG.UI
 		public void OnInfoButtonClick()
 		{
 			ItemInfoPanel.gameObject.SetActive(true);
-			_activeItemSlot.SetupItemItemInfoPanel(ItemInfoPanel);
+			_activeItemSlot.SetupItemInfoPanel(ItemInfoPanel);
 			_activeItemSlot = null;
 		}
 

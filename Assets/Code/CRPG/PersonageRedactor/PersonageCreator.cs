@@ -91,7 +91,7 @@ public class PersonageCreator : MonoBehaviour
 
 	public void UpdateRaceInfo(RaceInfo info)
 	{
-		string raceName = Translator.Translate(info.Race);
+		string raceName = TextHelper.Translate(info.Race);
 		_pickRaceBtnText.text = $"Раса\n{raceName}";
 		RaceTitle.text = raceName;
 		RaceDescription.text = $"{info.Description}\nСкорость: {info.StandartSpeed}\nБазовое здоровье: {info.BaseHealth}\nБазовая выносливость: {info.BaseStamina}";

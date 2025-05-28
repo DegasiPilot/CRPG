@@ -1,3 +1,4 @@
+using CRPG.PersonageRedactor;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -7,8 +8,10 @@ public class CharacteristicRedactor : MonoBehaviour
 {
 	public Characteristics Characteristic;
 
+	[SerializeField] private Text _characteristicNameText;
 	[SerializeField] private ControlGroup _statControl;
 	[SerializeField] private Text _bonusText;
+	[SerializeField] private CharacteristicTip _characteristicTip;
 
 	private Action<Characteristics> _onAddPoint;
 	private Action<Characteristics> _onRemovePoint;
@@ -18,6 +21,7 @@ public class CharacteristicRedactor : MonoBehaviour
 
 	private void OnValidate()
 	{
+		_characteristicNameText.text = TextHelper.Translate(Characteristic) + ":";
 		if (_bonusText == null) _bonusText = GetComponentsInChildren<Text>().First(x => x.name == "Bonus");
 		if (_statControl == null) _statControl = GetComponentInChildren<ControlGroup>();
 	}
@@ -32,6 +36,7 @@ public class CharacteristicRedactor : MonoBehaviour
 		_canRemoveMore = canRemoveMore;
 		_getAmount = getAmount;
 		_statControl.Setup(AddPoint, RemovePoint, CanAddMore, CanRemoveMore, GetAmount);
+		_characteristicTip.Setup(Characteristic);
 	}
 
 	private void AddPoint() => _onAddPoint.Invoke(Characteristic);

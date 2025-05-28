@@ -2565,7 +2565,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &2515453624956930678
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2602,6 +2602,9 @@ MonoBehaviour:
   UniqueName: Item/MetallicHelmet
   _saveableComponents:
   - {fileID: 1776612462798052683}
+  AfterLoadEndEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1776612462798052683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2614,6 +2617,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba1a6669c044bf40a86aa3577a41d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 46847801349939948}
+  collider: {fileID: 2515453624956930678}
+  RotationInHand: {x: 0, y: 0, z: 0}
   ArmorInfo: {fileID: 11400000, guid: bb5a60115339c304d8d9fb17887fe1b6, type: 2}
 --- !u!1 &9112553634441980811
 GameObject:

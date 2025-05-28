@@ -31,6 +31,7 @@ public class PersonageInfo : ScriptableObject
 	public int ActionsPerTurn => 1 + Dexterity / 3;
 
 	public int Speed => RaceInfo.StandartSpeed;
+	public int DefaultMaxEnergyToAttack => 4 + Strength;
 
 	[SerializeField] private Texture2D _personagePortrait;
 	public Texture2D PersonagePortrait

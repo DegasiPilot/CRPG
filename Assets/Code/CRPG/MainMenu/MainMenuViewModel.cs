@@ -21,10 +21,23 @@ namespace CRPG.MainMenu
 			_mainMenuScript.LoadGameButton.onClick.AddListener(LoadGameBtnListener);
 			_mainMenuScript.StartNewGameButton.onClick.AddListener(StartNewGame);
 			_mainMenuScript.ExitGameButton.onClick.AddListener(ExitGame);
+			_mainMenuScript.ExitFromAccountButton.onClick.AddListener(ExitFromAccount);
 			_mainMenuScript.OnAwake.AddListener(Awake);
 		}
 
 		public void Awake()
+		{
+			_mainMenuScript.AuthRegManager.AfterUserInitializedEvent += AfterUserInitialized;
+			StartAuthorization();
+		}
+
+		private void ExitFromAccount()
+		{
+			_mainMenuScript.AuthRegManager.ExitFromAccount();
+			StartAuthorization();
+		}
+
+		private void StartAuthorization()
 		{
 			MongoDataSaveLoader mongo = MongoDataSaveLoader.Instance;
 			if (mongo.Ping())
@@ -41,15 +54,18 @@ namespace CRPG.MainMenu
 			}
 
 			GlobalDataManager.DataSaveLoader = _dataSaveLoader;
-			_mainMenuScript.AuthRegManager.AfterUserInitializedEvent += AfterUserInitialized;
+			_mainMenuScript.LoadLastGameButton.interactable = false;
+			_mainMenuScript.LoadGameButton.interactable = false;
+			_mainMenuScript.StartNewGameButton.interactable = false;
 			_mainMenuScript.AuthRegManager.Activate(_dataSaveLoader, _messageBoxManager);
 		}
 
 		private void AfterUserInitialized()
 		{
 			bool hasSaves = _dataSaveLoader.HasSaves;
-			_mainMenuScript.LoadLastGameButton.gameObject.SetActive(hasSaves);
-			_mainMenuScript.LoadGameButton.gameObject.SetActive(hasSaves);
+			_mainMenuScript.LoadLastGameButton.interactable = hasSaves;
+			_mainMenuScript.LoadGameButton.interactable = hasSaves;
+			_mainMenuScript.StartNewGameButton.interactable = true;
 		}
 
 		public void StartNewGame()

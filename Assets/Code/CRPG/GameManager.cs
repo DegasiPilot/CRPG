@@ -49,18 +49,7 @@ public class GameManager : MonoBehaviour
 		using (var container = LifetimeScope.Container)
 		{
 			GlobalDataManager globalDataManager = container.Resolve<GlobalDataManager>();
-			foreach (var personage in _personages)
-			{
-				if (GameData.Companions.Any(
-					companion => companion.Personage.PersonageInfo.Name ==
-					personage.PersonageInfo.Name))
-				{
-					Destroy(personage.gameObject);
-					continue;
-				}
-				personage.Setup();
-				_sceneSaveLoadManager.LoadSceneFromSave(GameData.SceneSaveInfo, globalDataManager);
-			}
+			_sceneSaveLoadManager.LoadSceneFromSave(GameData.SceneSaveInfo, globalDataManager);
 		}
 	}
 
@@ -106,15 +95,26 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	public void OnPersonageUnderPointer(Personage personage)
+	public void OnPlayerUnderPointer(PlayerController playerController)
 	{
+		Personage personage = playerController.Personage;
+		if (_currentComponentUnderPointer != personage)
+		{
+			_canvasManager.ShowInfoUnderPosition(personage.PersonageInfo.Name + " (это вы)", personage.HitPoint.position);
+			_currentComponentUnderPointer = personage;
+		}
+	}
+
+	public void OnPersonageUnderPointer(PersonageController personageController)
+	{
+		Personage personage = personageController.Personage;
 		if (_currentComponentUnderPointer != personage)
 		{
 			if (_gameMode == GameMode.Free)
 			{
 				if (ActivePlayer.ActiveAction == ActionType.Attack)
 				{
-					ShowAttackInfo(personage);
+					ShowAttackInfo(personageController);
 				}
 				else
 				{
@@ -129,18 +129,19 @@ public class GameManager : MonoBehaviour
 				}
 				else
 				{
-					ShowAttackInfo(personage);
+					ShowAttackInfo(personageController);
 				}
 			}
 			_currentComponentUnderPointer = personage;
 		}
 	}
 
-	private void ShowAttackInfo(Personage personage)
+	private void ShowAttackInfo(PersonageController personageController)
 	{
+		Personage personage = personageController.Personage;
 		StringBuilder attackInfoBuider = new();
 		attackInfoBuider.AppendLine(personage.PersonageInfo.Name);
-		float distance = Vector3.Distance(ActivePlayer.Personage.HitPoint.position, personage.HitPoint.position);
+		float distance = Vector3.Distance(ActivePlayer.transform.position, personage.transform.position) - personageController.Radius;
 		attackInfoBuider.AppendLine($"Расстояние {distance.ToString("0.#")}");
 		if (personage.IsDead)
 		{
@@ -148,7 +149,7 @@ public class GameManager : MonoBehaviour
 		}
 		else
 		{
-			if (distance <= ActivePlayer.MaxAttackDistance && !BattleManager.AttackRaycast(ActivePlayer.Personage.HitPoint.position, personage.HitPoint.position, ActivePlayer.MaxAttackDistance, personage))
+			if (distance <= ActivePlayer.MaxAttackDistance && !BattleManager.AttackRaycast(ActivePlayer.Personage, ActivePlayer.MaxAttackDistance, personage))
 			{
 				attackInfoBuider.AppendLine("Цель за укрытием");
 			}
@@ -202,7 +203,7 @@ public class GameManager : MonoBehaviour
 	{
 		if (GameMode == GameMode.Free)
 		{
-			ActivePlayer.InteractWith(1, item.transform.position, new PickupItemInteract(item));
+			ActivePlayer.InteractWith(GlobalRules.MaxItemTakeDistance, item.transform.position, new PickupItemInteract(item));
 		}
 		else if (GameMode == GameMode.Battle)
 		{
@@ -242,24 +243,6 @@ public class GameManager : MonoBehaviour
 		else if (_gameMode == GameMode.Battle && BattleManager.ActivePersonageController == ActivePlayer)
 		{
 			ActivePlayer.OnGroundPressedInBattle(hitPoint);
-		}
-	}
-
-	internal void OnPlayerPressed(PlayerController player)
-	{
-		if (GameData.ActivePlayer != player)
-		{
-			if (GameData.MainPlayer.PlayerController != player && !GameData.Companions.Contains(player))
-			{
-				if (player.TryGetComponent(out SaveableGameobject saveableGameobject))
-				{
-					_sceneSaveLoadManager.ObjectsToSave.Remove(saveableGameobject);
-				}
-				GameData.Companions.Add(player);
-				player.transform.SetParent(null);
-				DontDestroyOnLoad(player);
-			}
-			SetActivePlayer(player);
 		}
 	}
 
