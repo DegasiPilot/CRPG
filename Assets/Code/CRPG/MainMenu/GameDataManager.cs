@@ -41,6 +41,10 @@ public class GameDataManager
 		{
 			LoadInventory(gameSave.InventoryItems, player.PlayerController.Inventory.transform);
 		}
+		else
+		{
+			GameData.Inventory.Clear();
+		}
 	}
 
 	private void InitPlayer(MainPlayer player)

@@ -65,6 +65,7 @@ public static class BattleManager
 	{
 		if (_participantPersonages != null)
 		{
+			ActivePersonageController.SetDefaultAction();
 			BattleUIManager.Instance.SetNextActivePersonage();
 			if (_activePersonageIndex < _participantPersonages.Count - 1)
 			{
@@ -158,11 +159,11 @@ public static class BattleManager
 								}
 								message += _activeFigthers[j].PersonageController.Personage.PersonageInfo.Name
 									+ " уклонился";
-								_activeFigthers[i].PersonageController.AttackModule.EndAttack();
+								_activeFigthers[i].PersonageController.AttackModule.StartAttackCoroutine(false);
 							}
 							else
 							{
-								_activeFigthers[i].PersonageController.AttackModule.StartAttackCoroutine();
+								_activeFigthers[i].PersonageController.AttackModule.StartAttackCoroutine(true);
 							}
 						}
 					}

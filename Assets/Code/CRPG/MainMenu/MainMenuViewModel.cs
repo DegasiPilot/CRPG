@@ -1,6 +1,7 @@
 ﻿using CRPG.DataSaveSystem;
 using CRPG.DataSaveSystem.SaveData;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CRPG.MainMenu
 {
@@ -87,12 +88,12 @@ namespace CRPG.MainMenu
 		{
 			_mainMenuScript.ShowLoadScreen();
 			_gameDataManager.LoadGameSave(gameSave);
-			_mainMenuScript.LoadScene("SampleScene");
+			_mainMenuScript.LoadScene("MainScene");
 		}
 
 		public List<GameSaveInfo> GetSaves()
 		{
-			return _saves ??= _dataSaveLoader.GetAllGameSaves();
+			return _saves ??= _dataSaveLoader.GetAllGameSaves().OrderByDescending(user => user.DateTime).ToList();
 		}
 
 		public void ExitGame()

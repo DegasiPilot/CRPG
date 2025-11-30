@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewArmorInfo", menuName = "ScriptableObjects/БроняInfo")]
+[CreateAssetMenu(fileName = "NewArmorInfo", menuName = "ScriptableObjects/БроняИнфо")]
 internal class ArmorInfo : ItemInfo
 {
 	public int SkinIndex;

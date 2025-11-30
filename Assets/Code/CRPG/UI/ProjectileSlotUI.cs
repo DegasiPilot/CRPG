@@ -14,8 +14,9 @@ namespace CRPG.UI
 
 		private ProjectileSlot _projectileSlot;
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
+			base.OnValidate();
 			if (_iconImage == null) _iconImage = transform.GetChild(0).GetComponent<Image>();
 		}
 

@@ -1,7 +1,9 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PersonageCreator : MonoBehaviour
@@ -9,7 +11,7 @@ public class PersonageCreator : MonoBehaviour
 	public UnityEvent<Gender> OnGenderChanged;
 	public UnityEvent<Color> PickedColorChanged => ColorPicker.onColorChange;
 
-	public InputField NameInput;
+	public TMP_InputField NameInput;
 	public Transform StatsParent;
 	public Transform ApearanceControllersParent;
 	public Transform RacesParent;
@@ -109,8 +111,8 @@ public class PersonageCreator : MonoBehaviour
 		RenderTexture.active = PhotoCamera.targetTexture;
 		PhotoCamera.Render();
 
-		Texture2D renderedTexture = new Texture2D(256, 256);
-		renderedTexture.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
+		Texture2D renderedTexture = new Texture2D(PhotoCamera.targetTexture.width, PhotoCamera.targetTexture.height);
+		renderedTexture.ReadPixels(new Rect(0, 0, PhotoCamera.targetTexture.width, PhotoCamera.targetTexture.height), 0, 0);
 		renderedTexture.Apply();
 		RenderTexture.active = null;
 
@@ -173,6 +175,11 @@ public class PersonageCreator : MonoBehaviour
 		{
 			if (redactor.IsOnlyMenPart) redactor.gameObject.SetActive(gender == Gender.Male);
 		}
+	}
+
+	public void ExitToMainMenu()
+	{
+		SceneManager.LoadScene("MainMenu");
 	}
 
 	public void SetNameWithoutNotify(string name) => NameInput.SetTextWithoutNotify(name);

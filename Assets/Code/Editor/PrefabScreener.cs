@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace Assets.Code
+namespace Assets.Code.Editor
 {
 	[RequireComponent(typeof(Camera))]
 	public class PrefabScreener : MonoBehaviour

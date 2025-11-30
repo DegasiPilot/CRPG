@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewRaceInfo", menuName = "ScriptableObjects/RaceInfo")]
+[CreateAssetMenu(fileName = "NewRaceInfo", menuName = "ScriptableObjects/РасаИнфо")]
 public class RaceInfo : ScriptableObject
 {
 	public Race Race;

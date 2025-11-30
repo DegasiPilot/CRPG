@@ -12,6 +12,7 @@ public class AnimatorManager : MonoBehaviour
 	public UnityEvent OnContactEnemy => _onContactEnemy;
 
 	[SerializeField] private Animator _animator;
+	public Animator Animator => _animator;
 	[SerializeField] private ItemSkin _rightHand;
 
 	private readonly int _atackAnimId = Animator.StringToHash("Attack");

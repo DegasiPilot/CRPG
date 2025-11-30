@@ -9,6 +9,8 @@ internal class InventorySlot : ItemSlot
 
 	public List<Item> Items { get; private set; }
 
+	public override bool IsEmpty => Items is null;
+
 	private IEnumerable<T> ItemsAs<T>() where T : Item
 	{
 		foreach (var item in Items)

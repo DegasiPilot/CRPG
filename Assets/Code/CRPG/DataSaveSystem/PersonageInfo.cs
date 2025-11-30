@@ -2,7 +2,7 @@ using CRPG.DataSaveSystem.SaveData;
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewPersonageInfo", menuName = "ScriptableObjects/PersonageInfo")]
+[CreateAssetMenu(fileName = "NewPersonageInfo", menuName = "ScriptableObjects/ПерсонажИнфо")]
 public class PersonageInfo : ScriptableObject
 {
 	public Action OnStatsChanged;

@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class MessageBoxManager : MonoBehaviour
 {
-	private static Coroutine _emergenceMessageRoutine;
-	private static Coroutine _hideMessageRoutine;
-	private static float _alphaFactor = 0;
+	private Coroutine _emergenceMessageRoutine;
+	private Coroutine _hideMessageRoutine;
+	private float _alphaFactor = 0;
 
 	public GameObject MessageBoxCanvas;
 	public Image MessageBackground;
@@ -19,26 +19,24 @@ public class MessageBoxManager : MonoBehaviour
 	private Color _normalBackgroundColor;
 
 	private string _message;
+	private bool _isInitialized;
 
 	private void Awake()
 	{
-		_normalTextColor = MessageTextblock.color;
-		_normalBackgroundColor = MessageBackground.color;
-		DontDestroyOnLoad(gameObject);
+		if (!_isInitialized)
+		{
+			_normalTextColor = MessageTextblock.color;
+			_normalBackgroundColor = MessageBackground.color;
+			DontDestroyOnLoad(gameObject);
+			_isInitialized = true;
+		}
 	}
 
 	public void ShowMessage(string message)
 	{
-		if (_message != null)
-		{
-			_message += "\n" + message;
-		}
-		else
-		{
-			_message = message;
-		}
+		_message = message;
 		MessageBoxCanvas.SetActive(true);
-		MessageTextblock.text = message;
+		MessageTextblock.text = _message;
 		EmergenceMessage();
 	}
 
@@ -58,14 +56,14 @@ public class MessageBoxManager : MonoBehaviour
 		{
 			while (_alphaFactor < 1)
 			{
-				yield return null;
-				_alphaFactor += Time.deltaTime / MessageEmergenceTime;
+				_alphaFactor = Mathf.MoveTowards(_alphaFactor, 1f, Time.unscaledDeltaTime / MessageEmergenceTime);
 				Color messageBackgroundColor = _normalBackgroundColor;
 				messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
 				MessageBackground.color = messageBackgroundColor;
 				Color messageTextColor = _normalTextColor;
 				messageTextColor.a = _normalTextColor.a * _alphaFactor;
 				MessageTextblock.color = _normalTextColor * _alphaFactor;
+				yield return null;
 			}
 			HideMessage();
 		}
@@ -81,24 +79,21 @@ public class MessageBoxManager : MonoBehaviour
 
 		IEnumerator HideMessageRoutine()
 		{
-			float t = 1;
-			while (t > 0)
-			{
-				yield return null;
-				t -= Time.deltaTime / (_message.Length * MessageTimePerCharacter);
-			}
+			yield return new WaitForSeconds(_message.Length * MessageTimePerCharacter);
 
 			while (_alphaFactor > 0)
 			{
-				yield return null;
-				_alphaFactor -= Time.deltaTime / MessageHideTime;
+				_alphaFactor = Mathf.MoveTowards(_alphaFactor, 0, Time.unscaledDeltaTime / MessageHideTime);
 				Color messageBackgroundColor = _normalBackgroundColor;
 				messageBackgroundColor.a = _normalBackgroundColor.a * _alphaFactor;
 				MessageBackground.color = messageBackgroundColor;
 				Color messageTextColor = _normalTextColor;
 				messageTextColor.a = _normalTextColor.a * _alphaFactor;
-				MessageTextblock.color = _normalTextColor * _alphaFactor;
+				MessageTextblock.color = messageTextColor;
+				yield return null;
 			}
+
+			_message = null;
 		}
 	}
 }

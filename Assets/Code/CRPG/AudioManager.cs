@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour
 {
 	public static AudioManager Instance { get; private set; }
 
+	[SerializeField] private AudioClip _mainAudioClip;
 	[SerializeField] private AudioClip _battleAudioClip;
 
 	private AudioSource _audioSource;
@@ -24,13 +25,23 @@ public class AudioManager : MonoBehaviour
 			_audioSource = GetComponent<AudioSource>();
 			SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
 			BattleManager.OnBattleStartEvent.AddListener(StartBattleMusic);
-			BattleManager.OnBattleEndEvent.AddListener(StopMusic);
+			BattleManager.OnBattleEndEvent.AddListener(StartMainMusic);
 		}
 	}
 
 	private void SceneManager_activeSceneChanged(Scene lastScene, Scene newScene)
 	{
-		_audioSource.Stop();
+		StopMusic();
+		if(newScene.name == "MainScene")
+		{
+			StartMainMusic();
+		}
+	}
+
+	public void StartMainMusic()
+	{
+		_audioSource.clip = _mainAudioClip;
+		_audioSource.Play();
 	}
 
 	public void StartBattleMusic()

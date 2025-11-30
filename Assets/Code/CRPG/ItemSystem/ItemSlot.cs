@@ -2,6 +2,8 @@ using System;
 
 public abstract class ItemSlot
 {
+	public abstract bool IsEmpty { get; }
+
 	public abstract void ClearSlot();
 	public abstract bool TrySetupItemContextMenu(ItemContextMenu itemContextMenu);
 	public abstract void SetupItemInfoPanel(ItemInfoPanel itemInfoPanel);

@@ -12,6 +12,7 @@ public class CanvasManager : MonoBehaviour
 {
 	[SerializeField] private InventoryPanel _inventoryPanel;
 	[SerializeField] private EquipmentPanel _equipmentPanel;
+	[SerializeField] private StatsDisplayer _statsDisplayer;
 	public GameObject PauseMenuPanel;
 	public Button SaveButton;
 	[SerializeField] private PlayerPanel _playerPanel;
@@ -60,17 +61,18 @@ public class CanvasManager : MonoBehaviour
 		}
 	}
 
-	public void ToggleInventory(List<Item> inventory, EquipmentManager equipmentManager)
+	public void ToggleInventory(List<Item> inventory, EquipmentManager equipmentManager, PersonageInfo personageInfo)
 	{
 		_inventoryPanel.ToggleInventory(inventory);
 		_equipmentPanel.Setup(equipmentManager);
+		_statsDisplayer.Setup(personageInfo);
 	}
 
 	public void TogglePauseMenu()
 	{
 		IsPauseMenuOpen = !IsPauseMenuOpen;
 		PauseMenuPanel.SetActive(IsPauseMenuOpen);
-		SaveButton.interactable = GameManager.Instance.GameMode == GameMode.Free;
+		SaveButton.interactable = GameManager.Instance.CanSaveGame;
 	}
 
 	public void SetActivePersonage(PlayerController personageController, EquipmentManager equipmentManager)

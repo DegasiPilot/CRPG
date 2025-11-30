@@ -149,10 +149,6 @@ public class GameManager : MonoBehaviour
 		}
 		else
 		{
-			if (distance <= ActivePlayer.MaxAttackDistance && !BattleManager.AttackRaycast(ActivePlayer.Personage, ActivePlayer.MaxAttackDistance, personage))
-			{
-				attackInfoBuider.AppendLine("Цель за укрытием");
-			}
 			attackInfoBuider.AppendLine($"Броня: {personage.ArmorPercent.ToString("0.#%")}");
 			EquipmentManager equipmentManager = ActivePlayer.Personage.EquipmentManager;
 			if (equipmentManager.IsWeaponNeedProjectiles && !equipmentManager.CanReloadWeapon)
@@ -248,13 +244,19 @@ public class GameManager : MonoBehaviour
 
 	public void CreateNewGameSave()
 	{
-		using (var container = LifetimeScope.Container)
+		if (CanSaveGame)
 		{
-			GlobalDataManager globalDataManager = container.Resolve<GlobalDataManager>();
-			GameData.SceneSaveInfo = _sceneSaveLoadManager.GetSceneSave(globalDataManager);
-			GlobalDataManager.DataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
+			using (var container = LifetimeScope.Container)
+			{
+				GlobalDataManager globalDataManager = container.Resolve<GlobalDataManager>();
+				GameData.SceneSaveInfo = _sceneSaveLoadManager.GetSceneSave(globalDataManager);
+				GlobalDataManager.DataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
+			}
+			LifetimeScope.Container.Resolve<MessageBoxManager>().ShowMessage("Игра сохранена!");
 		}
 	}
+
+	public bool CanSaveGame => GameMode == GameMode.Free && GameData.ActivePlayer.IsFree;
 
 	public void ExitToMainMenu()
 	{
@@ -282,7 +284,7 @@ public class GameManager : MonoBehaviour
 
 	public void ToggleInvenoty()
 	{
-		_canvasManager.ToggleInventory(GameData.Inventory, ActivePlayer.Personage.EquipmentManager);
+		_canvasManager.ToggleInventory(GameData.Inventory, ActivePlayer.Personage.EquipmentManager, ActivePlayer.Personage.PersonageInfo);
 		if (_canvasManager.IsInventoryOpen)
 		{
 			_cameraController.enabled = false;

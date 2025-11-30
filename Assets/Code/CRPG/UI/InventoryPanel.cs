@@ -39,7 +39,10 @@ namespace CRPG.UI
 			{
 				if (raycastResults[0].gameObject.TryGetComponent(out ItemSlotUI itemSlot))
 				{
-					ActivateContextMenu(itemSlot);
+					if(itemSlot.ItemSlot != null)
+					{
+						ActivateContextMenu(itemSlot);
+					}
 					return;
 				}
 				else if (raycastResults[0].gameObject.TryGetComponent(out Button button))

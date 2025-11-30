@@ -1,6 +1,7 @@
 ﻿using CRPG.Customization;
 using CRPG.DataSaveSystem;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -259,9 +260,17 @@ namespace CRPG.PersonageRedactor
 			if (!string.IsNullOrEmpty(errors))
 			{
 				_messageBoxManager.ShowMessage(errors);
-				return;
 			}
+			else
+			{
+				_personageCreator.StartCoroutine(SavePersonage());
+			}
+		}
 
+		private IEnumerator SavePersonage()
+		{
+			_messageBoxManager.ShowMessage("Загрузка...");
+			yield return new WaitForSeconds(_messageBoxManager.MessageEmergenceTime);
 			ApplyBonuses();
 			AppearanceStruct appearance = new AppearanceStruct();
 			foreach (var redactor in _personageCreator.ApperanceRedactors)
@@ -281,15 +290,22 @@ namespace CRPG.PersonageRedactor
 			}
 			appearance.HairsColor = HairColor;
 			appearance.SkinColor = SkinColor;
-			GameData.MainPersonageAppearance = appearance;
 			_playerCustomizer.ApplyAppearance(appearance);
+			GameData.MainPlayer.PlayerController.AnimatorManager.Animator.ForceStateNormalizedTime(0);
+			GameData.MainPlayer.PlayerController.AnimatorManager.Animator.Update(0.001f);
 			_personageInfo.PersonagePortrait = _personageCreator.SavePersonagePortrait();
 
 			GameData.InitializeNewGame(_personageInfo);
-			MaleObject.transform.rotation = Quaternion.identity;
-			FemaleObject.transform.rotation = Quaternion.identity;
+			if(MaleObject != null)
+			{
+				MaleObject.transform.rotation = Quaternion.identity;
+			}
+			if(FemaleObject != null)
+			{
+				FemaleObject.transform.rotation = Quaternion.identity;
+			}
 			_dataSaveLoader.CreateGameSaveInfo(GameData.NewGameSave());
-			SceneManager.LoadScene("SampleScene");
+			SceneManager.LoadSceneAsync("MainScene");
 		}
 
 		private void ApplyBonuses()

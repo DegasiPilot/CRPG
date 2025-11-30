@@ -24,8 +24,9 @@ namespace CRPG.UI
 		}
 		public override ItemSlot ItemSlot => InventorySlot;
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
+			base.OnValidate();
 			if (_iconImage == null) _iconImage = transform.GetChild(0).GetComponent<Image>();
 		}
 
@@ -41,7 +42,7 @@ namespace CRPG.UI
 		protected override void EquipItem(ItemInfo item)
 		{
 			base.EquipItem(item);
-			gameObject.SetActive(true);
+			_iconImage.enabled = true;
 			if (item.IsStackable)
 			{
 				_text.text = _inventorySlot.Items.Count.ToString();
@@ -54,7 +55,8 @@ namespace CRPG.UI
 
 		protected override void UnequipItem()
 		{
-			gameObject.SetActive(false);
+			_iconImage.enabled = false;
+			_text.text = string.Empty;
 		}
 	}
 }

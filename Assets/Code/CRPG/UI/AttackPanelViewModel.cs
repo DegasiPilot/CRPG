@@ -76,7 +76,7 @@ namespace BattleSystem.ViewModels
 		{
 			_defendEnergy = defendEnergy;
 			_view.RefreshDefend(DefendEnergy);
-			_view.RefreshDodgeResult(DefendEnergy * _selfPlayer.DodgeCoefficient);
+			_view.RefreshDodgeResult(Mathf.Min(DefendEnergy * _selfPlayer.DodgeCoefficient, 1f));
 			_view.UpdateAttackBtnInteractable(CanAttack);
 		}
 

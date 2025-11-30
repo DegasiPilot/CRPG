@@ -32,6 +32,14 @@ internal class ActionButton : MonoBehaviour, IDisposable
 
 	private void OnToggleChanged(bool activate)
 	{
+		if (activate == false)
+		{
+			var toggle = ToggleGroup.GetFirstActiveToggle();
+			if(toggle != null && toggle != _toggle)
+			{
+				return; //Ignore deactivate by toggleGroup
+			}
+		}
 		OnToggle.Invoke(_myAction, activate);
 	}
 

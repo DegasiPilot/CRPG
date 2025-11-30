@@ -10,6 +10,8 @@ namespace CRPG.ItemSystem
 		public event Action OnEquipProjectile;
 		public event Action<List<ProjectileItem>> OnUnequipItems;
 
+		public override bool IsEmpty => ProjectileItems is null;
+
 		public override void ClearSlot()
 		{
 			foreach (var item in ProjectileItems)

@@ -16,7 +16,6 @@ namespace CRPG.DataSaveSystem
 		public static List<Item> Inventory = new List<Item>();
 		internal static MainPlayer MainPlayer;
 		internal static PlayerController ActivePlayer;
-		internal static AppearanceStruct MainPersonageAppearance { get; set; }
 
 		internal static GameSaveInfo NewGameSave()
 		{
@@ -44,7 +43,7 @@ namespace CRPG.DataSaveSystem
 					PersonageSaveInfo = mainPersonageSaveInfo,
 				},
 				MainPersonageInfo = MainPlayer.PlayerController.Personage.PersonageInfo.Save(),
-				MainPersonageAppearance = MainPersonageAppearance,
+				MainPersonageAppearance = MainPlayer.PlayerCustomizer.AppearanceStruct,
 				SceneSaveInfo = SceneSaveInfo,
 				InventoryItems = ItemNames(notEquipedItems),
 			};

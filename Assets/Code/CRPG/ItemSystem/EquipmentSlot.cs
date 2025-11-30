@@ -5,6 +5,8 @@ public class EquipmentSlot : ItemSlot
 {
 	public readonly BodyPart BodyPart;
 
+	public override bool IsEmpty => EquipableItem is null;
+
 	public EquipableItem EquipableItem { get; private set; }
 	public event Action<EquipableItem, BodyPart> OnEquipItem;
 	public event Action<EquipableItem, BodyPart> OnUnequipItem;

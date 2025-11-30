@@ -2,17 +2,18 @@
 using CRPG.DataSaveSystem.SaveData;
 using System;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AuthRegManager : MonoBehaviour
 {
-	public InputField LoginInput;
-	public InputField PasswordInput;
+	public TMP_InputField LoginInput;
+	public TMP_InputField PasswordInput;
 	public GameObject LoginPanel;
 	public Toggle RememberMeToggle;
 	public GameObject UserPanel;
-	public Text UserPanelLogin;
+	public TextMeshProUGUI UserPanelLogin;
 
 	bool _isSearchInProgress;
 	StringBuilder errors = new StringBuilder(2);

@@ -2,7 +2,7 @@
 
 namespace CRPG
 {
-	[CreateAssetMenu(fileName = "NewPersonageActionInfo", menuName = "ScriptableObjects/PersonageActionInfo")]
+	[CreateAssetMenu(fileName = "NewPersonageActionInfo", menuName = "ScriptableObjects/ДействиеПерсонажаИнфо")]
 	class PersonageActionInfo : ScriptableObject
 	{
 		[SerializeField] private ActionType _actionType;

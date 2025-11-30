@@ -64,7 +64,7 @@ namespace CRPG.UI
 			{
 				_personageController.SetActiveAction(actionType);
 			}
-			else
+			else if (_personageController.ActiveAction == actionType)
 			{
 				_personageController.SetDefaultAction();
 			}

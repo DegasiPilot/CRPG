@@ -11,8 +11,9 @@ namespace CRPG.UI
 
 		private EquipmentSlot _equipmentSlot;
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
+			base.OnValidate();
 			if (_iconImage == null) _iconImage = transform.GetChild(0).GetComponent<Image>();
 		}
 
@@ -45,16 +46,7 @@ namespace CRPG.UI
 
 		private void EquipItem(EquipableItem item, BodyPart bodyPart)
 		{
-			EquipItem(item.ItemInfo,
-				item is Weapon weapon &&
-				weapon.WeaponInfo.IsTwoHandled &&
-				bodyPart == BodyPart.LeftHand);
-		}
-
-		private void EquipItem(ItemInfo itemInfo, bool darkened = false)
-		{
-			base.EquipItem(itemInfo);
-			_iconImage.color = darkened ? _darkenedColor : Color.white;
+			EquipItem(item.ItemInfo);
 		}
 
 		private void UnequipItemAdapter(Item item, BodyPart bodyPart)

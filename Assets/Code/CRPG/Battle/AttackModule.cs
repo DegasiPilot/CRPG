@@ -54,18 +54,17 @@ namespace CRPG.Battle
 		{
 			_personageController.Personage.Stamina -= _attack;
 			_enemy.GetDamage(_attack * _damageCoefficient, _personageController.Personage.DamageType);
-			_isAttackAnim = false;
 
 			EndAttack();
 			_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
 		}
 
-		public void StartAttackCoroutine()
+		public void StartAttackCoroutine(bool isSucces)
 		{
-			_personageController.StartCoroutine(AttackCoroutine());
+			_personageController.StartCoroutine(AttackCoroutine(isSucces));
 		}
 
-		private IEnumerator AttackCoroutine()
+		private IEnumerator AttackCoroutine(bool isSucces)
 		{
 			if (_isAttackAnim)
 			{
@@ -73,7 +72,14 @@ namespace CRPG.Battle
 			}
 			_isAttackAnim = true;
 
-			_personageController.AnimatorManager.OnContactEnemy.AddListener(MakeDamage);
+			if (isSucces)
+			{
+				_personageController.AnimatorManager.OnContactEnemy.AddListener(MakeDamage);
+			}
+			else
+			{
+				_personageController.AnimatorManager.OnContactEnemy.AddListener(EndAttack);
+			}
 
 			var equipmentManager = _personageController.Personage.EquipmentManager;
 			if (equipmentManager.Weapon != null && equipmentManager.Weapon.TargetingOffset != Vector3.zero)
@@ -96,7 +102,9 @@ namespace CRPG.Battle
 
 		public void EndAttack()
 		{
+			_isAttackAnim = false;
 			_isAttacking = false;
+			_personageController.AnimatorManager.OnContactEnemy.RemoveListener(EndAttack);
 			_personageController.EndAttack();
 			AfterAttack();
 		}
@@ -110,6 +118,7 @@ namespace CRPG.Battle
 			if (_personageController != null && _personageController.AnimatorManager != null)
 			{
 				_personageController.AnimatorManager.OnContactEnemy.RemoveListener(MakeDamage);
+				_personageController.AnimatorManager.OnContactEnemy.RemoveListener(EndAttack);
 			}
 		}
 

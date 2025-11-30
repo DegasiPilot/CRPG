@@ -42,10 +42,20 @@ namespace CRPG
 		public void ShowSaves(List<GameSaveInfo> saves, Action<GameSaveInfo> loadSave)
 		{
 			SavesPanel.SetActive(true);
+			ClearSaves();
 			foreach (var save in saves)
 			{
 				SaveVisualizer saveVisualizer = Instantiate(SaveSlotPrefab, SavesTransformParent);
 				saveVisualizer.Setup(save, loadSave);
+			}
+		}
+
+		private void ClearSaves()
+		{
+			var saves = SavesTransformParent.gameObject.GetComponentsInChildren<SaveVisualizer>();
+			foreach (var save in saves)
+			{
+				Destroy(save.gameObject);
 			}
 		}
 

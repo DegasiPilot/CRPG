@@ -15,9 +15,17 @@ namespace CRPG.DataSaveSystem
 		public bool CanExit => true;
 		public bool HasSaves => _activeUser?.GameSaves != null && _activeUser.GameSaves.Count > 0;
 
-		const string connectionUri = "mongodb://localhost:27017";
+		const string connectionUri = "mongodb://Timur:TimMongoCRPG@217.199.252.220:27017/";
 		const string DbName = "CRPG_DB";
-		MongoClient client = new MongoClient(connectionUri);
+
+		readonly static MongoClientSettings MongoSettings = new MongoClientSettings()
+		{
+			Server = new MongoServerAddress("217.199.252.220", 27017),
+			Credential = MongoCredential.CreateCredential("admin", "Timur", "TimMongoCRPG"),
+			IPv6 = true,
+		};
+
+		MongoClient client = new MongoClient(MongoSettings);
 		private User _activeUser;
 
 		private static MongoDataSaveLoader _instance;
@@ -41,19 +49,25 @@ namespace CRPG.DataSaveSystem
 			if (!BsonClassMap.IsClassMapRegistered(typeof(PersonageSaveInfo)))
 			{
 				BsonClassMap.RegisterClassMap<PersonageSaveInfo>();
+				BsonClassMap.RegisterClassMap<DialogueActorSaveData>();
 			}
 		}
 
 		public bool Ping()
 		{
-			for (int attempt = 1; attempt <= 3; attempt++)
+			try
 			{
-				if (client.Cluster.Description.State != MongoDB.Driver.Core.Clusters.ClusterState.Disconnected)
-				{
-					return true;
-				}
-				Thread.Sleep(150);
+				var client = new MongoClient(MongoSettings);
+				var db = client.GetDatabase(DbName);
+				var collections = db.ListCollectionNames().ToList();
+				return true;
 			}
+			catch(System.Exception e)
+			{
+				Debug.LogWarning("Mongo:" + e.Message);
+			}
+			Thread.Sleep(150);
+			Debug.Log("No db connection");
 			return false;
 		}
 

@@ -154,17 +154,11 @@ public class PlayerController : PersonageController
 		}
 	}
 
-	public override void SetDefaultAction()
-	{
-		base.SetDefaultAction();
-	}
-
 	public override void SetActiveAction(ActionType actionType)
 	{
 		if(_activeAction == ActionType.Movement)
 		{
-			AccesableLineRenderer.enabled = false;
-			UnaccesableLineRenderer.enabled = false;
+			ClearLines();
 		}
 		base.SetActiveAction(actionType);
 		OnSetAction.Invoke(actionType);
@@ -179,6 +173,12 @@ public class PlayerController : PersonageController
 		}
 	}
 	public UnityEvent<ActionType> OnSetAction;
+
+	private void ClearLines()
+	{
+		AccesableLineRenderer.enabled = false;
+		UnaccesableLineRenderer.enabled = false;
+	}
 
 	private void DisplaySphere(float sphereDiametr, float shpereY)
 	{

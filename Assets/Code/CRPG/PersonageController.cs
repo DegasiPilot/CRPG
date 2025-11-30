@@ -2,7 +2,6 @@
 using CRPG.Battle;
 using CRPG.Interactions;
 using System.Collections;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -149,7 +148,7 @@ public abstract class PersonageController : MonoBehaviour
 		yield return RotateTo(targetPosition);
 		OnJumpToPosition(targetPosition, jumpHeigth, jumpDuration);
 		_isGrounded = false;
-		_controller.enabled = false; // Выключаем NavMeshAgent
+		_controller.enabled = false; // Deactivate NavMeshAgent
 		SetDefaultAction();
 
 		Vector3 startPos = transform.position;
@@ -165,7 +164,7 @@ public abstract class PersonageController : MonoBehaviour
 			yield return null;
 		}
 
-		// Фиксируем позицию после прыжка
+		// Fixing position after jump
 		transform.position = targetPosition;
 		_isGrounded = true;
 		_controller.enabled = true;
