@@ -1,16 +1,21 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class FBXHelper : MonoBehaviour
 {
-	public ModelImporterMaterialImportMode ImportMode;
+#if UNITY_EDITOR
+    public ModelImporterMaterialImportMode ImportMode;
 	public ModelImporterMaterialLocation MaterialLocation;
 	public ModelImporterMaterialSearch MaterialSearch;
+
 	[Space]
 	public List<Object> Assets;
 
-	[ContextMenu("Change material import settings")]
+    [ContextMenu("Change material import settings")]
     public void ChangeMaterialImport(MenuCommand command)
 	{
 		for(int i = 0; i < Assets.Count; i++)
@@ -28,4 +33,5 @@ public class FBXHelper : MonoBehaviour
 			}
 		}
 	}
+#endif
 }

@@ -40,19 +40,27 @@ namespace CRPG.MainMenu
 
 		private void StartAuthorization()
 		{
-			MongoDataSaveLoader mongo = MongoDataSaveLoader.Instance;
-			if (mongo.Ping())
+			const bool useExternalDB = false;
+			if (useExternalDB)
 			{
-				_dataSaveLoader = mongo;
-			}
+                MongoDataSaveLoader mongo = MongoDataSaveLoader.Instance;
+                if (mongo.Ping())
+                {
+                    _dataSaveLoader = mongo;
+                }
+                else
+                {
+                    if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
+                    {
+                        _messageBoxManager.ShowMessage("Нет подключения к БД. Включен оффлайн режим");
+                    }
+                    _dataSaveLoader = LocalSaveLoader.Instance;
+                }
+            }
 			else
 			{
-				if (GlobalDataManager.DataSaveLoader != LocalSaveLoader.Instance)
-				{
-					_messageBoxManager.ShowMessage("Нет подключения к БД. Включен оффлайн режим");
-				}
-				_dataSaveLoader = LocalSaveLoader.Instance;
-			}
+                _dataSaveLoader = LocalSaveLoader.Instance;
+            }
 
 			GlobalDataManager.DataSaveLoader = _dataSaveLoader;
 			_mainMenuScript.LoadLastGameButton.interactable = false;
